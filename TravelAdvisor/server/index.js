@@ -160,7 +160,8 @@ app.get("/api/rooms/:code/stream", (req, res) => {
   });
 });
 
-if (process.env.NODE_ENV === "production" && fs.existsSync(DIST)) {
+// Serve the built UI whenever dist/ exists (Windows-friendly; no shell env required).
+if (fs.existsSync(DIST)) {
   app.use(express.static(DIST));
   app.get("*", (_req, res) => {
     res.sendFile(path.join(DIST, "index.html"));

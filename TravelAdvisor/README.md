@@ -29,6 +29,8 @@ npm start
 
 然后访问 http://localhost:8787 。
 
+> Windows 说明：请用 **命令提示符 CMD** 或 PowerShell 运行上述命令，不要用开始菜单里的 “Node.js” 交互窗口（那个是 `>` 提示符的 REPL）。项目已用 `cross-env` 兼容 Windows。
+
 ## 让手机也能访问（云端 / 局域网）
 
 ### 方案 A：同一 Wi‑Fi 临时互通
