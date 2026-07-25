@@ -6,4 +6,3 @@ data/*.tmp
 .env
 .env.*
 *.log
-.Dockerignore
