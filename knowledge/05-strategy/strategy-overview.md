@@ -56,8 +56,9 @@ status: active
 
 | 方向 | 一句话 | 项目文件 |
 |---|---|---|
-| 嘉兴仓库扩容 | 扩容能力 | `projects/2026-08-jiaxing-wh-expansion.md` |
-| 嘉兴仓库温控改造 | 温控能力升级（关联 UV/水性 5–35°C） | `projects/2026-08-jiaxing-wh-temp-control.md` |
+| **嘉兴 2027 仓储投资组合** | 新仓库投资 + 温控设备采购合一 | `projects/2026-08-jiaxing-2027-wh-capex-program.md` |
+| 嘉兴仓库扩容 / 新仓库 | WP-A（并入上项） | `projects/2026-08-jiaxing-wh-expansion.md` |
+| 嘉兴仓库温控改造 | WP-B（并入上项） | `projects/2026-08-jiaxing-wh-temp-control.md` |
 | 储罐卸货操作治理 | 储罐卸货的流程、操作与管理要求 | `projects/2026-08-tank-unload-ops.md` |
 | 出口危化品到东南亚 | 东南亚危化品出口拓展 | `projects/2026-08-export-dg-sea.md` |
 
