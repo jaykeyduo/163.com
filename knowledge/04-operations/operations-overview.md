@@ -7,7 +7,8 @@ status: draft
 
 # 运营总览
 
-> 状态：`draft`
+> 状态：`draft` — **第 5 轮问答 PENDING**（用户暂停，先测 Agent）。  
+> 已知碎片见 `01-company` / `03-network` / `05-strategy`；本文件细流程待补。
 
 ## 运输模式结构
 
