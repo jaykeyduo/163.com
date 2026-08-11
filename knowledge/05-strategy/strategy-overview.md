@@ -56,6 +56,7 @@ status: active
 
 | 方向 | 一句话 | 项目文件 |
 |---|---|---|
+| **金山工厂物流重启** | 含硅/含铬产线配套仓人力与叉车 | `projects/2026-08-jinshan-wh-restart.md` |
 | **嘉兴 2027 仓储投资组合** | 新仓库投资 + 温控设备采购合一 | `projects/2026-08-jiaxing-2027-wh-capex-program.md` |
 | 嘉兴仓库扩容 / 新仓库 | WP-A（并入上项） | `projects/2026-08-jiaxing-wh-expansion.md` |
 | 嘉兴仓库温控改造 | WP-B（并入上项） | `projects/2026-08-jiaxing-wh-temp-control.md` |
