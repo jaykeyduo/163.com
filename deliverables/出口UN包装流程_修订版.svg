@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1480" font-family="Microsoft YaHei, Arial, sans-serif">
+  <rect width="100%" height="100%" fill="#FAFBFC"/>
+  <text x="40" y="36" font-size="20" font-weight="700" fill="#1F4E79">出口 UN 包装流程 — 修订版（对齐 Phase I/II）</text>
+  <text x="40" y="58" font-size="12" fill="#C00000">替换 Notion Export+Process_ByRoy 空表头版｜冲突以 Phase II 为准</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker>
+  </defs>
+
+  <!-- Phase boxes -->
+  <rect x="30" y="80" width="1040" height="90" rx="8" fill="#E8F0FE" stroke="#1F4E79"/>
+  <text x="45" y="105" font-size="14" font-weight="700" fill="#1F4E79">Phase 0 主数据（采购）</text>
+  <rect x="60" y="120" width="420" height="35" rx="6" fill="#fff" stroke="#5B9BD5"/>
+  <text x="75" y="142" font-size="12">S2 出口包装选项｜一料号一条｜浙江新材料抬头</text>
+  <rect x="520" y="120" width="520" height="35" rx="6" fill="#fff" stroke="#5B9BD5"/>
+  <text x="535" y="142" font-size="12">S3 性能单汇总｜独山抬头｜自然年｜4位编码↔桶形1:1</text>
+
+  <rect x="30" y="190" width="1040" height="280" rx="8" fill="#FFF8E7" stroke="#ED7D31"/>
+  <text x="45" y="215" font-size="14" font-weight="700" fill="#C65911">Phase 1 需求与包装锁定</text>
+  <!-- nodes -->
+  <rect x="60" y="235" width="200" height="40" rx="6" fill="#fff" stroke="#333"/><text x="80" y="260" font-size="12">1 业务提出出口需求</text>
+  <rect x="300" y="235" width="200" height="40" rx="6" fill="#fff" stroke="#333"/><text x="320" y="260" font-size="12">2 查阅 S2 选包装</text>
+  <rect x="540" y="235" width="240" height="40" rx="6" fill="#fff" stroke="#333"/><text x="555" y="260" font-size="12">3 填写 S1 出口包装申请表</text>
+  <polygon points="860,235 980,255 860,275 740,255" fill="#FFF2CC" stroke="#333"/>
+  <text x="780" y="259" font-size="11">4 该国首出口?</text>
+
+  <rect x="60" y="310" width="280" height="40" rx="6" fill="#FCE4D6" stroke="#333"/><text x="75" y="335" font-size="12">4a 是→海关检测 Lead-time</text>
+  <rect x="380" y="310" width="240" height="40" rx="6" fill="#E2EFDA" stroke="#333"/><text x="400" y="335" font-size="12">4b 否→常规 Lead-time</text>
+  <rect x="660" y="310" width="360" height="40" rx="6" fill="#fff" stroke="#333"/><text x="675" y="335" font-size="12">5 采购核 S3 / 料号唯一 / 库存包装</text>
+
+  <polygon points="200,390 320,410 200,430 80,410" fill="#FFF2CC" stroke="#333"/>
+  <text x="125" y="414" font-size="11">6 足够?</text>
+  <rect x="360" y="390" width="280" height="40" rx="6" fill="#fff" stroke="#333"/><text x="375" y="415" font-size="12">6a 否→采购补购+到货贴UN年份</text>
+  <rect x="680" y="390" width="340" height="40" rx="6" fill="#C6EFCE" stroke="#333"/><text x="695" y="415" font-size="12">7 包装锁定→通知计划/生产/物流</text>
+
+  <rect x="30" y="490" width="1040" height="200" rx="8" fill="#E2EFDA" stroke="#548235"/>
+  <text x="45" y="515" font-size="14" font-weight="700" fill="#375623">Phase 2 计划与仓备料</text>
+  <rect x="60" y="535" width="300" height="40" rx="6" fill="#fff" stroke="#333"/><text x="75" y="560" font-size="12">8 计划排产（含 Lead-time Milestone）</text>
+  <rect x="400" y="535" width="280" height="40" rx="6" fill="#fff" stroke="#333"/><text x="420" y="560" font-size="12">9 仓收 UN 包装并核对</text>
+  <rect x="720" y="535" width="300" height="40" rx="6" fill="#fff" stroke="#333"/><text x="740" y="560" font-size="12">10 大口盖切换→隔离存3号仓</text>
+  <rect x="60" y="600" width="420" height="40" rx="6" fill="#fff" stroke="#333"/><text x="75" y="625" font-size="12">11 小口新UN到货→通知生产报废旧库存</text>
+  <rect x="520" y="600" width="240" height="40" rx="6" fill="#C6EFCE" stroke="#333"/><text x="580" y="625" font-size="12">12 可供产叫料</text>
+
+  <rect x="30" y="710" width="1040" height="160" rx="8" fill="#FCE4D6" stroke="#C65911"/>
+  <text x="45" y="735" font-size="14" font-weight="700" fill="#C65911">Phase 3 罐装与合规</text>
+  <rect x="60" y="755" width="360" height="40" rx="6" fill="#fff" stroke="#333"/><text x="75" y="780" font-size="12">13 生产按罐装单备注 UN 号取桶罐装</text>
+  <rect x="450" y="755" width="300" height="40" rx="6" fill="#fff" stroke="#333"/><text x="465" y="780" font-size="12">14 QC · SAP 生产日期精确到日</text>
+  <rect x="780" y="755" width="240" height="40" rx="6" fill="#fff" stroke="#333"/><text x="795" y="780" font-size="12">15 按需：相容性/危包证</text>
+  <rect x="60" y="815" width="300" height="40" rx="6" fill="#C6EFCE" stroke="#333"/><text x="120" y="840" font-size="12">16 合规齐套</text>
+
+  <rect x="30" y="900" width="1040" height="120" rx="8" fill="#DDEBF7" stroke="#2F5496"/>
+  <text x="45" y="925" font-size="14" font-weight="700" fill="#1F4E79">Phase 4 出运</text>
+  <rect x="60" y="945" width="200" height="40" rx="6" fill="#fff" stroke="#333"/><text x="110" y="970" font-size="12">17 仓出库</text>
+  <rect x="320" y="945" width="280" height="40" rx="6" fill="#fff" stroke="#333"/><text x="360" y="970" font-size="12">18 出口报关出运</text>
+  <rect x="660" y="945" width="280" height="40" rx="6" fill="#fff" stroke="#333"/><text x="700" y="970" font-size="12">19 回写包装消耗</text>
+
+  <rect x="30" y="1050" width="1040" height="100" rx="8" fill="#F2F2F2" stroke="#666"/>
+  <text x="45" y="1075" font-size="14" font-weight="700" fill="#333">年度切换子流程（并行｜采购牵头）</text>
+  <text x="60" y="1105" font-size="12">年底切换会 → 邮件通知计划/生产/物流 → 执行大口隔离/小口报废 → 更新 S2/S3 新年度记录</text>
+  <text x="60" y="1130" font-size="12">培训：Roy/Jason + Francis 对 Sales+PC 讲解如何读 S2</text>
+
+  <text x="40" y="1200" font-size="13" font-weight="700" fill="#C00000">ByRoy 现图主要缺失（须改）</text>
+  <text x="40" y="1225" font-size="12">① S1门禁 ② 首出口Lead-time ③ S2/S3主数据 ④ 罐装单UN指导现场 ⑤ 年切换隔离/报废 ⑥ 相容性与精确生产日 ⑦ 中文责任泳道</text>
+  <text x="40" y="1260" font-size="12" fill="#666">源：Phase I (2026-07-29) + Phase II 纪要｜知识库 knowledge/02-products/export-process-revised.md</text>
+</svg>

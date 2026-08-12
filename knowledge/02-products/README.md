@@ -10,4 +10,6 @@
 | 文件 | 用途 | 状态 |
 |---|---|---|
 | `products-overview.md` | 产品物流特性总览 | active |
-| `export-packaging-un.md` | 出口包装 / UN 管控专题 | draft（后期补） |
+| `export-packaging-un.md` | 出口包装/UN 流程分析与纪要对齐 | active |
+| `export-process-revised.md` | 出口流程修订版（含流程图） | active |
+| `export-process-revised.mmd` | Mermaid 源文件 | active |
