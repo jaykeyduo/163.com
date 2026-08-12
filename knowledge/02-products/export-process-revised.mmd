@@ -1,5 +1,6 @@
 %% 出口 UN 包装主流程 — 修订版
 %% 对齐：ByRoy 现图 ExportProcess_ByRoy.jpg + Phase I/II 纪要
+%% Jason 2026-08-12：1st time export test = 首出口 Lead-time（同一动作）
 %% 冲突规则：Phase II 优先；无冲突沿用 Phase I / 保留 ByRoy 已有正确节点
 
 flowchart TB
@@ -20,8 +21,8 @@ flowchart TB
     A9["New Package Assessment<br/>默认 Not recommend"]
     A10["Confirm Export Request Sheet<br/>出口桶码 ≠ 内贸桶码"]
     A11{"出口部：是否该国首次出口？"}
-    A12["标注海关检测 Lead-time<br/>反馈业务/计划"]
-    A13["常规 Lead-time"]
+    A12["标记首出口<br/>计划 Milestone 预留 Lead-time"]
+    A13["常规交期（无额外首出口缓冲）"]
     A14["采购核对 S3：性能单/库存/料号唯一"]
     A15{"性能单/包装是否足够？"}
     A16["采购申请/下单包装<br/>供应商贴 UN+年份"]
@@ -31,7 +32,7 @@ flowchart TB
 
   subgraph P2["Phase 2 计划与仓库备料"]
     B1["MP：Prepare Filling Order<br/>Export tin code 单独区分"]
-    B2["MP：排产 Milestone 含出口 Lead-time"]
+    B2["MP：排产（含已标记的首出口 Lead-time）"]
     B3["仓库收货 UN 包装<br/>核对 UN/年份/料号"]
     B4{"大口盖切换？"}
     B5["新旧盖物理隔离<br/>新盖存 3 号仓"]
@@ -50,10 +51,10 @@ flowchart TB
     C7["Logistic：Storage"]
   end
 
-  subgraph P4["Phase 4 报关出运（保留 ByRoy 末段）"]
+  subgraph P4["Phase 4 报关出运"]
     D1["Order customs inspection"]
-    D2{"1st time?"}
-    D3["1st time export test process"]
+    D2{"本票已标记首出口？"}
+    D3["执行 1st time export test<br/>= 纪要首出口 Lead-time 同一动作"]
     D4["Shipping Label Labelling"]
     D5["Export Inspection"]
     D6["Delivery & Vessel Booking"]

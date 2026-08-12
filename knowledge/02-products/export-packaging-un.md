@@ -16,6 +16,8 @@ source:
 
 **建议：** 保留 ByRoy 四阶段骨架与「首出口测试」「出口桶/罐码与内贸区分」等已有节点；用修订版补齐纪要缺口，作为正式 Export+Process 主干。冲突规则：**与 Phase I 冲突以 Phase II 为准；无冲突继续沿用 Phase I。**
 
+**术语对齐（Jason 2026-08-12 确认）：** 图中 **「1st time export test」** = 纪要 **「首出口 Lead-time」**，**同一动作**（该国首次出口触发的海关检测/测试及其交期占用）。图上只保留一个节点；计划侧把该动作的 Lead-time 写入 Milestone，不另画第二套流程。
+
 ---
 
 ## 2. ByRoy 现图 As-Is（2026-08-12 识读）
@@ -84,7 +86,7 @@ source:
 3. **Standard toolbox** 作为标准包装工具箱（接近 S2 思想）  
 4. **新包装评估默认不推荐**  
 5. **出口桶/罐码与内贸区分**（13 位 / tin code）  
-6. **首出口测试** 分支（在出运阶段）  
+6. **首出口测试** 分支（= 纪要首出口 Lead-time，出运阶段执行）  
 7. 生产完成 → QC → 入库 → 报关 → 贴标 → 查验 → 订舱交货 的出运链  
 
 ---
@@ -96,7 +98,7 @@ source:
 | 1 | **S1** 出口包装申请表（业务填；Francis 补采购字段） | 有 Export Request Sheet，未命名 S1、未规定字段门禁 | 将 Export Request Sheet **正式映射为 S1**，补必填字段 |
 | 2 | **S2** 出口包装选项（采购维护；一料号一条；培训 Sales+PC） | 有 Standard toolbox，未写维护责任/唯一性/培训 | 明确 toolbox = S2；采购主数据维护泳道 |
 | 3 | **S3** 包装及性能单信息汇总（采购；独山抬头；自然年；4 位编码↔桶形 1:1） | 无 | 采购维护 S3；申请/切换必读 |
-| 4 | 出口部判定 **该国首次出口** → 叠加海关检测 **Lead-time** 进计划 Milestone | 有 Logistic **1st time export test**（偏出运末段） | 前移：出口部在申请/排产前判定；保留末段测试节点并改名对齐 |
+| 4 | 出口部判定 **该国首次出口** → 海关检测 **Lead-time** | 有 Logistic **1st time export test**（Jason 确认 = 纪要首出口 Lead-time，同一动作） | **勿拆成两个节点**；统一命名「首出口检测/测试（Lead-time）」；申请/排产时仅做 **是否首出口** 判定并预留 Milestone，执行仍在 Phase IV |
 | 5 | 罐装单 **备注 UN 号**，现场按单取桶 | 仅写 Production Complete with export package | Production 节点写明「按罐装单 UN 取桶/核对」 |
 | 6 | 新老 UN **年切换**：采购邮件通知；大口物理隔离→**3 号仓**；小口到货通知生产报废 | 无 | 增加并行「年度切换」子流程 |
 | 7 | 供应商到货贴 **UN+年份** | 无 | 写入仓收货核对节点 |
@@ -150,29 +152,30 @@ source:
 
 ```text
 业务需求 → 查S2(toolbox)选包装 → 填S1(Export Request Sheet)
-    → 出口部：是否该国首出口？→（是）加海关检测Lead-time
+    → 出口部判定：是否该国首出口？（是则计划 Milestone 预留 Lead-time）
     → 采购：核对S3/性能单/料号唯一性 → 必要时年申请/补购包装
-    → 计划排产（含Lead-time）→ 仓收UN包装（贴标/隔离规则）
+    → 计划排产 → 仓收UN包装（贴标/隔离规则）
     → 生产按罐装单UN号罐装 + QC（生产日精确到日）
     → [按需] 相容性/危包证
-    → 仓出库 → 首出口测试(若适用) → 贴标/查验/订舱出运
+    → 仓出库 → [若首出口] 执行 1st time export test（=首出口Lead-time动作）
+    → 贴标/查验/订舱出运
 ```
 
 ---
 
 ## 6. 改图优先级
 
-1. **P0**：S1/S2/S3 命名与门禁；首出口 Lead-time 前移；罐装按 UN  
+1. **P0**：S1/S2/S3 命名与门禁；首出口节点统一命名（判定≠另造第二动作）；罐装按 UN  
 2. **P1**：年切换隔离子流程；采购通知邮件  
 3. **P2**：相容性/危包证；纸箱性能单（Phase I 未闭环）  
-4. **P3**：Jason 出口 Lead-time 天数回写 Milestone  
+4. **P3**：Jason 回填该动作占用的 **Lead-time 天数** 及影响哪些 Milestone  
 
 ---
 
 ## 7. 待确认（不阻塞出修订图）
 
 - Francis：S1 相对现 Export Request Sheet 还需哪些采购字段；性能单未用完影响  
-- Jason：出口 Lead-time 影响哪些 Milestone（天数）；与图中「1st time export test」是否同一动作  
+- Jason：首出口检测（1st time export test）的 **Lead-time 天数**、写入哪些 Milestone  
 - 纸箱无编号追溯流程（Phase I 未定）  
 - PDF 性能单查看权限  
 - Customer Lab 是否实为内部实验室/TAC（建议图上改名避免误解）  

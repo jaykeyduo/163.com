@@ -9,7 +9,9 @@ status: active
 
 ## 结论
 
-已识读 Notion 图 `Export+Process_ByRoy.jpg`：**四阶段主干可用**。修订版在保留其 Export Request Sheet、Standard toolbox、出口码≠内贸、首出口测试、出运链的基础上，**补齐 S1/S2/S3、Lead-time 前移、罐装 UN、年切换、相容性/精确生产日**。Lead-time 天数待 Jason 回填。
+已识读 Notion 图 `Export+Process_ByRoy.jpg`：**四阶段主干可用**。修订版补齐 S1/S2/S3、罐装 UN、年切换、相容性/精确生产日。  
+
+**Jason 确认（2026-08-12）：** 图中「1st time export test」与纪要「首出口 Lead-time」为**同一动作**——申请/排产时只做「是否首出口」判定并预留 Milestone；**执行**仍用 Phase IV 该节点，勿拆成两套流程。Lead-time **天数**待 Jason 回填。
 
 ## 责任泳道（建议）
 
@@ -17,8 +19,8 @@ status: active
 |---|---|---|
 | 业务 / PC | Project Coordinator | 查 S2、填 S1、确认 SO、接受培训 |
 | 采购 | Procurement | 维 S2/S3、UN 要求、toolbox、新包装评估（默认不推荐） |
-| 出口部 | （现图并入 Logistic） | 首出口判定、海关 Lead-time、报关出运 |
-| 计划 MP | Material Planning | 排产 / Filling Order（含 Lead-time） |
+| 出口部 | （现图并入 Logistic） | 首出口判定、执行首出口检测、报关出运 |
+| 计划 MP | Material Planning | 排产 / Filling Order（首出口则 Milestone 含 Lead-time） |
 | 生产 & QC | Production & QC | 按罐装单 UN 罐装；生产日进 SAP |
 | 仓库物流 | Logistic（仓段） | UN 包装收货、隔离/报废、出库贴标协同 |
 | 实验室/第三方 | Customer Lab（建议改名） | 物性数据；按需相容性自检 |
@@ -27,7 +29,7 @@ status: active
 ## 相对 ByRoy 现图的关键增补
 
 1. 显式 **S1/S2/S3**（Request Sheet≈S1，toolbox≈S2，S3 新增）  
-2. 首出口 **Lead-time 前移**到申请/排产；保留 Phase IV **1st time export test**  
+2. 首出口：**同一动作**——早判定进 Milestone + Phase IV 执行「1st time export test」  
 3. 罐装单 **UN 号** 指导现场  
 4. **年切换** 隔离/报废子流程  
 5. 相容性/危包证 + **精确生产日**  
@@ -53,8 +55,8 @@ flowchart TB
     A9["New Package Assessment<br/>默认 Not recommend"]
     A10["Confirm Export Request Sheet<br/>出口桶码 ≠ 内贸"]
     A11{"出口部：该国首次出口？"}
-    A12["叠加海关检测 Lead-time"]
-    A13["常规 Lead-time"]
+    A12["标记首出口<br/>计划 Milestone 预留 Lead-time"]
+    A13["常规交期（无额外首出口缓冲）"]
     A14["采购核 S3 / 库存 / 料号唯一"]
     A15{"性能单与包装足够？"}
     A16["补申请/下单｜到货贴 UN+年份"]
@@ -64,7 +66,7 @@ flowchart TB
 
   subgraph P2["Phase 2 计划与仓备料"]
     B1["MP：Prepare Filling Order<br/>出口 tin code 单独区分"]
-    B2["MP：排产 Milestone 含 Lead-time"]
+    B2["MP：排产（含已标记的首出口 Lead-time）"]
     B3["仓收 UN 包装并核对"]
     B4{"大口盖年切换？"}
     B5["新旧盖隔离 · 新盖→3号仓"]
@@ -83,10 +85,10 @@ flowchart TB
     C7["仓：Storage"]
   end
 
-  subgraph P4["Phase 4 报关出运（保留 ByRoy）"]
+  subgraph P4["Phase 4 报关出运"]
     D1["Order customs inspection"]
-    D2{"1st time export test?"}
-    D3["1st time export test process"]
+    D2{"本票已标记首出口？"}
+    D3["执行 1st time export test<br/>= 纪要首出口 Lead-time 同一动作"]
     D4["Shipping Label Labelling"]
     D5["Export Inspection"]
     D6["Delivery & Vessel Booking"]
