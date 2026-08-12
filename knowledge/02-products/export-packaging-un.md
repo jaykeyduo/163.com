@@ -4,7 +4,7 @@ owner: logistics
 last_updated: 2026-08-12
 status: active
 source:
-  - Notion: 出口流程图Export+Process_ByRoy
+  - Notion MK数据库 image: 出口流程图Export+Process_ByRoy.jpg (2026-08-12)
   - Email: Phase I (2026-07-29) + Phase II minutes (Jason Jiang)
 ---
 
@@ -12,105 +12,167 @@ source:
 
 ## 1. 总结（给管理层）
 
-出口卡点已从「没船」转为 **「包装↔UN↔性能单↔罐装现场」闭环不清**。Phase I/II 已定出管理原则与三张表（S1 申请 / S2 选项 / S3 性能单汇总），并明确 **罐装单备注 UN 号**。  
+已基于 Notion **MK数据库** 内嵌图片 `出口流程图Export+Process_ByRoy.jpg` 完整识读 **ByRoy 现图（As-Is）**。现图是可用的 **申请→包装准备→生产→报关出运** 泳道主干，但与 Phase I/II 纪要相比，**主数据门禁（S1/S2/S3）、罐装现场 UN 指导、年切换隔离/报废、相容性/危包证、精确生产日** 仍未写入图中。
 
-但对 Notion 页 `出口流程图Export+Process_ByRoy` 的可读内容核查：**当前页内仅有英文部门泳道表头与 “Phase III Production” 字样，几乎没有可执行步骤节点**，无法作为「已定稿流程」落地，也未完整体现 Phase II 纪要中的 S1/S2/S3、首出口 Lead-time、年切换物理隔离、采购通知等里程碑。  
-
-**建议：** 以本文件「修订版流程图」替换/升级现图；细节仍按纪要 case-by-case 改，但主干必须先对齐纪要。
-
-冲突规则（纪要第 6 条）：**与 Phase I 冲突以 Phase II 为准；无冲突继续沿用 Phase I。**
+**建议：** 保留 ByRoy 四阶段骨架与「首出口测试」「出口桶/罐码与内贸区分」等已有节点；用修订版补齐纪要缺口，作为正式 Export+Process 主干。冲突规则：**与 Phase I 冲突以 Phase II 为准；无冲突继续沿用 Phase I。**
 
 ---
 
-## 2. Notion 现图问题清单
+## 2. ByRoy 现图 As-Is（2026-08-12 识读）
 
-| # | 问题 | 影响 | 建议修改 |
+**源文件：** `deliverables/source/ExportProcess_ByRoy.jpg`  
+**Notion：** [MK数据库](https://app.notion.com/p/3b36f5d12cd680f59f17c30047a9f8de) 内嵌图  
+**标题：** Export Process Procedure  
+
+### 2.1 泳道（左→右）
+
+| # | 泳道 |
+|---|---|
+| 1 | Project Coordinator |
+| 2 | Procurement |
+| 3 | Production & QC |
+| 4 | Customer Lab |
+| 5 | Order Clearing |
+| 6 | Material Planning |
+| 7 | Logistic |
+
+### 2.2 阶段与节点（按图）
+
+#### Phase I — Requirement Clarification（Application）
+
+| 泳道 | 节点 / 交付物 |
+|---|---|
+| PC | **Request** → **Define the product (10 Digit)** → 文档 **Export Request Sheet (Product + Package)** |
+| Procurement | **Provide the UN requirements** → 文档 **UN Package requirements input**；**Advise Export Package**（输入来自 Export Request Sheet + **Standard toolbox**） |
+| Customer Lab | 按 UN 包装要求提供 **composition / viscosity / density** 等 → 对应文档 |
+| Order Clearing | **Provide SDS, Label info** → **SDS, Label doc** |
+
+#### Phase II — Package Preparation
+
+| 节点 | 说明 |
+|---|---|
+| **Check if meet requirements**（菱形） | Yes / No 分支 |
+| No | **New Package Assessment (Not recommend)** → 回到 / 关联 **Standard toolbox for Export package**、**Stock for Export** |
+| Yes | **Confirm in the Export Request Sheet** |
+| 规则注记 | **Export bucket code should be different from domestic** |
+| Customer Lab | **Apply 13 Digit of Product** |
+| Material Planning | **Prepare for Filling Order**；注记 **Export tin code should be separate distinction** |
+
+#### Phase III — Production
+
+| 泳道 | 节点 |
+|---|---|
+| PC | **Confirm the demand, Sales Order** |
+| Material Planning | **Production Order & Filling Order** |
+| Production & QC | **Production Complete with export package** → **QC result OK** |
+| Logistic | **Storage** |
+| 规则注记 | 再次强调出口桶码 ≠ 内贸桶码 |
+
+#### Phase IV — Customs Inspection
+
+| 泳道 | 节点 |
+|---|---|
+| Logistic | **Order customs inspection** → 菱形 **1st time?** |
+|  | Yes → **1st time export test process**；No → 直通 |
+|  | **Shipping Label Labelling** → **Export Inspection** → **Delivery & Vessel Booking** |
+| PC | **END** |
+
+### 2.3 现图已覆盖的价值点（应保留）
+
+1. 早期锁定 **UN package requirements** + 产品物性（粘度/密度等）  
+2. **Export Request Sheet** 作为申请载体  
+3. **Standard toolbox** 作为标准包装工具箱（接近 S2 思想）  
+4. **新包装评估默认不推荐**  
+5. **出口桶/罐码与内贸区分**（13 位 / tin code）  
+6. **首出口测试** 分支（在出运阶段）  
+7. 生产完成 → QC → 入库 → 报关 → 贴标 → 查验 → 订舱交货 的出运链  
+
+---
+
+## 3. 相对 Phase I/II 纪要的缺口清单
+
+| # | 纪要要求 | ByRoy 现图 | 建议修改 |
 |---|---|---|---|
-| 1 | 页内无完整步骤，仅泳道标题（PC / Production&QC / Customer Lab / Order Clearing / Material Planning / Logistic） | 无法培训、无法稽核 | 按下方修订版补全节点与交付物 |
-| 2 | 未出现 **S1 出口包装申请表**（业务必填） | 与 Phase II 第 2 条不符 | 在「业务提出需求」后立即插入 S1 门禁 |
-| 3 | 未体现 **出口部判定是否该国首次出口**（海关检测 Lead-time） | Milestone 时间会失真 | 增加决策菱形 + Lead-time 分支 |
-| 4 | 未体现 **S2 包装选项**（采购维护，一料号一条）与业务培训 | 业务不知选什么包装 | S1 填写前/时引用 S2；采购主数据维护并行泳道 |
-| 5 | 未体现 **S3 性能单信息汇总** | 性能单信息散落 | 采购维护 S3；申请/切换读 S3 |
-| 6 | 未体现 **性能单一自然年、独山抬头、4 位编码一对一桶形** | 罐装现场无法分辨 | 写入采购主数据规则框 |
-| 7 | 未体现 **新老 UN 切换**：采购邮件通知计划/生产/物流；大盖物理隔离（3 号仓）；小口报废旧库存 | 年底切换会乱 | 增加「年度切换」子流程 |
-| 8 | 未体现 **罐装单已备注 UN** 指导现场用桶 | 现场执行依据不清 | 生产节点写明「按罐装单 UN 取桶/核对」 |
-| 9 | 未体现 **相容性自检单 / 危包证**、生产日期精确到日 | 合规缺口 | 合规并行泳道（实验室/第三方 + SAP 生产日） |
-| 10 | 泳道命名偏英文且缺 **Sales/业务、采购、出口报关** | 责任不清 | 改中文责任部门：业务/PC、采购、出口、计划、生产&QC、仓库物流、EHS/合规 |
-| 11 | 「Customer Lab」位置突兀 | 易误解为客户实验室常驻节点 | 改为「实验室/第三方（相容性）」按需触发 |
-| 12 | Phase III 仅标题无内容 | 阶段边界不清 | 明确 Phase：需求&包装锁定 → 备料&生产 → 出运&单证 |
+| 1 | **S1** 出口包装申请表（业务填；Francis 补采购字段） | 有 Export Request Sheet，未命名 S1、未规定字段门禁 | 将 Export Request Sheet **正式映射为 S1**，补必填字段 |
+| 2 | **S2** 出口包装选项（采购维护；一料号一条；培训 Sales+PC） | 有 Standard toolbox，未写维护责任/唯一性/培训 | 明确 toolbox = S2；采购主数据维护泳道 |
+| 3 | **S3** 包装及性能单信息汇总（采购；独山抬头；自然年；4 位编码↔桶形 1:1） | 无 | 采购维护 S3；申请/切换必读 |
+| 4 | 出口部判定 **该国首次出口** → 叠加海关检测 **Lead-time** 进计划 Milestone | 有 Logistic **1st time export test**（偏出运末段） | 前移：出口部在申请/排产前判定；保留末段测试节点并改名对齐 |
+| 5 | 罐装单 **备注 UN 号**，现场按单取桶 | 仅写 Production Complete with export package | Production 节点写明「按罐装单 UN 取桶/核对」 |
+| 6 | 新老 UN **年切换**：采购邮件通知；大口物理隔离→**3 号仓**；小口到货通知生产报废 | 无 | 增加并行「年度切换」子流程 |
+| 7 | 供应商到货贴 **UN+年份** | 无 | 写入仓收货核对节点 |
+| 8 | 危包证 / **产品-包装相容性自检**（实验室或第三方，一次性） | Customer Lab 仅物性数据，无相容性/危包证 | 合规并行：按需触发相容性 |
+| 9 | SAP **生产日期精确到日**（海关） | 无 | QC/出运单证节点写入 |
+| 10 | 泳道含 **业务/Sales、出口报关、仓库** 责任清晰 | 无独立 Export 部门；Customer Lab 易误解为客户实验室；仓与报关都挤在 Logistic | 改中文责任：业务/PC、采购、出口、计划、生产&QC、仓库、实验室/第三方 |
+| 11 | Phase 边界：需求&包装锁定 → 备料生产 → 出运 | 四阶段可用，但 Phase I/II 与纪要命名不完全一致 | 保留四阶段，节点按上表补齐 |
 
 ---
 
-## 3. 纪要原则蒸馏（修订版必须遵守）
+## 4. 纪要原则蒸馏（修订版必须遵守）
 
 ### 表与主数据
 
-| 代号 | 名称 | 谁维护/填写 | 原则 |
+| 代号 | 名称 | 谁维护/填写 | 与 ByRoy 映射 |
 |---|---|---|---|
-| S1 | 出口包装申请表 | **业务填**；Francis 补采购所需字段 | 启动出口包装需求的门禁 |
-| S2 | 出口包装选项 | **采购维护**；培训 Sales+PC | **一包装料号原则上仅一条**；新需求默认浙江新材料公司申请抬头 |
-| S3 | 包装及性能单信息汇总 | **采购维护** | 性能单信息及时、可查 |
+| S1 | 出口包装申请表 | **业务填**；Francis 补采购字段 | ≈ Export Request Sheet |
+| S2 | 出口包装选项 | **采购维护**；培训 Sales+PC | ≈ Standard toolbox |
+| S3 | 包装及性能单信息汇总 | **采购维护** | **现图缺失，必须新增** |
 
 ### 性能单 / UN
 
 - 未来新项目性能单、出口抬头：**独山工厂**  
 - 每种出口桶 **一对一 4 位编码**（禁止一码两桶形）  
-- 性能单按 **自然年** 申请；尽量覆盖全年（Francis 确认未用完影响）  
+- 性能单按 **自然年** 申请  
 - 新老 UN 切换：采购 **邮件通知** 计划/生产/物流；年底切换专题会  
 
 ### 仓库物理
 
-- 供应商到货贴 **UN+年份** 标识  
-- 大口：新旧盖切换时 **物理隔离**，新盖进 **3 号仓**  
-- 小口：新 UN 桶到货 → 仓邮件通知生产 → 生产报废旧小口库存  
+- 供应商到货贴 **UN+年份**  
+- 大口：新旧盖 **物理隔离**，新盖进 **3 号仓**  
+- 小口：新 UN 到货 → 仓邮件通知生产 → 生产报废旧小口库存  
 
-### 生产
+### 生产 / 合规
 
 - 罐装单 **已备注 UN 号** → 现场按单用桶  
-
-### 合规
-
 - 海关要 **精确到日** 的生产日期（SAP）  
-- 危包证需 **产品-包装相容性自检**（实验室/第三方，一次性文件）  
-
-### 培训
-
-- Roy/Jason + Francis：Sales+PC 培训如何读 S2  
+- 危包证需 **相容性自检**（实验室/第三方）  
 
 ---
 
-## 4. 修订版流程图（主干）
+## 5. 修订版流程图
 
-见同目录 `export-process-revised.mmd`（Mermaid）。逻辑摘要：
+见同目录：
+
+- `export-process-revised.md` — 可读摘要  
+- `export-process-revised.mmd` — Mermaid 源（含年度切换子流程）  
+- `deliverables/出口UN包装流程_修订版.svg` — 交付图  
+
+逻辑摘要：
 
 ```text
-业务需求 → 查S2选包装 → 填S1
+业务需求 → 查S2(toolbox)选包装 → 填S1(Export Request Sheet)
     → 出口部：是否该国首出口？→（是）加海关检测Lead-time
     → 采购：核对S3/性能单/料号唯一性 → 必要时年申请/补购包装
-    → 计划排产（含Lead-time里程碑）
-    → 仓收UN包装（贴标/隔离规则）
-    → 生产按罐装单UN号罐装 + QC
-    → [按需] 相容性文件 / 危包证
-    → 物流出运 + 出口单证（生产日精确到日）
+    → 计划排产（含Lead-time）→ 仓收UN包装（贴标/隔离规则）
+    → 生产按罐装单UN号罐装 + QC（生产日精确到日）
+    → [按需] 相容性/危包证
+    → 仓出库 → 首出口测试(若适用) → 贴标/查验/订舱出运
 ```
 
-年度切换为并行子流程，不混在每一票出口主链里。
+---
+
+## 6. 改图优先级
+
+1. **P0**：S1/S2/S3 命名与门禁；首出口 Lead-time 前移；罐装按 UN  
+2. **P1**：年切换隔离子流程；采购通知邮件  
+3. **P2**：相容性/危包证；纸箱性能单（Phase I 未闭环）  
+4. **P3**：Jason 出口 Lead-time 天数回写 Milestone  
 
 ---
 
-## 5. 建议立刻改图的优先级
+## 7. 待确认（不阻塞出修订图）
 
-1. **P0**：补 S1 门禁、首出口 Lead-time、罐装按 UN、采购 S2/S3 泳道  
-2. **P1**：年切换物理隔离子流程、通知邮件  
-3. **P2**：相容性/危包证、纸箱性能单（Phase I 未闭环）  
-4. **P3**：Jason 完成出口 Lead-time 分析后回写 Milestone 天数  
-
----
-
-## 6. 待确认（不阻塞出修订图）
-
-- Francis：S1 还需哪些采购字段；性能单未用完影响  
-- Jason：出口 Lead-time 对哪些 Milestone 有影响（天数）  
+- Francis：S1 相对现 Export Request Sheet 还需哪些采购字段；性能单未用完影响  
+- Jason：出口 Lead-time 影响哪些 Milestone（天数）；与图中「1st time export test」是否同一动作  
 - 纸箱无编号追溯流程（Phase I 未定）  
 - PDF 性能单查看权限  
-- Notion 原 draw.io 是否另有完整图未贴进该页（若有，请把完整图再放入 MK数据库）  
+- Customer Lab 是否实为内部实验室/TAC（建议图上改名避免误解）  

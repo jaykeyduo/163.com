@@ -1,48 +1,63 @@
-%% 出口 UN 包装主流程 — 修订版（对齐 Phase I/II 纪要）
-%% 冲突规则：Phase II 优先；无冲突沿用 Phase I
-%% 源：Export+Process_ByRoy 问题清单 + Jason 会议纪要
+%% 出口 UN 包装主流程 — 修订版
+%% 对齐：ByRoy 现图 ExportProcess_ByRoy.jpg + Phase I/II 纪要
+%% 冲突规则：Phase II 优先；无冲突沿用 Phase I / 保留 ByRoy 已有正确节点
 
 flowchart TB
   subgraph P0["Phase 0 主数据（采购常驻维护）"]
-    S2["S2 出口包装选项<br/>采购维护｜一料号一条记录<br/>默认浙江新材料抬头申请"]
+    S2["S2 / Standard toolbox<br/>采购维护｜一料号一条记录<br/>默认浙江新材料抬头申请"]
     S3["S3 包装及性能单信息汇总<br/>采购及时维护｜独山抬头<br/>自然年申请｜4位编码↔桶形1:1"]
   end
 
-  subgraph P1["Phase 1 需求与包装锁定"]
-    A1["业务/PC：提出出口需求"]
-    A2["业务查阅 S2 选择包装选项"]
-    A3["业务填写 S1 出口包装申请表<br/>含包装类型/数量/消耗等<br/>Francis补齐采购所需字段"]
-    A4{"出口部：是否该国<br/>首次出口？"}
-    A5["标注海关检测 Lead-time<br/>并反馈业务/计划"]
-    A6["无额外海关检测缓冲<br/>或沿用常规 Lead-time"]
-    A7["采购核对 S3：性能单是否覆盖<br/>料号唯一性 / 是否需补购包装"]
-    A8{"性能单/库存包装<br/>是否足够？"}
-    A9["采购申请/下单包装<br/>供应商贴 UN+年份标识"]
-    A10["包装与性能单锁定<br/>通知计划/生产/物流"]
+  subgraph P1["Phase 1 需求澄清 + 包装锁定"]
+    A1["PC：Request"]
+    A2["Define product（10 Digit）"]
+    A3["填 S1 = Export Request Sheet<br/>Product + Package<br/>Francis补齐采购字段"]
+    A4["采购：Provide UN requirements"]
+    A5["实验室：composition / viscosity / density"]
+    A6["Order Clearing：SDS / Label"]
+    A7["采购：Advise Export Package<br/>读 S2 Standard toolbox"]
+    A8{"Check if meet requirements?"}
+    A9["New Package Assessment<br/>默认 Not recommend"]
+    A10["Confirm Export Request Sheet<br/>出口桶码 ≠ 内贸桶码"]
+    A11{"出口部：是否该国首次出口？"}
+    A12["标注海关检测 Lead-time<br/>反馈业务/计划"]
+    A13["常规 Lead-time"]
+    A14["采购核对 S3：性能单/库存/料号唯一"]
+    A15{"性能单/包装是否足够？"}
+    A16["采购申请/下单包装<br/>供应商贴 UN+年份"]
+    A17["包装锁定 → 通知计划/生产/物流"]
+    A18["实验室：Apply 13 Digit of Product"]
   end
 
   subgraph P2["Phase 2 计划与仓库备料"]
-    B1["计划（MP）：排产<br/>Milestone 含出口 Lead-time"]
-    B2["仓库收货 UN 包装<br/>核对 UN/年份/料号"]
-    B3{"大口盖切换？"}
-    B4["新旧盖物理隔离<br/>新盖存 3 号仓"]
-    B5{"小口桶新 UN 到货？"}
-    B6["仓邮件通知生产<br/>生产报废旧小口库存"]
-    B7["库存可用 · 供产叫料"]
+    B1["MP：Prepare Filling Order<br/>Export tin code 单独区分"]
+    B2["MP：排产 Milestone 含出口 Lead-time"]
+    B3["仓库收货 UN 包装<br/>核对 UN/年份/料号"]
+    B4{"大口盖切换？"}
+    B5["新旧盖物理隔离<br/>新盖存 3 号仓"]
+    B6{"小口桶新 UN 到货？"}
+    B7["仓邮件通知生产<br/>生产报废旧小口库存"]
+    B8["库存可用 · 供产叫料"]
   end
 
   subgraph P3["Phase 3 生产罐装与合规"]
-    C1["生产：按罐装单备注的 UN 号<br/>取对应 UN 桶罐装"]
-    C2["QC / 批次 / SAP 生产日期精确到日"]
-    C3{"本票需危包证/<br/>相容性文件？"}
-    C4["实验室或第三方出具<br/>产品-包装相容性自检（一次性）"]
-    C5["合规文件齐套"]
+    C1["PC：Confirm demand / Sales Order"]
+    C2["MP：Production Order & Filling Order"]
+    C3["生产：按罐装单备注的 UN 号<br/>取对应 UN 桶罐装"]
+    C4["QC result OK<br/>SAP 生产日期精确到日"]
+    C5{"本票需危包证/相容性？"}
+    C6["实验室或第三方<br/>产品-包装相容性自检"]
+    C7["Logistic：Storage"]
   end
 
-  subgraph P4["Phase 4 出运与单证"]
-    D1["仓库备货出库"]
-    D2["出口部报关出运<br/>单证含精确生产日等"]
-    D3["关闭本票：回写包装消耗<br/>供 S1/S3 复盘"]
+  subgraph P4["Phase 4 报关出运（保留 ByRoy 末段）"]
+    D1["Order customs inspection"]
+    D2{"1st time?"}
+    D3["1st time export test process"]
+    D4["Shipping Label Labelling"]
+    D5["Export Inspection"]
+    D6["Delivery & Vessel Booking"]
+    D7["END"]
   end
 
   subgraph Y["年度切换子流程（并行）"]
@@ -52,23 +67,30 @@ flowchart TB
     Y4["更新 S2/S3 新年度记录"]
   end
 
-  S2 --> A2
-  S3 --> A7
-  A1 --> A2 --> A3 --> A4
-  A4 -->|是| A5 --> A7
-  A4 -->|否| A6 --> A7
-  A7 --> A8
-  A8 -->|否| A9 --> A10
-  A8 -->|是| A10
-  A10 --> B1 --> B2 --> B3
-  B3 -->|是| B4 --> B5
-  B3 -->|否| B5
-  B5 -->|是| B6 --> B7
-  B5 -->|否| B7
-  B7 --> C1 --> C2 --> C3
-  C3 -->|是| C4 --> C5
-  C3 -->|否| C5
-  C5 --> D1 --> D2 --> D3
+  S2 --> A7
+  S3 --> A14
+  A1 --> A2 --> A3
+  A3 --> A4 --> A5 --> A6
+  A3 --> A7 --> A8
+  A8 -->|No| A9 --> A7
+  A8 -->|Yes| A10 --> A11
+  A11 -->|是| A12 --> A14
+  A11 -->|否| A13 --> A14
+  A14 --> A15
+  A15 -->|否| A16 --> A17
+  A15 -->|是| A17
+  A17 --> A18 --> B1 --> B2 --> B3 --> B4
+  B4 -->|是| B5 --> B6
+  B4 -->|否| B6
+  B6 -->|是| B7 --> B8
+  B6 -->|否| B8
+  B8 --> C1 --> C2 --> C3 --> C4 --> C5
+  C5 -->|是| C6 --> C7
+  C5 -->|否| C7
+  C7 --> D1 --> D2
+  D2 -->|Yes| D3 --> D4
+  D2 -->|No| D4
+  D4 --> D5 --> D6 --> D7
   Y1 --> Y2 --> Y3 --> Y4
   Y4 -.-> S2
   Y4 -.-> S3

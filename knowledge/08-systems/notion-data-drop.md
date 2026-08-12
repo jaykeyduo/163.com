@@ -1,7 +1,7 @@
 ---
 id: notion-data-drop
 owner: logistics
-last_updated: 2026-08-05
+last_updated: 2026-08-12
 status: active
 ---
 
@@ -32,7 +32,8 @@ status: active
 |---|---|
 | CSV **Import 成 Notion Database**（推荐） | **能** — SQL 查询行级数据 |
 | 页面粘贴表格 | 能（经 fetch 页面内容） |
-| 仅上传 **xlsx/csv 附件**（不导入成库） | **不能**完整解析 — 需改为 Import |
+| 页面内嵌 **图片**（流程图截图等） | **能** — fetch 得签名 URL 后下载识读 |
+| 仅上传 **xlsx / csv / docx 附件**（不导入成页/库） | **不能**完整解析 — 改 Import、贴图，或转页面正文 |
 
 ## 用户投放 SOP（请保持）
 

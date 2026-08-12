@@ -5,98 +5,123 @@ last_updated: 2026-08-12
 status: active
 ---
 
-# 出口流程修订版（对齐 Phase I / II）
+# 出口流程修订版（ByRoy 现图 + Phase I/II）
 
 ## 结论
 
-Notion `Export+Process_ByRoy` **现图不可用为执行版**（几乎只有泳道表头）。下图按会议纪要重建，建议作为 **Export+Process 正式主干**；Lead-time 天数待 Jason 分析后回填。
+已识读 Notion 图 `Export+Process_ByRoy.jpg`：**四阶段主干可用**。修订版在保留其 Export Request Sheet、Standard toolbox、出口码≠内贸、首出口测试、出运链的基础上，**补齐 S1/S2/S3、Lead-time 前移、罐装 UN、年切换、相容性/精确生产日**。Lead-time 天数待 Jason 回填。
 
-## 责任泳道（建议替换原英文列）
+## 责任泳道（建议）
 
-| 泳道 | 职责要点 |
-|---|---|
-| 业务 / PC | 查 S2、填 S1、接受培训 |
-| 采购 | 维 S2/S3、性能单与包装采购、UN 切换通知 |
-| 出口部 | 首出口判定、海关 Lead-time、报关出运 |
-| 计划 MP | 排产 Milestone（含 Lead-time） |
-| 生产 & QC | 按罐装单 UN 罐装；生产日进 SAP |
-| 仓库物流 | UN 包装收货、隔离/报废协同、出库 |
-| 实验室/第三方 | 相容性自检（按需） |
+| 泳道 | 对应 ByRoy 列 | 职责要点 |
+|---|---|---|
+| 业务 / PC | Project Coordinator | 查 S2、填 S1、确认 SO、接受培训 |
+| 采购 | Procurement | 维 S2/S3、UN 要求、toolbox、新包装评估（默认不推荐） |
+| 出口部 | （现图并入 Logistic） | 首出口判定、海关 Lead-time、报关出运 |
+| 计划 MP | Material Planning | 排产 / Filling Order（含 Lead-time） |
+| 生产 & QC | Production & QC | 按罐装单 UN 罐装；生产日进 SAP |
+| 仓库物流 | Logistic（仓段） | UN 包装收货、隔离/报废、出库贴标协同 |
+| 实验室/第三方 | Customer Lab（建议改名） | 物性数据；按需相容性自检 |
+| Order Clearing | Order Clearing | SDS / Label 资料 |
+
+## 相对 ByRoy 现图的关键增补
+
+1. 显式 **S1/S2/S3**（Request Sheet≈S1，toolbox≈S2，S3 新增）  
+2. 首出口 **Lead-time 前移**到申请/排产；保留 Phase IV **1st time export test**  
+3. 罐装单 **UN 号** 指导现场  
+4. **年切换** 隔离/报废子流程  
+5. 相容性/危包证 + **精确生产日**  
 
 ## 流程图
 
 ```mermaid
 flowchart TB
-  subgraph P0["Phase 0 主数据（采购常驻维护）"]
-    S2["S2 出口包装选项<br/>采购维护｜一料号一条记录"]
-    S3["S3 包装及性能单信息汇总<br/>独山抬头｜自然年｜编码↔桶形1:1"]
+  subgraph P0["Phase 0 主数据（采购常驻）"]
+    S2["S2 / Standard toolbox<br/>采购维护｜一料号一条"]
+    S3["S3 性能单信息汇总<br/>独山抬头｜自然年｜编码↔桶形1:1"]
   end
 
-  subgraph P1["Phase 1 需求与包装锁定"]
-    A1["业务/PC：提出出口需求"]
-    A2["查阅 S2 选择包装"]
-    A3["填写 S1 出口包装申请表"]
-    A4{"出口部：该国首次出口？"}
-    A5["叠加海关检测 Lead-time"]
-    A6["常规 Lead-time"]
-    A7["采购核 S3 / 料号唯一 / 库存"]
-    A8{"性能单与包装足够？"}
-    A9["采购补申请/下单<br/>到货贴 UN+年份"]
-    A10["包装锁定 → 通知计划/生产/物流"]
+  subgraph P1["Phase 1 需求澄清（保留 ByRoy）"]
+    A1["PC：Request"]
+    A2["定义产品 10 位码"]
+    A3["填 S1 = Export Request Sheet<br/>Product + Package"]
+    A4["采购：提供 UN requirements"]
+    A5["实验室：粘度/密度/组成等"]
+    A6["Order Clearing：SDS / Label"]
+    A7["采购：Advise Export Package<br/>读 S2 toolbox"]
+    A8{"Check if meet requirements?"}
+    A9["New Package Assessment<br/>默认 Not recommend"]
+    A10["Confirm Export Request Sheet<br/>出口桶码 ≠ 内贸"]
+    A11{"出口部：该国首次出口？"}
+    A12["叠加海关检测 Lead-time"]
+    A13["常规 Lead-time"]
+    A14["采购核 S3 / 库存 / 料号唯一"]
+    A15{"性能单与包装足够？"}
+    A16["补申请/下单｜到货贴 UN+年份"]
+    A17["包装锁定 → 通知计划/生产/物流"]
+    A18["实验室：Apply 13 Digit"]
   end
 
   subgraph P2["Phase 2 计划与仓备料"]
-    B1["计划排产（含 Lead-time Milestone）"]
-    B2["仓收 UN 包装并核对"]
-    B3{"大口盖年切换？"}
-    B4["新旧盖隔离 · 新盖→3号仓"]
-    B5{"小口新 UN 到货？"}
-    B6["通知生产报废旧小口库存"]
-    B7["可供产"]
+    B1["MP：Prepare Filling Order<br/>出口 tin code 单独区分"]
+    B2["MP：排产 Milestone 含 Lead-time"]
+    B3["仓收 UN 包装并核对"]
+    B4{"大口盖年切换？"}
+    B5["新旧盖隔离 · 新盖→3号仓"]
+    B6{"小口新 UN 到货？"}
+    B7["通知生产报废旧小口库存"]
+    B8["可供产"]
   end
 
-  subgraph P3["Phase 3 罐装与合规"]
-    C1["生产按罐装单 UN 号用桶"]
-    C2["QC · SAP 生产日期精确到日"]
-    C3{"需危包证/相容性？"}
-    C4["实验室/第三方相容性自检"]
-    C5["合规齐套"]
+  subgraph P3["Phase 3 生产"]
+    C1["PC：Confirm demand / Sales Order"]
+    C2["MP：Production Order & Filling Order"]
+    C3["生产：按罐装单 UN 号用桶罐装"]
+    C4["QC OK｜SAP 生产日期精确到日"]
+    C5{"需危包证/相容性？"}
+    C6["实验室/第三方相容性自检"]
+    C7["仓：Storage"]
   end
 
-  subgraph P4["Phase 4 出运"]
-    D1["仓出库"]
-    D2["出口报关出运"]
-    D3["回写包装消耗"]
+  subgraph P4["Phase 4 报关出运（保留 ByRoy）"]
+    D1["Order customs inspection"]
+    D2{"1st time export test?"}
+    D3["1st time export test process"]
+    D4["Shipping Label Labelling"]
+    D5["Export Inspection"]
+    D6["Delivery & Vessel Booking"]
+    D7["END"]
   end
 
-  S2 --> A2
-  S3 --> A7
-  A1 --> A2 --> A3 --> A4
-  A4 -->|是| A5 --> A7
-  A4 -->|否| A6 --> A7
-  A7 --> A8
-  A8 -->|否| A9 --> A10
-  A8 -->|是| A10
-  A10 --> B1 --> B2 --> B3
-  B3 -->|是| B4 --> B5
-  B3 -->|否| B5
-  B5 -->|是| B6 --> B7
-  B5 -->|否| B7
-  B7 --> C1 --> C2 --> C3
-  C3 -->|是| C4 --> C5
-  C3 -->|否| C5
-  C5 --> D1 --> D2 --> D3
+  S2 --> A7
+  S3 --> A14
+  A1 --> A2 --> A3
+  A3 --> A4 --> A5 --> A6
+  A3 --> A7 --> A8
+  A8 -->|No| A9 --> A7
+  A8 -->|Yes| A10 --> A11
+  A11 -->|是| A12 --> A14
+  A11 -->|否| A13 --> A14
+  A14 --> A15
+  A15 -->|否| A16 --> A17
+  A15 -->|是| A17
+  A17 --> A18 --> B1 --> B2 --> B3 --> B4
+  B4 -->|是| B5 --> B6
+  B4 -->|否| B6
+  B6 -->|是| B7 --> B8
+  B6 -->|否| B8
+  B8 --> C1 --> C2 --> C3 --> C4 --> C5
+  C5 -->|是| C6 --> C7
+  C5 -->|否| C7
+  C7 --> D1 --> D2
+  D2 -->|Yes| D3 --> D4
+  D2 -->|No| D4
+  D4 --> D5 --> D6 --> D7
 ```
-
-## 相对 ByRoy 现图的关键增补
-
-1. S1 门禁 + S2/S3 主数据  
-2. 首出口 Lead-time 分支  
-3. 罐装单 UN 指导现场  
-4. 年切换隔离/报废（可画并行子流程，见 `export-process-revised.mmd`）  
-5. 相容性与精确生产日  
 
 ## 源文件
 
-- 详细问题与纪要：`export-packaging-un.md`  
-- Mermaid 源：`export-process-revised.mmd`  
+- 现图审计：`export-packaging-un.md`  
+- 原图副本：`deliverables/source/ExportProcess_ByRoy.jpg`  
+- Mermaid：`export-process-revised.mmd`  
+- SVG：`deliverables/出口UN包装流程_修订版.svg`  

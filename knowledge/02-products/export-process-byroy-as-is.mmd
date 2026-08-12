@@ -1,0 +1,47 @@
+%% ByRoy As-Is transcription — Export Process Procedure
+%% Source: Notion MK数据库 image ExportProcess_ByRoy.jpg (2026-08-12)
+%% For gap analysis only; formal target = export-process-revised.mmd
+
+flowchart TB
+  subgraph I["Phase I Requirement Clarification"]
+    R[Request] --> D10[Define product 10 Digit]
+    D10 --> ERS[Export Request Sheet Product+Package]
+    ERS --> UN[Provide UN requirements]
+    UN --> UNI[UN Package requirements input]
+    UNI --> LAB[Lab: composition viscosity density]
+    LAB --> SDS[Provide SDS Label info]
+    ERS --> ADV[Advise Export Package]
+    TBX[Standard toolbox] --> ADV
+    ADV --> CHK{Check if meet requirements?}
+  end
+
+  subgraph II["Phase II Package Preparation"]
+    CHK -->|No| NPA[New Package Assessment Not recommend]
+    NPA --> TBX2[Standard toolbox for Export package]
+    TBX2 --> STK[Stock for Export]
+    CHK -->|Yes| CONF[Confirm in Export Request Sheet]
+    CONF --> NOTE1[Export bucket code ≠ domestic]
+    CONF --> D13[Apply 13 Digit of Product]
+    D13 --> FO[Prepare for Filling Order]
+    FO --> NOTE2[Export tin code separate distinction]
+  end
+
+  subgraph III["Phase III Production"]
+    SO[Confirm demand Sales Order] --> PO[Production Order and Filling Order]
+    PO --> PCMP[Production Complete with export package]
+    PCMP --> QC[QC result OK]
+    QC --> STOR[Storage]
+  end
+
+  subgraph IV["Phase IV Customs Inspection"]
+    STOR --> OCI[Order customs inspection]
+    OCI --> FT{1st time?}
+    FT -->|Yes| TEST[1st time export test process]
+    FT -->|No| LABL[Shipping Label Labelling]
+    TEST --> LABL
+    LABL --> EI[Export Inspection]
+    EI --> BOOK[Delivery and Vessel Booking]
+    BOOK --> ENDN[END]
+  end
+
+  FO --> SO
