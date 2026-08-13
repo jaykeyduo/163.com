@@ -9,8 +9,9 @@
 | 文件 | 用途 |
 |---|---|
 | `compliance-overview.md` | 合规总览入口 |
-| `ghs-tdg-mapping.md` | **GHS ↔ TDG 对照**（仓库贴标 / 培训 / Skill 主数据） |
+| `ghs-pictograms.md` | **GHS01–09 象形图 ↔ 危害类别**（识读 SDS 第 2 章） |
+| `ghs-tdg-mapping.md` | **GHS ↔ TDG 对照**（是否贴运输标） |
 
 ## 关联 Skill
 
-- `.cursor/skills/dg-ghs-tdg-labeling/SKILL.md` — 危货物流 GHS vs 运输标签问答
+- `.cursor/skills/dg-ghs-tdg-labeling/SKILL.md` — 危货物流：GHS 象形图 + vs 运输标签

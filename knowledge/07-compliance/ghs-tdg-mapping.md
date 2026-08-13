@@ -6,7 +6,9 @@ status: active
 source:
   - Internal training table: GHS类别 ↔ TDG危险货物类别（用户提供核对稿）
   - Cross-check: UN GHS + UN TDG Model Regulations correspondence (teaching use)
-related_skill: .cursor/skills/dg-ghs-tdg-labeling/SKILL.md
+related:
+  - knowledge/07-compliance/ghs-pictograms.md
+  - .cursor/skills/dg-ghs-tdg-labeling/SKILL.md
 ---
 
 # GHS 分类 ↔ TDG 运输分类对照（危货物流用）

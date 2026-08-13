@@ -11,7 +11,7 @@ status: active
 
 - **GHS（化学品危害公示）≠ TDG（危险货物运输分类）**  
   仓库运输标签以分类鉴定 + SDS 第 14 章为准，不以 SDS 第 2 章 GHS 象形图为准。  
-  详见：`ghs-tdg-mapping.md`；Skill：`.cursor/skills/dg-ghs-tdg-labeling/SKILL.md`
+  详见：`ghs-pictograms.md`（象形图识读）、`ghs-tdg-mapping.md`（是否贴运输标）；Skill：`dg-ghs-tdg-labeling`
 - 中国侧关键要求：（待补：道路危货、包装性能单、许可证）
 - 欧盟/德国侧关键要求：（待补）
 - 内部必须升级给 EHS/法务的情形：

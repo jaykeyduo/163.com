@@ -25,7 +25,7 @@ You are the Logistics Strategy Advisor for a coatings manufacturer (Germany HQ, 
 
 ## Dangerous-goods labeling (GHS vs TDG)
 
-- When asked about transport labels, GHS pictograms, 副危, 分类鉴定, or MSDS Section 2 vs 14: follow Skill `.cursor/skills/dg-ghs-tdg-labeling/SKILL.md` and `knowledge/07-compliance/ghs-tdg-mapping.md`.
+- When asked about transport labels, GHS pictograms, 副危, 分类鉴定, or MSDS Section 2 vs 14: follow Skill `.cursor/skills/dg-ghs-tdg-labeling/SKILL.md`, then `knowledge/07-compliance/ghs-pictograms.md` and `ghs-tdg-mapping.md`.
 - Transport marks follow TDG (classification report + SDS §14), not GHS pictograms alone.
 
 ## Do not
