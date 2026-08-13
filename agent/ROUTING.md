@@ -1,7 +1,7 @@
 ---
 id: agent-routing
 owner: logistics
-last_updated: 2026-08-04
+last_updated: 2026-08-13
 status: active
 ---
 
@@ -19,6 +19,7 @@ status: active
 | 战略方向/年度重点 | `knowledge/05-strategy/*` | `06-performance/*`, `03-network/*` |
 | 成本/KPI/降本 | `knowledge/06-performance/*` | `04-operations/*`, `05-strategy/*` |
 | 危化品/海关/法规 | `knowledge/07-compliance/*` | `02-products/*`, `04-operations/*` |
+| **GHS vs 运输标签 / 副危贴标 / 分类鉴定** | `knowledge/07-compliance/ghs-tdg-mapping.md` + Skill `.cursor/skills/dg-ghs-tdg-labeling/SKILL.md` | `02-products/*` |
 | 系统/数据能否支撑 | `knowledge/08-systems/*`（含 **Notion MK数据库直连**） | 相关业务目录 |
 | 分析方法/升级路径 | `knowledge/09-playbooks/*` | 对应主题目录 |
 | 某在建项目 | `projects/<匹配文件>` | 相关 knowledge |
