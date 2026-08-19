@@ -24,7 +24,7 @@ status: active
 | 数据集 | 内容 | 文件 |
 |---|---|---|
 | 2026 周工作量 | W2–W31 进出仓 KG + 工时 | `wh-workload-2026-weekly.md` / `.csv` |
-| HAM→SHA 海运航行 | 已到港覆盖：Feb–May 80%=55 / 90%=58；Dec–May 80%=55 / 90%=63 | `ham-sha-sailing-lead-time.md` |
+| HAM→SHA 海运航行 | Nov 46.4d → May 55.0d（+8.6d）；80% 覆盖 49→55 | `ham-sha-sailing-lead-time.md`；一页纸 `deliverables/HAM-SHA_arrival_leadtime_getting_worse.pdf` |
 
 ## 2026 周工作量快照（剔除春节低谷 W7–W8）
 
