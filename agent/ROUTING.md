@@ -22,6 +22,7 @@ status: active
 | **GHS 象形图含义 / vs 运输标签 / 副危 / 分类鉴定** | `ghs-pictograms.md` + `ghs-tdg-mapping.md` + Skill `dg-ghs-tdg-labeling` | `02-products/*` |
 | 系统/数据能否支撑 | `knowledge/08-systems/*`（含 **Notion MK数据库直连**） | 相关业务目录 |
 | 分析方法/升级路径 | `knowledge/09-playbooks/*` | 对应主题目录 |
+| **中国出口 vs 墨西哥/泰国建厂** | `knowledge/09-playbooks/china-export-vs-local-plant-framework.md` | `05-strategy`、`03-network`、`02-products/export-packaging-*`、`projects/2026-08-export-dg-sea.md` |
 | 某在建项目 | `projects/<匹配文件>` | 相关 knowledge |
 | 复盘历史决策 | `decisions/*` | 相关 knowledge / projects |
 | **用户说数据在 Notion / MK数据库 / 新 CSV** | **先 fetch MK数据库页** → 查子库（见 `08-systems/notion-data-drop.md`） | 再写入 `06-performance/` |
