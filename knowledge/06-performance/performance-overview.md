@@ -24,6 +24,7 @@ status: active
 | 数据集 | 内容 | 文件 |
 |---|---|---|
 | 2026 周工作量 | W2–W31 进出仓 KG + 工时 | `wh-workload-2026-weekly.md` / `.csv` |
+| HAM→SHA 海运航行 | 2025-10～2026-08，n=199 | `ham-sha-sailing-lead-time.md` |
 
 ## 2026 周工作量快照（剔除春节低谷 W7–W8）
 

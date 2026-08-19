@@ -11,3 +11,4 @@
 | `performance-overview.md` | 绩效总览 | active |
 | `wh-workload-2026-weekly.md` | 2026 仓周工作量（KG+工时）摘要与表 | active |
 | `wh-workload-2026-weekly.csv` | 同上机器可读 | active |
+| `ham-sha-sailing-lead-time.md` | 汉堡→上海海运航行日与计划 sailing LT | active |
