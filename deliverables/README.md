@@ -11,4 +11,4 @@
 | `出口UN包装流程_修订版.svg` | 出口跨部门 | 对齐 Phase I/II 的修订流程图 |
 | `source/ExportProcess_ByRoy.jpg` | 归档 | Notion 原图 ByRoy Export Process 副本 |
 
-仓库内 Markdown（`projects/`、`knowledge/`）仅作 Agent 知识维护；**对外递交以 Word/Excel 为准**（流程图可用 SVG）。
+仓库内 Markdown（`projects/`、`knowledge/`）仅作 Agent 知识维护；**对外递交以 Word / Excel / PDF 为准**（流程图可用 SVG）。
