@@ -62,6 +62,7 @@ status: active
 | 嘉兴仓库温控改造 | WP-B（并入上项） | `projects/2026-08-jiaxing-wh-temp-control.md` |
 | 储罐卸货操作治理 | 储罐卸货的流程、操作与管理要求 | `projects/2026-08-tank-unload-ops.md` |
 | 出口危化品到东南亚 | 东南亚危化品出口拓展 | `projects/2026-08-export-dg-sea.md` |
+| **中国出口 vs 海外建厂** | 墨西哥/泰国：出口、前置仓或当地建厂 | `knowledge/09-playbooks/china-export-vs-local-plant-framework.md` |
 
 另：出口欧洲包装/UN 闭环见 `knowledge/02-products/export-packaging-un.md`（专题 draft）。
 

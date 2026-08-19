@@ -10,3 +10,5 @@
 |---|---|
 | `advisory-playbook.md` | 顾问标准分析顺序 |
 | `notion-csv-ingest.md` | 从 MK数据库 摄入新 CSV |
+| `china-export-vs-local-plant-framework.md` | 中国工厂出口 vs 墨西哥/泰国建厂决策框架 |
+| `competitor-peter-lacke-china-logistics.md` | PETER/LACKE 中国仓配与出口公开情报 |
