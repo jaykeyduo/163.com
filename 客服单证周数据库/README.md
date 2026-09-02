@@ -14,7 +14,7 @@ Cursor Artifacts / 对话页点「另存为」常会变成「网页，全部」�
 
 2. **克隆/拉取仓库**后进入 `客服单证周数据库` 文件夹
 
-拿到文件夹后，在公司电脑双击 `Deploy-To-Desktop.bat`，会复制到：
+拿到文件夹后，在公司电脑双击 `Deploy-To-Desktop.bat`（脚本为英文 ASCII，避免 CMD 中文乱码），会复制到：
 
 `C:\Users\jason.jiang\桌面\Tool`  
 （若只有英文 Desktop，则自动用 `C:\Users\jason.jiang\Desktop\Tool`）
