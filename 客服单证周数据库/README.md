@@ -1,4 +1,4 @@
-# 客服单证周数据库（带 UI）
+# 物流单证周数据库（带 UI）
 
 在公司现有环境内运行的数据录入工具：**PowerShell 5.1 + WinForms + Excel**，无需管理员权限、无需安装额外软件。
 
@@ -10,15 +10,26 @@
 - 数据写入后台 Excel：`WeeklyDatabase.xlsx`
 - 上限约 **1000 条**，保留约 **7 天**（按「录入时间」清理）
 
-## 部署
+## 部署（推荐）
 
-1. 将整个 `客服单证周数据库` 文件夹复制到：
+云端 Agent **无法直接写入**你本机的 `Y:` 盘。请在公司电脑上任选一种方式：
 
-   `Y:\03_Exchange\03_Among Supply Chain\06_客服单证\Tool\`
+### 方式 A：一键部署脚本
+1. 从仓库下载/拉取 `客服单证周数据库` 文件夹到本机任意位置
+2. 确认已映射 `Y:` 盘
+3. 双击 `Deploy-To-Y.bat`
+4. 脚本会复制到：
 
-2. 确认本机已安装 **Microsoft Excel**，且 `Y:` 盘可访问。
-3. 双击 `Start.bat` 启动。
-4. 如需改字段：编辑 `config.json` 中的 `columns`，保存后重新打开程序。再用「导出上传模板」生成新模板。
+   `Y:\03_Exchange\03_Among Supply Chain\05_物流单证\Tool\周数据库\`
+
+5. 再双击该目录下的 `Start.bat`
+
+### 方式 B：手动复制
+把整个文件夹复制到：
+
+`Y:\03_Exchange\03_Among Supply Chain\05_物流单证\Tool\`
+
+确认本机已安装 **Microsoft Excel**。如需改字段：编辑 `config.json` 中的 `columns`，保存后重新打开程序。
 
 ## 默认字段（可改）
 

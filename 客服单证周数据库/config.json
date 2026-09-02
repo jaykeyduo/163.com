@@ -1,6 +1,6 @@
 {
-  "appTitle": "客服单证周数据库",
-  "dataFolder": "Y:\\03_Exchange\\03_Among Supply Chain\\06_客服单证\\Tool",
+  "appTitle": "物流单证周数据库",
+  "dataFolder": "Y:\\03_Exchange\\03_Among Supply Chain\\05_物流单证\\Tool",
   "databaseFileName": "WeeklyDatabase.xlsx",
   "sheetName": "Records",
   "maxRecords": 1000,
