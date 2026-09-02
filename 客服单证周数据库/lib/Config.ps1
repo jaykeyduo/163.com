@@ -63,8 +63,37 @@ function Get-DatabasePath {
         [switch]$PreferLocalFallback
     )
 
-    $folder = [string]$Config.dataFolder
-    if ($PreferLocalFallback -or -not (Test-Path -LiteralPath $folder)) {
+    $candidates = New-Object System.Collections.Generic.List[string]
+    $configured = [string]$Config.dataFolder
+    if ($configured) { [void]$candidates.Add($configured) }
+
+    # 中文 Windows「桌面」与英文 Desktop 互通
+    if ($configured -match '\\桌面\\') {
+        [void]$candidates.Add(($configured -replace '\\桌面\\', '\Desktop\'))
+    }
+    elseif ($configured -match '\\Desktop\\') {
+        [void]$candidates.Add(($configured -replace '\\Desktop\\', '\桌面\'))
+    }
+
+    $folder = $null
+    foreach ($c in $candidates) {
+        $parent = Split-Path -Parent $c
+        if ($parent -and (Test-Path -LiteralPath $parent)) {
+            if (-not (Test-Path -LiteralPath $c)) {
+                New-Item -ItemType Directory -Path $c -Force | Out-Null
+            }
+            if (Test-Path -LiteralPath $c) {
+                $folder = $c
+                break
+            }
+        }
+        elseif (Test-Path -LiteralPath $c) {
+            $folder = $c
+            break
+        }
+    }
+
+    if ($PreferLocalFallback -or -not $folder) {
         $local = Join-Path (Get-AppRoot) 'data'
         if (-not (Test-Path -LiteralPath $local)) {
             New-Item -ItemType Directory -Path $local -Force | Out-Null

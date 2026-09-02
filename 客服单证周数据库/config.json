@@ -1,6 +1,6 @@
 {
   "appTitle": "物流单证周数据库",
-  "dataFolder": "Y:\\03_Exchange\\03_Among Supply Chain\\05_物流单证\\Tool",
+  "dataFolder": "C:\\Users\\jason.jiang\\桌面\\Tool",
   "databaseFileName": "WeeklyDatabase.xlsx",
   "sheetName": "Records",
   "maxRecords": 1000,
@@ -16,5 +16,5 @@
     { "name": "状态", "required": false, "type": "string", "width": 80 },
     { "name": "备注", "required": false, "type": "string", "width": 160 }
   ],
-  "notes": "字段可按业务修改本文件后重启程序。录入时间/录入人由系统自动追加，无需在表单填写。"
+  "notes": "字段可按业务修改本文件后重启程序。录入时间/录入人由系统自动追加，无需在表单填写。数据目录优先使用中文「桌面」；若不存在则回退到 Desktop。"
 }

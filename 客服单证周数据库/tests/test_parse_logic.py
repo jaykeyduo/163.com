@@ -117,8 +117,10 @@ class ParseTests(unittest.TestCase):
     def test_config_limits(self):
         self.assertEqual(self.cfg["maxRecords"], 1000)
         self.assertEqual(self.cfg["retentionDays"], 7)
-        self.assertIn("Among Supply Chain", self.cfg["dataFolder"])
-        self.assertIn("05_物流单证", self.cfg["dataFolder"])
+        self.assertIn("jason.jiang", self.cfg["dataFolder"])
+        self.assertTrue(
+            ("桌面" in self.cfg["dataFolder"]) or ("Desktop" in self.cfg["dataFolder"])
+        )
 
     def test_paste_with_header(self):
         text = (
