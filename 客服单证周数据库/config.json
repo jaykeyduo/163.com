@@ -1,0 +1,20 @@
+{
+  "appTitle": "物流单证周数据库",
+  "dataFolder": "C:\\Users\\jason.jiang\\桌面\\Tool",
+  "databaseFileName": "WeeklyDatabase.xlsx",
+  "sheetName": "Records",
+  "maxRecords": 1000,
+  "retentionDays": 7,
+  "timestampColumn": "录入时间",
+  "operatorColumn": "录入人",
+  "columns": [
+    { "name": "日期", "required": true, "type": "string", "width": 100 },
+    { "name": "单号", "required": true, "type": "string", "width": 140 },
+    { "name": "客户", "required": false, "type": "string", "width": 140 },
+    { "name": "业务类型", "required": false, "type": "string", "width": 100 },
+    { "name": "内容摘要", "required": false, "type": "string", "width": 220 },
+    { "name": "状态", "required": false, "type": "string", "width": 80 },
+    { "name": "备注", "required": false, "type": "string", "width": 160 }
+  ],
+  "notes": "字段可按业务修改本文件后重启程序。录入时间/录入人由系统自动追加，无需在表单填写。数据目录优先使用中文「桌面」；若不存在则回退到 Desktop。"
+}
