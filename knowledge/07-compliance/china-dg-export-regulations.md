@@ -11,6 +11,7 @@ related:
   - knowledge/02-products/export-packaging-un.md
   - knowledge/02-products/export-packaging-procurement-raci.md
   - knowledge/02-products/export-process-revised.md
+  - knowledge/02-products/export-initiate-checklist.md
 ---
 
 # 中国出口危险货物 — 物流部法规地图

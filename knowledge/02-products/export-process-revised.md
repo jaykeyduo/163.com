@@ -13,6 +13,8 @@ status: active
 
 **Jason 确认（2026-08-12）：** 图中「1st time export test」与纪要「首出口 Lead-time」为**同一动作**——申请/排产时只做「是否首出口」判定并预留 Milestone；**执行**仍用 Phase IV 该节点，勿拆成两套流程。Lead-time **天数**待 Jason 回填。
 
+**Initiate 跨部门检查（draft）：** 业务提出出口后、排产前，物流按部门要问什么见 `export-initiate-checklist.md`（待物流经理 review 后转 active）。
+
 ## 责任泳道（建议）
 
 | 泳道 | 对应 ByRoy 列 | 职责要点 |
