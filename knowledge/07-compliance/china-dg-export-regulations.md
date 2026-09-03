@@ -274,7 +274,7 @@ related:
 
 | 问题 | 先读 |
 |---|---|
-| Initiate 跨部门问什么 | **`export-initiate-checklist.md`（draft）** |
+| Initiate 跨部门勾选 | `02-products/export-initiate-checklist.md` + `deliverables/出口Initiate跨部门Checklist.xlsx` |
 | 这票出口包装流程、S1/S2/S3、首出口测试 | `02-products/export-process-revised.md` |
 | 性能单谁买、海空分证 | `02-products/export-packaging-procurement-raci.md` |
 | UN 包装主数据与罐装 | `02-products/export-packaging-un.md` |

@@ -12,5 +12,5 @@
 | `products-overview.md` | 产品物流特性总览 | active |
 | `export-packaging-un.md` | 出口包装/UN 流程分析与纪要对齐 | active |
 | `export-process-revised.md` | 出口流程修订版（含流程图） | active |
-| `export-initiate-checklist.md` | **出口 Initiate 后物流跨部门 Checklist（draft，待 review）** | draft |
+| `export-initiate-checklist.md` | 出口 Initiate 后跨部门 Checklist（v1；Owner=出口部门） | active |
 | `export-process-revised.mmd` | Mermaid 源文件 | active |

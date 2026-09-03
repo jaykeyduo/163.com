@@ -20,7 +20,7 @@ status: active
 | 成本/KPI/降本 | `knowledge/06-performance/*` | `04-operations/*`, `05-strategy/*` |
 | 危化品/海关/法规 | `knowledge/07-compliance/*` | `02-products/*`, `04-operations/*` |
 | **中国出口危险货物 / 危包证 / 129 号公告 / IMDG 出口** | `07-compliance/china-dg-export-regulations.md` | `02-products/export-packaging-*`、`export-process-revised.md` |
-| **出口 Initiate 后物流找谁问什么** | `02-products/export-initiate-checklist.md` | `export-process-revised.md`、`export-packaging-procurement-raci.md`、`china-dg-export-regulations.md` |
+| **出口 Initiate 后出口部门找谁问什么** | `02-products/export-initiate-checklist.md` + `deliverables/出口Initiate跨部门Checklist.xlsx` | `export-process-revised.md`、`export-packaging-procurement-raci.md`、`china-dg-export-regulations.md` |
 | **GHS 象形图含义 / vs 运输标签 / 副危 / 分类鉴定** | `ghs-pictograms.md` + `ghs-tdg-mapping.md` + Skill `dg-ghs-tdg-labeling` | `02-products/*` |
 | 系统/数据能否支撑 | `knowledge/08-systems/*`（含 **Notion MK数据库直连**） | 相关业务目录 |
 | 分析方法/升级路径 | `knowledge/09-playbooks/*` | 对应主题目录 |
