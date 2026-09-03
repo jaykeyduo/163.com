@@ -17,6 +17,7 @@ description: >-
 1. `knowledge/07-compliance/ghs-pictograms.md` — GHS01–09 象形图代表哪些危害  
 2. `knowledge/07-compliance/ghs-tdg-mapping.md` — 该危害是否对应 TDG 运输类 / 如何贴运输标  
 3. 具体料号时：`knowledge/02-products/*`
+4. 问中国**出口**危货/危包证/海关检验时：另读 `knowledge/07-compliance/china-dg-export-regulations.md`
 
 ## 核心原则（不可违背）
 

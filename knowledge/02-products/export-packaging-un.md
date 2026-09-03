@@ -10,6 +10,8 @@ source:
 
 # 出口 UN 包装 / 流程分析与修订建议
 
+> 中国出境法规闸门（海关 129 号、危包证、IMDG/IATA、公路）见 `knowledge/07-compliance/china-dg-export-regulations.md`。本文件管内部流程与主数据，不替代法规地图。
+
 ## 1. 总结（给管理层）
 
 已基于 Notion **MK数据库** 内嵌图片 `出口流程图Export+Process_ByRoy.jpg` 完整识读 **ByRoy 现图（As-Is）**。现图是可用的 **申请→包装准备→生产→报关出运** 泳道主干，但与 Phase I/II 纪要相比，**主数据门禁（S1/S2/S3）、罐装现场 UN 指导、年切换隔离/报废、相容性/危包证、精确生产日** 仍未写入图中。

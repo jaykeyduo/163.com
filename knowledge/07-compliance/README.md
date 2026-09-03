@@ -9,6 +9,7 @@
 | 文件 | 用途 |
 |---|---|
 | `compliance-overview.md` | 合规总览入口 |
+| `china-dg-export-regulations.md` | **中国出口危险货物：物流部法规地图**（海关 129 号、危包证、公路/海运/空运、闸门清单） |
 | `ghs-pictograms.md` | **GHS01–09 象形图 ↔ 危害类别**（识读 SDS 第 2 章） |
 | `ghs-tdg-mapping.md` | **GHS ↔ TDG 对照**（是否贴运输标） |
 
