@@ -246,7 +246,7 @@ def draw_facts(c, x, y, w, h):
         (
             False,
             "Winter peak vs shoulder (voyage-equal)",
-            "Nov–Dec mean 48.1d (n=7). Jan–Feb mean 54.7d (n=9). Drop the 76d stow and Feb is still 50.3d vs Nov 47d.",
+            "Nov–Dec mean 48.1d (n=7). Jan–Feb mean 54.8d (n=9). Drop the 76d stow and Feb is still 50.3d vs Nov 47d.",
         ),
         (
             False,
