@@ -8,7 +8,7 @@
 | `嘉兴仓储能力投资计划_2027_一体Program.docx` | 厂长 / 联合小组 | 完整说明（附件） |
 | `2025温控运输仪表盘_客户与物料.xlsx` | 物流 / 管理层 | 温控运输双视角仪表盘（客户×物料） |
 | `HAM-SHA_arrival_leadtime_getting_worse.pdf` | 物流 / HQ | 汉堡→上海航行 LT 变慢（已到港透视，19 Aug 2026） |
-| `HAM-SHA_latest_schedule_leadtime.pdf` | 物流 / HQ | 同线路 Latest Vessel Schedule 一页纸（60 B/L，7 Sep 2026） |
+| `HAM-SHA_latest_schedule_leadtime.pdf` | 物流 / HQ | 同线路 Latest Vessel Schedule 一页纸（107 B/L v2，7 Sep 2026） |
 | `出口UN包装流程_修订版.svg` | 出口跨部门 | 对齐 Phase I/II 的修订流程图 |
 | `出口Initiate跨部门Checklist.xlsx` | 出口部门 / 跨部门 | 出口 Initiate 后勾选表（票头+清单+统计） |
 | `source/build_export_initiate_checklist_xlsx.py` | 内部 | 生成上表 |
