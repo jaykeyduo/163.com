@@ -1,7 +1,7 @@
 ---
 id: performance-overview
 owner: logistics
-last_updated: 2026-08-19
+last_updated: 2026-09-08
 status: active
 ---
 
@@ -24,7 +24,8 @@ status: active
 | 数据集 | 内容 | 文件 |
 |---|---|---|
 | 2026 周工作量 | W2–W31 进出仓 KG + 工时 | `wh-workload-2026-weekly.md` / `.csv` |
-| HAM→SHA 海运航行 | Nov 46.4d → May 55.0d（+8.6d）；80% 覆盖 49→55 | `ham-sha-sailing-lead-time.md`；一页纸 `deliverables/HAM-SHA_arrival_leadtime_getting_worse.pdf` |
+| HAM→SHA 海运航行（已到港透视） | Nov 46.4d → May 55.0d（+8.6d）；80% 覆盖 49→55 | `ham-sha-sailing-lead-time.md`；一页纸 `deliverables/HAM-SHA_arrival_leadtime_getting_worse.pdf` |
+| 国际运输档案 HAM→SHA Latest Schedule | Nov 2025–Aug 2026：107 票 / 47 航次；Jun 航次均 64.7d | `intl-transport/`；Excel `deliverables/国际运输数据档案_HAM-SHA航行时间.xlsx` |
 
 ## 2026 周工作量快照（剔除春节低谷 W7–W8）
 

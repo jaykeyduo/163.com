@@ -1,0 +1,17 @@
+snapshot_id,lane_id,metric,grain,window,n,coverage,k,L_days,mean_days,median_days,min_days,max_days
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,all_incl_eta,47,0.8,38,63,54.9362,53,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,all_incl_eta,47,0.85,40,64,54.9362,53,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,all_incl_eta,47,0.9,43,69,54.9362,53,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,all_incl_eta,47,0.95,45,71,54.9362,53,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,nov_jun_schedule_passed,38,0.8,31,62,53.9474,52.0,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,nov_jun_schedule_passed,38,0.85,33,64,53.9474,52.0,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,nov_jun_schedule_passed,38,0.9,35,69,53.9474,52.0,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,nov_jun_schedule_passed,38,0.95,37,71,53.9474,52.0,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,feb_may,20,0.8,16,55,52.2,51.5,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,feb_may,20,0.85,17,55,52.2,51.5,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,feb_may,20,0.9,18,58,52.2,51.5,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,feb_may,20,0.95,19,58,52.2,51.5,36,76
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,apr_jun,16,0.8,13,65,58.5625,57.5,48,71
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,apr_jun,16,0.85,14,69,58.5625,57.5,48,71
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,apr_jun,16,0.9,15,70,58.5625,57.5,48,71
+2026-09-07_ham-sha_lvs,HAM-SHA,latest_vessel_schedule_minus_atd,voyage,apr_jun,16,0.95,16,71,58.5625,57.5,48,71

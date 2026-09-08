@@ -1,7 +1,7 @@
 ---
 id: agent-routing
 owner: logistics
-last_updated: 2026-09-03
+last_updated: 2026-09-08
 status: active
 ---
 
@@ -18,6 +18,7 @@ status: active
 | 承运商/流程/SLA | `knowledge/04-operations/*` | `06-performance/*`, `projects/*` |
 | 战略方向/年度重点 | `knowledge/05-strategy/*` | `06-performance/*`, `03-network/*` |
 | 成本/KPI/降本 | `knowledge/06-performance/*` | `04-operations/*`, `05-strategy/*` |
+| **国际运输时效 / HAM→SHA 航行日 / 线路对比** | `06-performance/intl-transport/README.md` + `snapshots/` | `ham-sha-sailing-lead-time.md`（计划 sailing LT 算法） |
 | 危化品/海关/法规 | `knowledge/07-compliance/*` | `02-products/*`, `04-operations/*` |
 | **中国出口危险货物 / 危包证 / 129 号公告 / IMDG 出口** | `07-compliance/china-dg-export-regulations.md` | `02-products/export-packaging-*`、`export-process-revised.md` |
 | **出口 Initiate 后出口部门找谁问什么** | `02-products/export-initiate-checklist.md` + `deliverables/出口Initiate跨部门Checklist.xlsx` | `export-process-revised.md`、`export-packaging-procurement-raci.md`、`china-dg-export-regulations.md` |

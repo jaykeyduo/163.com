@@ -11,7 +11,7 @@
 | [03-network](03-network/) | 网络节点与货流 |
 | [04-operations](04-operations/) | 日常运作、承运商、SLA |
 | [05-strategy](05-strategy/) | 战略目标与痛点 |
-| [06-performance](06-performance/) | 成本与 KPI |
+| [06-performance](06-performance/) | 成本与 KPI；国际运输时效快照见 `06-performance/intl-transport/` |
 | [07-compliance](07-compliance/) | 合规与法规约束 |
 | [08-systems](08-systems/) | 系统与数据 |
 | [09-playbooks](09-playbooks/) | 分析方法与升级路径 |

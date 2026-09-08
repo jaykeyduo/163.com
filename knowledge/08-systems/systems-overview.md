@@ -1,7 +1,7 @@
 ---
 id: systems-overview
 owner: logistics
-last_updated: 2026-08-05
+last_updated: 2026-09-08
 status: active
 ---
 
@@ -22,6 +22,7 @@ status: active
 |---|---|---|---|---|
 | 温控运输 2025 Q4 | 是 | 物料行 / Delivery | 用户投放 | Notion 子库 `2025TCTRansport.csv` |
 | 仓周工作量 2026 | 是 | 周 | 用户粘贴/截图入库 | `wh-workload-2026-weekly.*` |
+| 国际运输 HAM→SHA 航行日 | 是 | 票 / 航次 / 月快照 | 用户提取入库，只追加 | `06-performance/intl-transport/` |
 | 订单 / 实时库存 | 否 | — | — | 待接 SAP 或新 CSV |
 | 成本全量 | 部分 | 温控运费（Delivery 去重） | 随 CSV | 其他成本待补 |
 
