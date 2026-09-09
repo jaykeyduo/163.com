@@ -189,7 +189,7 @@ Dec–May 90%/95% 被 1/16、1/19 两票 64/63 天拉高；若内部参数服务
 口径：`Latest Vessel Schedule − ATD`。航次 = 同一 **ATD 日期 + 船期日**（同开航、不同到港日拆成两条，对应分票/中转）。一航次一权。
 
 样本：107 票，47 航次，ATD **2025-11-23～2026-08-07**。  
-**行级业务底表（后续对比用）：** `intl-transport/` 快照 `2026-09-07_ham-sha_lvs`。  
+**行级业务底表（后续对比用）：** `intl-transport/` 快照 `2026-09-09_ham-sha_merged`（含 2022–2025 历史去重合并）。2026 打字快照仍为 `2026-09-07_ham-sha_lvs`。  
 一页纸：`deliverables/HAM-SHA_latest_schedule_leadtime.pdf`。工作副本：`deliverables/source/ham_sha_latest_schedule_bl.csv`。
 
 **截止日 2026-09-07：** 船期日晚于该日的 7–8 月航次记为 **ETA**（9 航次 / 18 票），不进覆盖率 k、不进「近 3 完整月」。
