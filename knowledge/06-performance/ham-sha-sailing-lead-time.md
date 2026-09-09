@@ -1,7 +1,7 @@
 ---
 id: ham-sha-sailing-lead-time
 owner: logistics
-last_updated: 2026-09-08
+last_updated: 2026-09-09
 status: active
 source: User table — HAM→SHA ocean ATD to NEW ETA; factory rule 2026-08-19
 scope: Sailing/transit calendar days only (not CIF door-to-Dushan)
@@ -132,6 +132,7 @@ Dec–May 90%/95% 被 1/16、1/19 两票 64/63 天拉高；若内部参数服务
 | SAP/计划 sailing LT | 用第 1 节 k 覆盖，**不要用 AVG 51 / MIN 36 / MAX 76** |
 | 建议起步 | Feb–May **80% = 55 天**（与 Dec–May 80% 相同）；要更保守用 90%/95% |
 | 6 月观察 | Latest Schedule 若视为已到港，近 3 完整月 Apr–Jun 80% = **65 天**；未确认 ATA 前 55 仍作对照，但不能当 55 已覆盖 6 月（6 月最短已 57） |
+| 台风季对照 | 到港月 Jun–Oct：2025 季内 80%=**55**，2026 季内（Jun–Aug）80%=**65**。工厂 55 天盖不住 2026 台风季。详见 `intl-transport/README.md` 与 `deliverables/HAM-SHA_typhoon_season_leadtime.pdf` |
 | 更新频率 | 每月初，仅用已到港明细行重算 |
 | 中转 | 上表含 GBLON/PABAL/SLL。若主参数只要默认 HAM-SHA，剔除后再算 k |
 | 全链进口 | 独山可用日 = sailing LT + 清关 + 洋山→独山 + 仓过账（后三段另测） |
