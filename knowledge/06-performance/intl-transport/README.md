@@ -1,7 +1,7 @@
 ---
 id: intl-transport-archive
 owner: logistics
-last_updated: 2026-09-08
+last_updated: 2026-09-09
 status: active
 source: User HAM→SHA B/L extract 2026-09-07 v2 (107 rows)
 scope: International lane lead-time snapshots for comparison; sailing/air days only
@@ -11,14 +11,15 @@ scope: International lane lead-time snapshots for comparison; sailing/air days o
 
 后续对比、滚动分析用的 **业务底表**。计划参数算法仍看 `ham-sha-sailing-lead-time.md`；本目录只存可复用的测量数据，**不覆盖历史快照，只追加**。
 
-管理层 Excel：`deliverables/国际运输数据档案_HAM-SHA航行时间.xlsx`  
-生成脚本：`deliverables/source/build_intl_transport_archive.py`
+管理层 Excel：`deliverables/国际运输数据档案_HAM-SHA航行时间.xlsx`（含合并原始表 + 年度比较）  
+生成脚本：`deliverables/source/build_intl_transport_archive.py`（2026 快照）、`deliverables/source/build_ham_sha_yoy_merge.py`（历史合并）
 
 ## 1. 现在有什么
 
 | 线路 | 模式 | 方向 | 快照 | ATD 范围 | 状态 |
 |---|---|---|---|---|---|
-| **HAM→SHA** | 海运 CIF | 进口 | `2026-09-07_ham-sha_lvs` | 2025-11-23 ~ 2026-08-07 | active |
+| **HAM→SHA** | 海运 CIF | 进口 | `2026-09-09_ham-sha_merged` | 2022-10-25 ~ 2026-08-07 | active（去重合并底表） |
+| HAM→SHA | 海运 CIF | 进口 | `2026-09-07_ham-sha_lvs` | 2025-11-23 ~ 2026-08-07 | 保留：2026 打字快照 |
 | FRA→PVG | 空运 CIF | 进口 | — | — | 线路已知，**尚无时效提取**（勿编天数） |
 
 HAM→SHA 计量：`Latest Vessel Schedule − ATD`（日历天）。不是 Original ETA，也不是门到独山。
@@ -34,7 +35,8 @@ HAM→SHA 计量：`Latest Vessel Schedule − ATD`（日历天）。不是 Orig
 | `snapshots/<id>_monthly.csv` | 月 | 最短 / 最长 / 均值 / 中位数（voyage + ticket） |
 | `snapshots/<id>_coverage.csv` | 窗口 | 工厂 CEILING 覆盖率 k，供对照 |
 
-当前快照文件前缀：`snapshots/2026-09-07_ham-sha_lvs_*`
+当前分析底表：`snapshots/2026-09-09_ham-sha_merged_*`  
+2026 打字快照仍保留：`snapshots/2026-09-07_ham-sha_lvs_*`
 
 ## 3. 口径（对比时必须对齐）
 
@@ -49,7 +51,38 @@ HAM→SHA 计量：`Latest Vessel Schedule − ATD`（日历天）。不是 Orig
 
 **禁止：** 覆盖旧 CSV；把 ETA 月与已过船期月直接比快慢；用票数给航次加权；把本表当 ATA 已到港证明。
 
-## 4. 快照 `2026-09-07_ham-sha_lvs` — 月表（业务记录）
+## 4. 快照 `2026-09-09_ham-sha_merged` — 年度比较
+
+去重主键 **B/L No.**。与 2026 打字底表冲突时以打字表为准。2022–2025 来自附件截图转录，个别票号/日期可能有识读误差。  
+年 = **ATD 年**。船期晚于 2026-09-07 的 7–8 月 **不进年度表**。2022 仅有 Q4；2026 仅有 1–6 月完整开航。
+
+### 航次等权（计划口径，剔除 ETA）
+
+| ATD 年 | n | 最短 | 最长 | 算术平均 | 中位数 | 80% |
+|---|---|---|---|---|---|---|
+| 2022（Q4） | 17 | 33 | 48 | 39.4 | 40 | 42 |
+| 2023 | 60 | 32 | 82 | 51.4 | 51.5 | 58 |
+| 2024 | 72 | 42 | 77 | 55.6 | 55.0 | 59 |
+| 2025 | 75 | 39 | 83 | 52.1 | 50 | 56 |
+| 2026（1–6 月） | 31 | 36 | 76 | 55.3 | 53 | 63 |
+
+### 按票（仅对照，剔除 ETA）
+
+| ATD 年 | n | 最短 | 最长 | 算术平均 | 中位数 |
+|---|---|---|---|---|---|
+| 2022（Q4） | 24 | 33 | 48 | 39.6 | 38.5 |
+| 2023 | 119 | 32 | 82 | 51.1 | 51 |
+| 2024 | 137 | 42 | 77 | 55.2 | 55 |
+| 2025 | 168 | 39 | 83 | 51.4 | 49 |
+| 2026（1–6 月） | 70 | 36 | 76 | 53.5 | 51 |
+
+有路由标注时：2025 直航航次均 **48.5** 天（n=37），中转 **57.3** 天（n=32）。2024 以 HAM-TAN-SHA 为主。2026 打字底表大多无路由，直航/中转未拆。
+
+读数：2023 起中枢从约 40 天抬到 51–56 天；2025 直航回落到 48 天附近，但 2026 年前 6 个月航次均 55.3、80% 覆盖 **63**，比 2025 全年 80%=56 更差。
+
+合并后 536 票 / 264 航次。原始行：`snapshots/2026-09-09_ham-sha_merged_bl.csv`。
+
+## 5. 快照 `2026-09-07_ham-sha_lvs` — 月表（业务记录）
 
 107 票，47 航次。7–8 月 ETA。
 
@@ -93,7 +126,7 @@ HAM→SHA 计量：`Latest Vessel Schedule − ATD`（日历天）。不是 Orig
 
 行级票/航次见 `snapshots/` CSV，不要只靠上表手改数字。
 
-## 5. 以后怎么追加
+## 6. 以后怎么追加
 
 1. 新提取另存为新 `snapshot_id`（建议 `YYYY-MM-DD_<lane>_<metric短名>`），**不要改旧文件**。  
 2. 把票级表放进 `snapshots/`，跑 `deliverables/source/build_intl_transport_archive.py`（或按同 schema 手工写 voyage / monthly）。  
@@ -102,7 +135,7 @@ HAM→SHA 计量：`Latest Vessel Schedule − ATD`（日历天）。不是 Orig
 5. 与上一期对比：同一 `lane_id + metric + grain`，并写明 ETA 是否纳入。  
 6. 若要改计划 sailing LT，再更新 `ham-sha-sailing-lead-time.md`，不要只改本档案月表。
 
-## 6. 与其它文件的分工
+## 7. 与其它文件的分工
 
 | 文件 | 角色 |
 |---|---|
