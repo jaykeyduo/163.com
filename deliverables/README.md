@@ -10,6 +10,7 @@
 | `HAM-SHA_arrival_leadtime_getting_worse.pdf` | 物流 / HQ | 汉堡→上海航行 LT 变慢（已到港透视，19 Aug 2026） |
 | `HAM-SHA_latest_schedule_leadtime.pdf` | 物流 / HQ | 同线路 Latest Vessel Schedule 一页纸（107 B/L v2，7 Sep 2026） |
 | `HAM-SHA_typhoon_season_leadtime.pdf` | 物流 / HQ | 上海台风季（到港 Jun–Oct）2023–2026 航次表现一页纸 |
+| `GI_warehouse_delay_two_clocks.pdf` | 物流 / 计划 | 德国发货日：Pl.arr.date vs AGI+72 两套到仓延迟（2026-06~08） |
 | `国际运输数据档案_HAM-SHA航行时间.xlsx` | 物流 / 计划 | HAM→SHA 合并原始表（2022–2026 去重）+ 年度比较 |
 | `出口UN包装流程_修订版.svg` | 出口跨部门 | 对齐 Phase I/II 的修订流程图 |
 | `出口Initiate跨部门Checklist.xlsx` | 出口部门 / 跨部门 | 出口 Initiate 后勾选表（票头+清单+统计） |
