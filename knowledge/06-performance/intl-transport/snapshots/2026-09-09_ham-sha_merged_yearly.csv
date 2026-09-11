@@ -1,0 +1,6 @@
+atd_year,voyage_n,voyage_min,voyage_max,voyage_mean,voyage_median,voyage_p80,direct_voyage_n,direct_voyage_mean,transship_voyage_n,transship_voyage_mean,ticket_n,ticket_min,ticket_max,ticket_mean,ticket_median
+2022,17,33,48,39.4,40,42,0,,0,,24,33,48,39.6,38.5
+2023,60,32,82,51.4,51.5,58,0,,4,63.5,119,32,82,51.1,51
+2024,72,42,77,55.6,55.0,59,2,62,52,55.3,137,42,77,55.2,55
+2025,75,39,83,52.1,50,56,37,48.5,32,57.3,168,39,83,51.4,49.0
+2026,31,36,76,55.3,53,63,0,,0,,70,36,76,53.5,51.0

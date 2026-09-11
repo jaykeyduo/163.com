@@ -1,0 +1,3 @@
+lane_id,origin,origin_name,destination,dest_name,direction,mode,incoterms,first_snapshot_id,status,notes
+HAM-SHA,HAM,Hamburg,SHA,Shanghai (Yangshan),import,ocean,CIF,2026-09-07_ham-sha_lvs,active,Germany-nominated carrier. Sailing/port-to-port days only.
+FRA-PVG,FRA,Frankfurt,PVG,Shanghai Pudong,import,air,CIF,,awaiting_extract,Lane exists in knowledge/03-network/network-overview.md. No lead-time extract yet — do not invent days.
