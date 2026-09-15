@@ -1557,12 +1557,16 @@ function renderDashboard() {
       <div class="table-wrap" id="taskTableWrap"></div>
     </div>`;
   setTimeout(() => {
-    $("#btnNewTask").onclick = () => newTask();
-    $("#btnContinue").onclick = () => { if (state.auditId) goStep("basic"); };
-    $("#btnSearch").onclick = () => drawTaskTable();
+    const newBtn = $("#btnNewTask");
+    const contBtn = $("#btnContinue");
+    const searchBtn = $("#btnSearch");
+    if (newBtn) newBtn.onclick = () => newTask();
+    if (contBtn) contBtn.onclick = () => { if (state.auditId) goStep("basic"); };
+    if (searchBtn) searchBtn.onclick = () => drawTaskTable();
     drawTaskTable();
   }, 0);
-  return wrap.firstChild;
+  // 注意：innerHTML 前导空白会使 firstChild 变成文本节点，必须用 firstElementChild
+  return wrap.firstElementChild || wrap;
 }
 
 function drawTaskTable() {
@@ -1807,7 +1811,22 @@ function renderSp() {
     <p class="lead">根据 UN 条目取得<strong>全部</strong>适用 SP，逐条确认（不允许匹配首条后停止）。预留 SP163 / 198 / 232 / 274 / 944。</p>
     ${statusBanner(g.gate, g.issues)}
     ${body}
+    <div class="no-print" style="margin:8px 0 0">
+      <button type="button" class="btn btn-secondary" id="btnConfirmAllSp">全部标记为已确认</button>
+    </div>
     ${stepActions("class", "path")}`;
+  setTimeout(() => {
+    const btn = $("#btnConfirmAllSp");
+    if (btn) btn.onclick = () => {
+      collectForm();
+      (state.sp.items || []).forEach(it => {
+        it.confirmed = true;
+        if (!it.note) it.note = "已确认";
+      });
+      evaluateAllGates();
+      render();
+    };
+  }, 0);
   return panel;
 }
 
@@ -2199,25 +2218,18 @@ function validateBeforeNext() {
   errors = {};
   collectForm();
   evaluateAllGates();
-  const order = ["basic","docs","class","sp","path","pack","label","report"];
-  const gate = state.gates[currentStep];
   if (currentStep === "basic") {
     ["productName","materialNo","productType","destinationCountry","destinationPort","etd"].forEach(k => {
       if (!state.basic[k]) errors[k] = "必填";
     });
     if (!state.applicant) errors.applicant = "必填";
   }
-  if (gate === GATE.FAIL || gate === GATE.INSUFFICIENT) {
-    return false;
-  }
-  if (gate === GATE.EXPERT && !state.approval.overrideApproved && currentStep !== "report") {
-    // 允许进入报告页处理，但阻止跨过专家步骤到包装等
-    const idx = order.indexOf(currentStep);
-    // 资料/分类/路径等专家阻断不可下一步
-    if (["docs","class","pack"].indexOf(currentStep) >= 0) return false;
-  }
-  return Object.keys(errors).length === 0 && gate !== GATE.FAIL && gate !== GATE.INSUFFICIENT &&
-    !(gate === GATE.EXPERT && !state.approval.overrideApproved && currentStep !== "sp" && currentStep !== "label");
+  const gate = state.gates[currentStep];
+  // 有条件通过允许继续；资料不足/不通过阻断；专家复核需覆盖批准（报告页除外，便于填写批准）
+  if (Object.keys(errors).length) return false;
+  if (gate === GATE.FAIL || gate === GATE.INSUFFICIENT) return false;
+  if (gate === GATE.EXPERT && !state.approval.overrideApproved && currentStep !== "report") return false;
+  return true;
 }
 
 function bindCommonActions() {
@@ -2350,7 +2362,7 @@ function showToast(msg) {
   if (!t) {
     t = document.createElement("div");
     t.id = "toast";
-    t.style.cssText = "position:fixed;bottom:24px;right:24px;background:#1e334d;color:#fff;padding:10px 16px;border-radius:6px;z-index:200;max-width:360px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2)";
+    t.style.cssText = "position:fixed;top:72px;left:50%;transform:translateX(-50%);background:#1e334d;color:#fff;padding:10px 16px;border-radius:6px;z-index:200;max-width:420px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none";
     document.body.appendChild(t);
   }
   t.textContent = msg;
@@ -2361,15 +2373,20 @@ function showToast(msg) {
 
 /* ==================== 顶栏绑定 ==================== */
 function bindChrome() {
-  $("#btnExportJson").onclick = exportAudit;
-  $("#btnExportRules").onclick = exportRules;
-  $("#btnImportJson").onclick = () => $("#fileImport").click();
-  $("#fileImport").onchange = (e) => {
+  const exportBtn = $("#btnExportJson");
+  const rulesBtn = $("#btnExportRules");
+  const importBtn = $("#btnImportJson");
+  const fileInput = $("#fileImport");
+  const clearBtn = $("#btnClear");
+  if (exportBtn) exportBtn.onclick = exportAudit;
+  if (rulesBtn) rulesBtn.onclick = exportRules;
+  if (importBtn) importBtn.onclick = () => fileInput && fileInput.click();
+  if (fileInput) fileInput.onchange = (e) => {
     const f = e.target.files && e.target.files[0];
     if (f) importAuditFile(f);
     e.target.value = "";
   };
-  $("#btnClear").onclick = clearTask;
+  if (clearBtn) clearBtn.onclick = clearTask;
 }
 
 /* ==================== 启动 ==================== */
