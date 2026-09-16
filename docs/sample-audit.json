@@ -1,0 +1,138 @@
+{
+  "exportType": "audit",
+  "exportedAt": "2026-09-15T10:00:00",
+  "toolVersion": "1.0.0",
+  "ruleMeta": {
+    "schemaVersion": "1.0.0",
+    "ruleVersion": "V1.0-DEMO",
+    "regulationVersion": "IMDG 42-24 (DEMO)",
+    "enterpriseRuleVersion": "CORP-DG-2026.09-DEMO",
+    "status": "DEMO"
+  },
+  "audit": {
+    "auditId": "DG-20260915-EXAMPLE-001",
+    "createdAt": "2026-09-15T09:30:00",
+    "updatedAt": "2026-09-15T10:00:00",
+    "applicant": "张三",
+    "department": "出口部",
+    "orderNo": "SO-2026-0915",
+    "ruleVersionLocked": "CORP-DG-2026.09-DEMO",
+    "regulationVersionLocked": "IMDG 42-24 (DEMO)",
+    "basic": {
+      "productName": "环氧底漆 EP-200",
+      "materialNo": "MAT-EP-200",
+      "productType": "涂料",
+      "destinationCountry": "新加坡",
+      "destinationPort": "Singapore",
+      "etd": "2026-10-20",
+      "transportMode": "海运",
+      "factory": "华东一厂",
+      "formulaVersion": "FV-3.2"
+    },
+    "docs": {
+      "files": {
+        "sds_zh": true,
+        "sds_en": true,
+        "transport_appraisal": true,
+        "class_report": true,
+        "pack_docs": true,
+        "label_sample": true
+      },
+      "sdsUn": "1263",
+      "appraisalUn": "1263",
+      "flashPoint": "28°C",
+      "reportIssueDate": "2026-01-10",
+      "reportExpiryDate": "2027-01-09",
+      "sdsProductName": "环氧底漆 EP-200",
+      "appraisalProductName": "环氧底漆 EP-200",
+      "manufacturer": "示例化工有限公司",
+      "formulaChanged": false,
+      "unFromCustomerLabelOnly": false,
+      "notes": "示例完整资料包"
+    },
+    "classification": {
+      "unNumber": "1263",
+      "properShippingName": "PAINT",
+      "technicalName": "Epoxy primer",
+      "class": "3",
+      "subsidiaryRisk": "",
+      "packingGroup": "II",
+      "marinePollutant": "否",
+      "ems": "F-E, S-E",
+      "evidence": "鉴定报告",
+      "matched": true,
+      "dglSource": "DGL DEMO UN1263 [DEMO]"
+    },
+    "sp": {
+      "items": [
+        { "code": "SP163", "spKey": "163", "confirmed": true, "note": "技术名称已与鉴定书一致" },
+        { "code": "SP944", "spKey": "944", "confirmed": true, "note": "目的港无额外企业附加要求" }
+      ],
+      "allConfirmed": true
+    },
+    "path": {
+      "eqFeasible": false,
+      "lqFeasible": false,
+      "regularFeasible": true,
+      "selected": "regular",
+      "reasonNotOthers": "单桶装量 180L，超出 LQ/EQ 限值，走普通危险货物路径",
+      "lq": {
+        "limit": "5 L",
+        "innerQty": "",
+        "combinationOk": false,
+        "grossKg": "",
+        "markOk": false
+      },
+      "eq": {
+        "code": "E2",
+        "innerLimit": "30g/30ml",
+        "outerLimit": "500g/500ml",
+        "innerActual": "",
+        "outerActual": ""
+      }
+    },
+    "packing": {
+      "packageId": "PKG-1A1-200L-Y",
+      "packageName": "钢桶闭口 200L",
+      "unPackageCode": "1A1",
+      "material": "钢",
+      "closure": "闭口",
+      "performanceRating": "Y",
+      "capacityL": "200",
+      "fillL": "180",
+      "maxGrossKg": "250",
+      "actualGrossKg": "220",
+      "relativeDensity": "1.2",
+      "maxRelativeDensity": "1.4",
+      "testPressureKPa": "100",
+      "compatibilityStatus": "已确认-涂料/稀释剂",
+      "performanceCertificate": "PERF-2025-1A1-001",
+      "useAppraisalScope": "液体 Class 3/8 PG II/III ≤200L",
+      "certificateCovers": true,
+      "packingInstruction": "P001"
+    },
+    "labels": {
+      "checks": {
+        "dg_label_primary": true,
+        "ghs": true,
+        "un_mark": true,
+        "psn_mark": true,
+        "orientation": true,
+        "ctu_placard": true
+      },
+      "manualConfirmed": true,
+      "notes": "样稿已由法规审核人目视确认"
+    },
+    "approval": {
+      "reviewer": "李四（EHS）",
+      "approver": "王五（危险品专家）",
+      "comments": "示例任务，内部预审通过",
+      "overrideReason": "",
+      "overrideApproved": false,
+      "finalDecision": "pass"
+    },
+    "gates": {},
+    "judgments": [],
+    "openIssues": []
+  }
+}

@@ -1,0 +1,2475 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>危险品出口包装与运输标签审核工具 · V1.0</title>
+<style>
+/* ========== 工业风格离线应用样式（无外部资源） ========== */
+:root {
+  --bg: #e8ecef;
+  --surface: #ffffff;
+  --ink: #1a2332;
+  --muted: #5a6a7a;
+  --line: #c8d0d8;
+  --steel: #2c4a6e;
+  --steel-deep: #1e334d;
+  --accent: #0d7a6f;
+  --accent-soft: #e6f4f2;
+  --warn: #b45309;
+  --warn-bg: #fff7ed;
+  --danger: #b91c1c;
+  --danger-bg: #fef2f2;
+  --ok: #047857;
+  --ok-bg: #ecfdf5;
+  --info: #1d4ed8;
+  --info-bg: #eff6ff;
+  --gray: #64748b;
+  --gray-bg: #f1f5f9;
+  --sidebar-w: 280px;
+  --font: "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --mono: "Cascadia Mono", "Consolas", "Courier New", monospace;
+  --radius: 6px;
+  --shadow: 0 1px 3px rgba(26, 35, 50, 0.08);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; height: 100%; }
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: var(--sidebar-w);
+  background: linear-gradient(180deg, var(--steel-deep) 0%, var(--steel) 100%);
+  color: #e8eef5;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.brand {
+  padding: 20px 18px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.brand h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+}
+.brand .sub {
+  margin-top: 8px;
+  font-size: 11px;
+  opacity: 0.75;
+  line-height: 1.4;
+}
+.brand .badge-demo {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 2px 8px;
+  border: 1px solid rgba(255,200,80,0.55);
+  color: #ffd666;
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.nav { padding: 12px 10px; flex: 1; }
+.nav-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  color: inherit;
+  padding: 10px 10px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font: inherit;
+  margin-bottom: 4px;
+  opacity: 0.85;
+  transition: background 0.15s, opacity 0.15s;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); opacity: 1; }
+.nav-item.active { background: rgba(13,122,111,0.45); opacity: 1; }
+.nav-item.locked { opacity: 0.45; cursor: not-allowed; }
+.nav-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0; margin-top: 1px;
+}
+.nav-item.done .nav-num { background: var(--accent); border-color: var(--accent); }
+.nav-item.active .nav-num { background: #fff; color: var(--steel-deep); border-color: #fff; }
+.nav-text { flex: 1; }
+.nav-text .t { font-size: 13px; font-weight: 600; }
+.nav-text .s { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+.gate-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  margin-top: 7px; flex-shrink: 0;
+}
+.gate-dot.pass { background: #34d399; }
+.gate-dot.conditional { background: #fbbf24; }
+.gate-dot.fail { background: #f87171; }
+.gate-dot.insufficient { background: #94a3b8; }
+.gate-dot.expert { background: #a78bfa; }
+
+.sidebar-foot {
+  padding: 12px 14px 18px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  font-size: 11px;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+.topbar-left { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.topbar-right { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.meta-chip {
+  font-size: 12px;
+  background: var(--gray-bg);
+  border: 1px solid var(--line);
+  padding: 4px 10px;
+  border-radius: 4px;
+  color: var(--muted);
+}
+.meta-chip strong { color: var(--ink); font-weight: 600; }
+
+.content { padding: 20px; max-width: 1100px; width: 100%; margin: 0 auto; flex: 1; }
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 22px 24px 28px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.25s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.panel h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  color: var(--steel-deep);
+  font-weight: 700;
+}
+.panel .lead {
+  margin: 0 0 18px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.alert {
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  border: 1px solid;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+.alert-warn { background: var(--warn-bg); border-color: #fdba74; color: #9a3412; }
+.alert-danger { background: var(--danger-bg); border-color: #fca5a5; color: #991b1b; }
+.alert-ok { background: var(--ok-bg); border-color: #6ee7b7; color: #065f46; }
+.alert-info { background: var(--info-bg); border-color: #93c5fd; color: #1e40af; }
+.alert-gray { background: var(--gray-bg); border-color: var(--line); color: var(--muted); }
+
+.grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 16px; }
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field.full { grid-column: 1 / -1; }
+.field label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--steel);
+}
+.field label .req { color: var(--danger); margin-left: 2px; }
+.field input, .field select, .field textarea {
+  font: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  color: var(--ink);
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: 2px solid rgba(13,122,111,0.35);
+  border-color: var(--accent);
+}
+.field input:disabled, .field select:disabled {
+  background: var(--gray-bg);
+  color: var(--muted);
+}
+.field .hint { font-size: 11px; color: var(--muted); }
+.field.error input, .field.error select, .field.error textarea {
+  border-color: var(--danger);
+  background: #fff5f5;
+}
+.field .err { font-size: 11px; color: var(--danger); display: none; }
+.field.error .err { display: block; }
+
+.btn {
+  font: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { background: #0a655c; }
+.btn-secondary { background: #fff; border-color: var(--line); color: var(--ink); }
+.btn-secondary:hover { background: var(--gray-bg); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: #991b1b; }
+.btn-ghost { background: transparent; border-color: rgba(255,255,255,0.3); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.actions-left, .actions-right { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.status-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  border: 1px solid;
+  margin-bottom: 16px;
+}
+.status-banner .code {
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.status-banner .msg { font-size: 13px; flex: 1; }
+.status-pass { background: var(--ok-bg); border-color: #6ee7b7; color: #065f46; }
+.status-conditional { background: var(--warn-bg); border-color: #fdba74; color: #9a3412; }
+.status-fail { background: var(--danger-bg); border-color: #fca5a5; color: #991b1b; }
+.status-insufficient { background: var(--gray-bg); border-color: var(--line); color: #475569; }
+.status-expert { background: #f5f3ff; border-color: #c4b5fd; color: #5b21b6; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.stat-card {
+  background: linear-gradient(145deg, #fff 0%, #f4f7fa 100%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.stat-card .n { font-size: 28px; font-weight: 700; color: var(--steel-deep); line-height: 1.1; }
+.stat-card .l { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+.table-wrap { overflow-x: auto; margin: 12px 0; }
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+table.data th, table.data td {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+table.data th { background: #f0f4f8; color: var(--steel); font-weight: 600; font-size: 12px; }
+table.data tr:hover td { background: #fafbfc; }
+table.data .clickable { cursor: pointer; color: var(--accent); font-weight: 600; }
+.empty { color: var(--muted); font-size: 13px; padding: 20px; text-align: center; }
+
+.check-list { list-style: none; padding: 0; margin: 0; }
+.check-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.check-list li:last-child { border-bottom: none; }
+.check-list input[type="checkbox"] { margin-top: 3px; width: 16px; height: 16px; }
+
+.sp-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  margin-bottom: 12px;
+  background: #fafbfc;
+}
+.sp-card h4 { margin: 0 0 8px; font-size: 14px; color: var(--steel-deep); }
+.sp-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+.tag {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid #b2ddd8;
+}
+.tag-demo { background: #fff7ed; color: #9a3412; border-color: #fdba74; }
+.tag-muted { background: var(--gray-bg); color: var(--muted); border-color: var(--line); }
+
+.path-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.path-card {
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color 0.15s, background 0.15s;
+}
+.path-card:hover { border-color: #9bb0c4; }
+.path-card.selected { border-color: var(--accent); background: var(--accent-soft); }
+.path-card.disabled { opacity: 0.55; cursor: not-allowed; }
+.path-card h4 { margin: 0 0 6px; font-size: 14px; }
+.path-card p { margin: 0; font-size: 12px; color: var(--muted); }
+
+.label-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.lbl {
+  border: 2px dashed var(--line);
+  border-radius: 4px;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px;
+  font-size: 11px;
+  background: repeating-linear-gradient(-45deg, #f8fafc, #f8fafc 8px, #f1f5f9 8px, #f1f5f9 16px);
+  color: var(--muted);
+}
+.lbl strong { display: block; font-size: 13px; color: var(--ink); margin-bottom: 4px; }
+.lbl.class3 { border-color: #dc2626; background: linear-gradient(180deg, #fecaca, #fff 55%); }
+.lbl.class8 { border-color: #000; background: linear-gradient(180deg, #fff 40%, #000 40%, #000 60%, #fffbeb 60%); color: #111; }
+.lbl.mp { border-color: #0ea5e9; }
+.lbl.lq { border-style: solid; border-width: 3px; }
+
+.report-box {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  background: #fff;
+}
+.report-box h3 {
+  margin: 18px 0 8px;
+  font-size: 15px;
+  color: var(--steel-deep);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 6px;
+}
+.report-box h3:first-child { margin-top: 0; }
+.report-kv { display: grid; grid-template-columns: 160px 1fr; gap: 6px 12px; font-size: 13px; }
+.report-kv .k { color: var(--muted); }
+.final-stamp {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  border: 3px solid;
+  border-radius: 4px;
+  margin: 8px 0 16px;
+}
+.stamp-pass { color: var(--ok); border-color: var(--ok); }
+.stamp-conditional { color: var(--warn); border-color: var(--warn); }
+.stamp-fail { color: var(--danger); border-color: var(--danger); }
+.stamp-insufficient { color: var(--gray); border-color: var(--gray); }
+.stamp-expert { color: #6d28d9; border-color: #6d28d9; }
+
+.disclaimer {
+  font-size: 12px;
+  color: var(--muted);
+  background: var(--gray-bg);
+  border-left: 3px solid var(--warn);
+  padding: 10px 12px;
+  margin: 16px 0;
+}
+
+.modal-mask {
+  position: fixed; inset: 0;
+  background: rgba(26,35,50,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  padding: 16px;
+}
+.modal {
+  background: #fff;
+  border-radius: var(--radius);
+  max-width: 480px;
+  width: 100%;
+  padding: 20px 22px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+.modal h3 { margin: 0 0 10px; }
+.modal p { margin: 0 0 16px; color: var(--muted); font-size: 13px; }
+.modal .row { display: flex; gap: 8px; justify-content: flex-end; }
+
+.hidden { display: none !important; }
+.mono { font-family: var(--mono); font-size: 12px; }
+
+@media (max-width: 900px) {
+  .app { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+  .nav { display: flex; overflow-x: auto; gap: 4px; padding: 8px; }
+  .nav-item { min-width: 140px; margin-bottom: 0; }
+  .grid, .grid-3, .path-grid { grid-template-columns: 1fr; }
+  .report-kv { grid-template-columns: 1fr; }
+  .content { padding: 12px; }
+  .panel { padding: 16px; }
+}
+
+@media print {
+  body { background: #fff; font-size: 12px; }
+  .sidebar, .topbar, .actions, .no-print, .modal-mask { display: none !important; }
+  .main { width: 100%; }
+  .content { max-width: none; padding: 0; }
+  .panel { box-shadow: none; border: none; padding: 0; }
+  .report-box { border: none; padding: 0; }
+  .disclaimer { border: 1px solid #ccc; }
+  a { text-decoration: none; color: inherit; }
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <!-- 左侧导航 -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h1>危险品出口包装与运输标签审核工具</h1>
+      <div class="sub">海运出口 · 涂料及相关化工品内部预审</div>
+      <span class="badge-demo">DEMO 规则 · 非正式法规结论</span>
+    </div>
+    <nav class="nav" id="stepNav"></nav>
+    <div class="sidebar-foot">
+      <div>企业规则库：<span id="sideRuleVer">—</span></div>
+      <div>IMDG 演示版：<span id="sideRegVer">—</span></div>
+      <div style="margin-top:8px;opacity:0.7">离线单文件 · 不上传网络</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar no-print">
+      <div class="topbar-left">
+        <span class="meta-chip">审核编号 <strong id="chipAuditId">未创建</strong></span>
+        <span class="meta-chip">状态 <strong id="chipStatus">草稿</strong></span>
+        <span class="meta-chip">路径 <strong id="chipPath">未选择</strong></span>
+      </div>
+      <div class="topbar-right">
+        <button type="button" class="btn btn-secondary" id="btnExportJson">导出审核JSON</button>
+        <button type="button" class="btn btn-secondary" id="btnImportJson">导入审核JSON</button>
+        <button type="button" class="btn btn-secondary" id="btnExportRules">导出规则JSON</button>
+        <button type="button" class="btn btn-danger" id="btnClear">清空当前任务</button>
+        <input type="file" id="fileImport" accept=".json,application/json" class="hidden" />
+      </div>
+    </header>
+
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+
+<script>
+/**
+ * 危险品出口包装与运输标签审核工具 V1.0
+ * 纯前端离线应用：无 CDN、无浏览器持久化存储、无网络请求
+ * 演示规则仅供原型比对，须经授权人员复核后方可作为正式依据
+ */
+
+/* ==================== 规则库（DEMO） ==================== */
+const RULES = {
+  meta: {
+    schemaVersion: "1.0.0",
+    ruleVersion: "V1.0-DEMO",
+    regulationVersion: "IMDG 42-24 (DEMO)",
+    enterpriseRuleVersion: "CORP-DG-2026.09-DEMO",
+    status: "DEMO",
+    effectiveDate: "2026-09-01",
+    expiryDate: "2027-12-31",
+    sourceReference: "内部演示规则，非正式 IMDG 摘录；正式数据须经授权人员复核",
+    disclaimer: "本系统仅用于企业内部预审，不替代危险特性分类鉴定、法定检验、海事申报、主管机关或承运人的最终审核。"
+  },
+  /* EQ 第7b栏代码对应内外包装限量（演示表） */
+  eqCodes: {
+    E0: { inner: 0, outer: 0, note: "不允许例外数量运输" },
+    E1: { inner: "30g/30ml", outer: "1000g/1000ml", note: "演示限值" },
+    E2: { inner: "30g/30ml", outer: "500g/500ml", note: "演示限值" },
+    E3: { inner: "30g/30ml", outer: "300g/300ml", note: "演示限值" },
+    E4: { inner: "1g/1ml", outer: "500g/500ml", note: "演示限值" },
+    E5: { inner: "1g/1ml", outer: "300g/300ml", note: "演示限值" }
+  },
+  /* 特殊规定 SP（演示条文映射） */
+  specialProvisions: {
+    "163": {
+      code: "SP163",
+      title: "涂料相关条目技术名称 / 组分说明",
+      applicability: "适用于含有颜料、溶剂等涂料相关物质的条目，必要时在运输单证中补充技术名称。",
+      requiredInputs: ["技术名称/组分说明", "是否含副危险成分"],
+      handling: "确认 Proper Shipping Name 是否需补充技术名称；有副危险时按规则标注。",
+      citation: "IMDG Code SP163 (DEMO)",
+      enterpriseNote: "涂料/稀释剂出口时，技术名称建议与 SDS 第14部分及鉴定书一致。"
+    },
+    "198": {
+      code: "SP198",
+      title: "醇类混合物浓度相关豁免提示",
+      applicability: "涉及特定醇类溶液浓度条件时适用（本演示工具仅作提示）。",
+      requiredInputs: ["是否含适用醇类", "浓度信息"],
+      handling: "若适用醇类条件，核对是否仍按危险货物运输；不确定则转专家复核。",
+      citation: "IMDG Code SP198 (DEMO)",
+      enterpriseNote: "稀释剂含醇类时由法规审核人确认是否触发。"
+    },
+    "232": {
+      code: "SP232",
+      title: "特殊包装/积载条件提示",
+      applicability: "特定条目可能附加包装或积载限制。",
+      requiredInputs: ["实际包装形式", "是否温控"],
+      handling: "核对包装导则与承运人积载要求；温控货物默认转专家。",
+      citation: "IMDG Code SP232 (DEMO)",
+      enterpriseNote: "V1 默认：温控或非标准包装 → 专家复核。"
+    },
+    "274": {
+      code: "SP274",
+      title: "技术名称补充要求",
+      applicability: "当正式运输名称需补充技术名称时适用。",
+      requiredInputs: ["技术名称"],
+      handling: "运输单证与包件标记须包含技术名称（若法规要求）。",
+      citation: "IMDG Code SP274 (DEMO)",
+      enterpriseNote: "固化剂、添加剂等常需技术名称，与鉴定书一致。"
+    },
+    "944": {
+      code: "SP944",
+      title: "企业扩展特殊规定占位",
+      applicability: "企业规则库预留条目，用于承运人/目的港附加要求映射。",
+      requiredInputs: ["目的港附加要求确认"],
+      handling: "检查企业附加清单；无匹配则记录为待办。",
+      citation: "企业 SP944 占位 (DEMO)",
+      enterpriseNote: "正式启用前须由危险品专家批准映射。"
+    }
+  },
+  /* UN_DGL 主数据（演示） */
+  unRules: {
+    "1263": {
+      unNumber: "1263",
+      properShippingName: "PAINT",
+      properShippingNameZh: "涂料",
+      class: "3",
+      subsidiaryRisk: "",
+      packingGroups: ["II", "III"],
+      specialProvisions: ["163"],
+      lqByPg: { "II": "5 L", "III": "5 L" },
+      eqByPg: { "II": "E2", "III": "E1" },
+      packingInstruction: "P001",
+      ems: "F-E, S-E",
+      marinePollutantDefault: false,
+      labels: ["3"],
+      sourceReference: "DGL DEMO UN1263",
+      status: "DEMO"
+    },
+    "3066": {
+      unNumber: "3066",
+      properShippingName: "PAINT RELATED MATERIAL",
+      properShippingNameZh: "涂料相关材料",
+      class: "8",
+      subsidiaryRisk: "",
+      packingGroups: ["II", "III"],
+      specialProvisions: ["163"],
+      lqByPg: { "II": "1 L", "III": "5 L" },
+      eqByPg: { "II": "E2", "III": "E1" },
+      packingInstruction: "P001",
+      ems: "F-A, S-B",
+      marinePollutantDefault: false,
+      labels: ["8"],
+      sourceReference: "DGL DEMO UN3066",
+      status: "DEMO"
+    },
+    "3469": {
+      unNumber: "3469",
+      properShippingName: "PAINT, FLAMMABLE, CORROSIVE",
+      properShippingNameZh: "涂料，易燃，腐蚀性",
+      class: "3",
+      subsidiaryRisk: "8",
+      packingGroups: ["I", "II", "III"],
+      specialProvisions: ["163", "274"],
+      lqByPg: { "I": "0", "II": "1 L", "III": "5 L" },
+      eqByPg: { "I": "E0", "II": "E2", "III": "E1" },
+      packingInstruction: "P001",
+      ems: "F-E, S-C",
+      marinePollutantDefault: false,
+      labels: ["3", "8"],
+      sourceReference: "DGL DEMO UN3469",
+      status: "DEMO"
+    },
+    "3470": {
+      unNumber: "3470",
+      properShippingName: "PAINT, CORROSIVE, FLAMMABLE",
+      properShippingNameZh: "涂料，腐蚀性，易燃",
+      class: "8",
+      subsidiaryRisk: "3",
+      packingGroups: ["I", "II", "III"],
+      specialProvisions: ["163", "274"],
+      lqByPg: { "I": "0", "II": "1 L", "III": "5 L" },
+      eqByPg: { "I": "E0", "II": "E2", "III": "E1" },
+      packingInstruction: "P001",
+      ems: "F-E, S-C",
+      marinePollutantDefault: false,
+      labels: ["8", "3"],
+      sourceReference: "DGL DEMO UN3470",
+      status: "DEMO"
+    }
+  },
+  /* 包装主数据（演示） */
+  packages: [
+    {
+      packageId: "PKG-1A1-200L-Y",
+      name: "钢桶闭口 200L",
+      unPackageCode: "1A1",
+      material: "钢",
+      closure: "闭口",
+      performanceRating: "Y",
+      capacityL: 200,
+      maxGrossKg: 250,
+      maxRelativeDensity: 1.4,
+      testPressureKPa: 100,
+      compatibilityStatus: "已确认-涂料/稀释剂",
+      performanceCertificate: "PERF-2025-1A1-001",
+      useAppraisalScope: "液体 Class 3/8 PG II/III ≤200L",
+      effectiveStatus: "有效"
+    },
+    {
+      packageId: "PKG-1H1-20L-Y",
+      name: "塑料桶闭口 20L",
+      unPackageCode: "1H1",
+      material: "塑料",
+      closure: "闭口",
+      performanceRating: "Y",
+      capacityL: 20,
+      maxGrossKg: 30,
+      maxRelativeDensity: 1.2,
+      testPressureKPa: 100,
+      compatibilityStatus: "已确认-稀释剂",
+      performanceCertificate: "PERF-2025-1H1-020",
+      useAppraisalScope: "液体 Class 3 PG II/III ≤20L",
+      effectiveStatus: "有效"
+    },
+    {
+      packageId: "PKG-1A2-60L-X",
+      name: "钢桶开口 60L",
+      unPackageCode: "1A2",
+      material: "钢",
+      closure: "开口",
+      performanceRating: "X",
+      capacityL: 60,
+      maxGrossKg: 100,
+      maxRelativeDensity: 1.5,
+      testPressureKPa: 100,
+      compatibilityStatus: "未知",
+      performanceCertificate: "PERF-2024-1A2-060",
+      useAppraisalScope: "待确认",
+      effectiveStatus: "有效"
+    },
+    {
+      packageId: "PKG-4G-LQ",
+      name: "纤维板箱组合包装（LQ演示）",
+      unPackageCode: "4G",
+      material: "纤维板",
+      closure: "组合包装",
+      performanceRating: "Y",
+      capacityL: 30,
+      maxGrossKg: 30,
+      maxRelativeDensity: 1.2,
+      testPressureKPa: 0,
+      compatibilityStatus: "已确认-限量内包装",
+      performanceCertificate: "PERF-2025-4G-LQ",
+      useAppraisalScope: "LQ 组合包装演示",
+      effectiveStatus: "有效"
+    }
+  ],
+  packingInstructionNotes: {
+    P001: {
+      code: "P001",
+      allowedCodes: ["1A1", "1A2", "1B1", "1B2", "1H1", "1H2", "1N1", "1N2", "3A1", "3A2", "3H1", "3H2", "4G"],
+      note: "演示：P001 允许常见桶/罐/箱型；正式限值以受控导则为准。",
+      status: "DEMO"
+    }
+  },
+  /* 包装等级 → 最低性能等级 */
+  pgPerformanceMap: {
+    "I": ["X"],
+    "II": ["X", "Y"],
+    "III": ["X", "Y", "Z"]
+  },
+  productTypes: ["涂料", "固化剂", "稀释剂", "添加剂", "其他相关化工品"],
+  documentTypes: [
+    { id: "sds_zh", name: "中文SDS" },
+    { id: "sds_en", name: "英文SDS" },
+    { id: "transport_appraisal", name: "运输条件鉴定书" },
+    { id: "class_report", name: "危险特性分类鉴定报告" },
+    { id: "pack_docs", name: "包装资料" },
+    { id: "label_sample", name: "标签样稿" }
+  ],
+  labelChecklistTemplates: {
+    common: [
+      { id: "ghs", text: "GHS 产品标签已人工确认（颜色/尺寸/位置/耐久性）" },
+      { id: "un_mark", text: "包件 UN 编号标记清晰、正确" },
+      { id: "psn_mark", text: "正确运输名称（及技术名称，如需要）已标记" },
+      { id: "orientation", text: "液体包件方向箭头符合要求（如适用）" },
+      { id: "ctu_placard", text: "运输组件（集装箱/车辆）标牌要求已核对" }
+    ]
+  }
+};
+
+/* ==================== 应用状态（仅内存） ==================== */
+const STEPS = [
+  { id: "dashboard", name: "首页", short: "任务总览" },
+  { id: "basic", name: "步骤1 基本信息", short: "基本信息" },
+  { id: "docs", name: "步骤2 SDS与鉴定", short: "SDS与鉴定" },
+  { id: "class", name: "步骤3 运输分类", short: "运输分类" },
+  { id: "sp", name: "步骤4 特殊规定", short: "特殊规定SP" },
+  { id: "path", name: "步骤5 运输路径", short: "运输路径" },
+  { id: "pack", name: "步骤6 包装审核", short: "包装审核" },
+  { id: "label", name: "步骤7 标记与标签", short: "标记标签" },
+  { id: "report", name: "步骤8 报告审批", short: "报告与审批" }
+];
+
+const GATE = {
+  PASS: "pass",
+  CONDITIONAL: "conditional",
+  FAIL: "fail",
+  INSUFFICIENT: "insufficient",
+  EXPERT: "expert",
+  NONE: "none"
+};
+
+const GATE_LABEL = {
+  pass: "通过",
+  conditional: "有条件通过",
+  fail: "不通过",
+  insufficient: "资料不足",
+  expert: "专家复核",
+  none: "未评估"
+};
+
+let state = createEmptyState();
+let currentStep = "dashboard";
+let taskList = []; // 会话内任务列表（内存）
+let errors = {};
+
+function createEmptyState() {
+  return {
+    auditId: "",
+    createdAt: "",
+    updatedAt: "",
+    applicant: "",
+    department: "出口部",
+    orderNo: "",
+    ruleVersionLocked: "",
+    regulationVersionLocked: "",
+    basic: {
+      productName: "",
+      materialNo: "",
+      productType: "",
+      destinationCountry: "",
+      destinationPort: "",
+      etd: "",
+      transportMode: "海运",
+      factory: "",
+      formulaVersion: ""
+    },
+    docs: {
+      files: {
+        sds_zh: false,
+        sds_en: false,
+        transport_appraisal: false,
+        class_report: false,
+        pack_docs: false,
+        label_sample: false
+      },
+      sdsUn: "",
+      appraisalUn: "",
+      flashPoint: "",
+      reportIssueDate: "",
+      reportExpiryDate: "",
+      sdsProductName: "",
+      appraisalProductName: "",
+      manufacturer: "",
+      formulaChanged: false,
+      unFromCustomerLabelOnly: false,
+      notes: ""
+    },
+    classification: {
+      unNumber: "",
+      properShippingName: "",
+      technicalName: "",
+      class: "",
+      subsidiaryRisk: "",
+      packingGroup: "",
+      marinePollutant: "否",
+      ems: "",
+      evidence: "鉴定报告",
+      matched: false,
+      dglSource: ""
+    },
+    sp: {
+      items: [], // {code, confirmed, note}
+      allConfirmed: false
+    },
+    path: {
+      eqFeasible: null,
+      lqFeasible: null,
+      regularFeasible: true,
+      selected: "", // eq | lq | regular
+      reasonNotOthers: "",
+      lq: {
+        limit: "",
+        innerQty: "",
+        combinationOk: false,
+        grossKg: "",
+        markOk: false
+      },
+      eq: {
+        code: "",
+        innerLimit: "",
+        outerLimit: "",
+        innerActual: "",
+        outerActual: ""
+      }
+    },
+    packing: {
+      packageId: "",
+      packageName: "",
+      unPackageCode: "",
+      material: "",
+      closure: "",
+      performanceRating: "",
+      capacityL: "",
+      fillL: "",
+      maxGrossKg: "",
+      actualGrossKg: "",
+      relativeDensity: "",
+      testPressureKPa: "",
+      compatibilityStatus: "",
+      performanceCertificate: "",
+      useAppraisalScope: "",
+      certificateCovers: false,
+      packingInstruction: ""
+    },
+    labels: {
+      checks: {},
+      manualConfirmed: false,
+      notes: ""
+    },
+    approval: {
+      reviewer: "",
+      approver: "",
+      comments: "",
+      overrideReason: "",
+      overrideApproved: false,
+      finalDecision: ""
+    },
+    gates: {},
+    judgments: [],
+    openIssues: []
+  };
+}
+
+function nowIso() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, "0");
+  return d.getFullYear() + "-" + p(d.getMonth()+1) + "-" + p(d.getDate()) + "T" + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
+}
+
+function genAuditId() {
+  const d = new Date();
+  const p = n => String(n).padStart(2, "0");
+  const rnd = Math.floor(Math.random() * 900 + 100);
+  return "DG-" + d.getFullYear() + p(d.getMonth()+1) + p(d.getDate()) + "-" + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds()) + "-" + rnd;
+}
+
+function parseVolumeToLiters(text) {
+  if (text == null || text === "") return null;
+  const s = String(text).trim().toUpperCase().replace(/,/g, "");
+  if (s === "0") return 0;
+  const m = s.match(/^([\d.]+)\s*(L|ML|KG|G)?$/);
+  if (!m) return null;
+  const n = parseFloat(m[1]);
+  const u = m[2] || "L";
+  if (u === "ML" || u === "G") return n / 1000;
+  return n;
+}
+
+function recordJudgment(ruleId, input, result, detail) {
+  state.judgments.push({
+    ruleId, input, result, detail,
+    at: nowIso(),
+    by: state.applicant || "系统"
+  });
+}
+
+/** 全角转半角，便于品名比对 */
+function toHalfWidth(s) {
+  return String(s || "").replace(/[\uFF01-\uFF5E]/g, ch =>
+    String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)
+  ).replace(/\u3000/g, " ");
+}
+
+/**
+ * 产品名称对应检查（DOC-003）
+ * 允许空格、连字符、大小写、「油漆/涂料」等类别前缀差异；
+ * 禁止仅凭完全字面相等判定。
+ */
+function normalizeProductName(s) {
+  let t = toHalfWidth(s).trim().toUpperCase();
+  t = t.replace(/[\s\-_/\\.,，。·•:：()（）\[\]【】"'“”]/g, "");
+  const prefixes = ["油漆", "涂料", "漆", "产品", "货品", "商品", "PAINT", "COATING", "PRIMER", "LACQUER", "VARNISH"];
+  let prev;
+  do {
+    prev = t;
+    prefixes.forEach(p => {
+      const u = p.toUpperCase();
+      if (t.startsWith(u) && t.length - u.length >= 4) t = t.slice(u.length);
+      if (t.endsWith(u) && t.length - u.length >= 4) t = t.slice(0, -u.length);
+    });
+  } while (t !== prev);
+  return t;
+}
+
+function namesCorrespond(a, b) {
+  const na = normalizeProductName(a);
+  const nb = normalizeProductName(b);
+  if (!na || !nb) return true;
+  if (na === nb) return true;
+  const shorter = na.length <= nb.length ? na : nb;
+  const longer = na.length > nb.length ? na : nb;
+  return shorter.length >= 4 && longer.indexOf(shorter) >= 0;
+}
+
+/* ==================== 闸门评估 ==================== */
+function evaluateDocsGate() {
+  const d = state.docs;
+  const issues = [];
+  let gate = GATE.PASS;
+
+  if (!d.files.sds_zh && !d.files.sds_en) {
+    issues.push("缺少中文或英文 SDS");
+    gate = GATE.INSUFFICIENT;
+  }
+  if (!d.files.transport_appraisal && !d.files.class_report) {
+    issues.push("缺少运输条件鉴定书或危险特性分类鉴定报告");
+    gate = GATE.INSUFFICIENT;
+  }
+  if (!d.sdsUn || !d.appraisalUn) {
+    issues.push("未录入 SDS 第14部分 UN 号或鉴定书 UN 号");
+    gate = GATE.INSUFFICIENT;
+  }
+  // DOC-001
+  if (d.sdsUn && d.appraisalUn && normalizeUn(d.sdsUn) !== normalizeUn(d.appraisalUn)) {
+    issues.push("DOC-001：SDS第14部分UN号与鉴定书UN号不一致，阻断并转人工复核");
+    recordJudgment("DOC-001", { sdsUn: d.sdsUn, appraisalUn: d.appraisalUn }, GATE.EXPERT, "UN号不一致");
+    return { gate: GATE.EXPERT, issues };
+  }
+  // DOC-002
+  if (d.reportExpiryDate) {
+    const exp = new Date(d.reportExpiryDate + "T23:59:59");
+    if (exp < new Date()) {
+      issues.push("DOC-002：鉴定报告已超过企业设定有效期，阻断");
+      recordJudgment("DOC-002", { reportExpiryDate: d.reportExpiryDate }, GATE.FAIL, "报告过期");
+      return { gate: GATE.FAIL, issues };
+    }
+  } else if (d.files.transport_appraisal || d.files.class_report) {
+    issues.push("已勾选鉴定类文件但未填写到期日期");
+    gate = GATE.INSUFFICIENT;
+  }
+  // DOC-003：产品名称无法对应（允许类别前缀/空格/符号差异）
+  const basicName = state.basic.productName || "";
+  if (d.sdsProductName && basicName && !namesCorrespond(d.sdsProductName, basicName)) {
+    issues.push("DOC-003：SDS产品名称「" + d.sdsProductName + "」与基本信息「" + basicName + "」无法对应。请改成可识别的同一产品，或使用下方同步按钮。");
+    gate = worse(gate, GATE.INSUFFICIENT);
+  }
+  if (d.appraisalProductName && basicName && !namesCorrespond(d.appraisalProductName, basicName)) {
+    issues.push("DOC-003：鉴定书产品名称「" + d.appraisalProductName + "」与基本信息「" + basicName + "」无法对应。请改成可识别的同一产品，或使用下方同步按钮。");
+    gate = worse(gate, GATE.INSUFFICIENT);
+  }
+  if (d.sdsProductName && d.appraisalProductName && !namesCorrespond(d.sdsProductName, d.appraisalProductName)) {
+    issues.push("DOC-003：SDS产品名称与鉴定书产品名称无法对应（「" + d.sdsProductName + "」vs「" + d.appraisalProductName + "」）");
+    gate = worse(gate, GATE.INSUFFICIENT);
+  }
+  // DOC-004
+  if (d.formulaChanged) {
+    issues.push("DOC-004：配方或关键原料发生变化，须重新确认分类适用性");
+    gate = worse(gate, GATE.CONDITIONAL);
+  }
+  // DOC-005
+  if (d.unFromCustomerLabelOnly) {
+    issues.push("DOC-005：仅凭客户标签确定UN号，禁止自动判定");
+    recordJudgment("DOC-005", { unFromCustomerLabelOnly: true }, GATE.EXPERT, "禁止自动判定");
+    return { gate: GATE.EXPERT, issues };
+  }
+
+  if (issues.length && gate === GATE.PASS) gate = GATE.CONDITIONAL;
+  return { gate, issues };
+}
+
+function normalizeUn(v) {
+  return String(v || "").replace(/^UN/i, "").trim().padStart(4, "0");
+}
+
+function worse(a, b) {
+  const rank = { none: 0, pass: 1, conditional: 2, insufficient: 3, expert: 4, fail: 5 };
+  return (rank[b] || 0) > (rank[a] || 0) ? b : a;
+}
+
+function evaluateBasicGate() {
+  const b = state.basic;
+  const issues = [];
+  const req = [
+    ["productName", "产品名称"],
+    ["materialNo", "内部物料号"],
+    ["productType", "产品类型"],
+    ["destinationCountry", "出口国家/地区"],
+    ["destinationPort", "目的港"],
+    ["etd", "预计出运日期"]
+  ];
+  req.forEach(([k, label]) => {
+    if (!b[k]) issues.push("缺少必填：" + label);
+  });
+  if (!state.auditId) issues.push("审核编号未生成");
+  if (!state.ruleVersionLocked) issues.push("规则版本未锁定");
+  return { gate: issues.length ? GATE.INSUFFICIENT : GATE.PASS, issues };
+}
+
+function evaluateClassGate() {
+  const c = state.classification;
+  const issues = [];
+  if (!c.unNumber) return { gate: GATE.INSUFFICIENT, issues: ["未填写 UN 号"] };
+  const un = normalizeUn(c.unNumber);
+  const rule = RULES.unRules[un];
+  if (!rule) {
+    issues.push("规则库无匹配 UN" + un + "，不得自动生成分类结论，转专家复核");
+    return { gate: GATE.EXPERT, issues };
+  }
+  if (!c.packingGroup) issues.push("未选择包装等级");
+  if (c.packingGroup && rule.packingGroups.indexOf(c.packingGroup) < 0) {
+    issues.push("所选包装等级不在该 UN 条目允许列表中");
+    return { gate: GATE.FAIL, issues };
+  }
+  if (!c.evidence) issues.push("缺少分类证据关联");
+  if (c.class !== rule.class) issues.push("主危险类别与 DGL 演示数据不一致");
+  if ((c.subsidiaryRisk || "") !== (rule.subsidiaryRisk || "")) {
+    issues.push("副危险与 DGL 演示数据不一致（请确认或转专家）");
+  }
+  if (issues.length) return { gate: GATE.CONDITIONAL, issues };
+  if (!c.matched) return { gate: GATE.INSUFFICIENT, issues: ["尚未从 DGL 载入匹配"] };
+  return { gate: GATE.PASS, issues: ["已匹配 DEMO DGL：" + rule.sourceReference] };
+}
+
+function evaluateSpGate() {
+  const items = state.sp.items || [];
+  if (!items.length) return { gate: GATE.PASS, issues: ["本条目无适用 SP 或尚未载入"] };
+  const unconfirmed = items.filter(i => !i.confirmed);
+  if (unconfirmed.length) {
+    return {
+      gate: GATE.INSUFFICIENT,
+      issues: unconfirmed.map(i => "未确认：" + i.code)
+    };
+  }
+  return { gate: GATE.PASS, issues: ["全部适用 SP 已分别确认"] };
+}
+
+function evaluatePathGate() {
+  const p = state.path;
+  const issues = [];
+  // 重新计算可行性
+  const feas = computePathFeasibility();
+  p.eqFeasible = feas.eq.ok;
+  p.lqFeasible = feas.lq.ok;
+  p.regularFeasible = true;
+
+  if (!p.selected) {
+    return { gate: GATE.INSUFFICIENT, issues: ["未选择实际运输路径"] };
+  }
+  if (p.selected === "lq") {
+    if (!feas.lq.ok) {
+      return { gate: GATE.FAIL, issues: feas.lq.issues };
+    }
+    issues.push(...feas.lq.notes);
+  } else if (p.selected === "eq") {
+    if (!feas.eq.ok) {
+      return { gate: GATE.FAIL, issues: feas.eq.issues };
+    }
+    issues.push(...feas.eq.notes);
+  } else {
+    issues.push("已选择普通危险货物路径");
+  }
+  if (!p.reasonNotOthers) {
+    issues.push("未填写未选择其他路径的原因（条件通过）");
+    return { gate: GATE.CONDITIONAL, issues };
+  }
+  return { gate: GATE.PASS, issues };
+}
+
+function computePathFeasibility() {
+  const c = state.classification;
+  const un = normalizeUn(c.unNumber);
+  const rule = RULES.unRules[un];
+  const pg = c.packingGroup;
+  const result = {
+    lq: { ok: false, issues: [], notes: [] },
+    eq: { ok: false, issues: [], notes: [] }
+  };
+  if (!rule || !pg) {
+    result.lq.issues.push("分类不完整，无法评估 LQ/EQ");
+    result.eq.issues.push("分类不完整，无法评估 LQ/EQ");
+    return result;
+  }
+  // LQ
+  const lqLimitStr = (rule.lqByPg && rule.lqByPg[pg]) || "0";
+  state.path.lq.limit = lqLimitStr;
+  const limitL = parseVolumeToLiters(lqLimitStr);
+  if (limitL === 0) {
+    result.lq.issues.push("DGL 第7a栏为 0，LQ 不可用");
+  } else {
+    const inner = parseVolumeToLiters(state.path.lq.innerQty);
+    if (inner == null) {
+      result.lq.issues.push("请填写内包装数量（L）");
+    } else if (inner > limitL) {
+      result.lq.issues.push("LQ：内包装数量 " + inner + "L 超过限值 " + lqLimitStr);
+    }
+    if (!state.path.lq.combinationOk) {
+      result.lq.issues.push("LQ：组合包装要求未确认");
+    }
+    const gross = parseFloat(state.path.lq.grossKg);
+    if (isNaN(gross)) {
+      result.lq.issues.push("LQ：请填写每件毛重");
+    } else if (gross > 30) {
+      result.lq.issues.push("LQ：演示规则每件毛重不得超过 30 kg");
+    }
+    if (!state.path.lq.markOk) {
+      result.lq.issues.push("LQ：标记要求未确认");
+    }
+    if (!result.lq.issues.length) {
+      result.lq.ok = true;
+      result.lq.notes.push("LQ 基础检查通过（DEMO 限值 " + lqLimitStr + "）");
+    }
+  }
+  // EQ
+  const eqCode = (rule.eqByPg && rule.eqByPg[pg]) || "E0";
+  state.path.eq.code = eqCode;
+  const eqDef = RULES.eqCodes[eqCode];
+  if (eqCode === "E0" || !eqDef || eqDef.inner === 0) {
+    result.eq.issues.push("EQ 代码为 E0 或不允许例外数量");
+  } else {
+    state.path.eq.innerLimit = eqDef.inner;
+    state.path.eq.outerLimit = eqDef.outer;
+    if (!state.path.eq.innerActual || !state.path.eq.outerActual) {
+      result.eq.issues.push("请填写 EQ 实际内外包装数量");
+    } else {
+      result.eq.ok = true;
+      result.eq.notes.push("EQ " + eqCode + " 已录入（须人工核对限值表，DEMO）");
+    }
+  }
+  return result;
+}
+
+function evaluatePackGate() {
+  const p = state.packing;
+  const c = state.classification;
+  const issues = [];
+  if (!p.packageId && !p.unPackageCode) {
+    return { gate: GATE.INSUFFICIENT, issues: ["未选择或录入包装"] };
+  }
+  const pi = c.matched ? (RULES.unRules[normalizeUn(c.unNumber)] || {}).packingInstruction : p.packingInstruction;
+  const piNote = RULES.packingInstructionNotes[pi || "P001"];
+  if (piNote && p.unPackageCode && piNote.allowedCodes.indexOf(p.unPackageCode) < 0) {
+    issues.push("包装代码 " + p.unPackageCode + " 不在演示包装导则 " + piNote.code + " 允许列表");
+    return { gate: GATE.FAIL, issues };
+  }
+  // 等级适配
+  const pg = c.packingGroup;
+  const allowedPerf = RULES.pgPerformanceMap[pg] || [];
+  if (pg && p.performanceRating && allowedPerf.indexOf(p.performanceRating) < 0) {
+    issues.push("包装性能等级 " + p.performanceRating + " 不满足货物包装等级 PG " + pg + " 最低要求");
+    return { gate: GATE.FAIL, issues };
+  }
+  const cap = parseFloat(p.capacityL);
+  const fill = parseFloat(p.fillL);
+  if (!isNaN(cap) && !isNaN(fill) && fill > cap) {
+    issues.push("实际装量超过标称容量");
+    return { gate: GATE.FAIL, issues };
+  }
+  const maxG = parseFloat(p.maxGrossKg);
+  const actG = parseFloat(p.actualGrossKg);
+  if (!isNaN(maxG) && !isNaN(actG) && actG > maxG) {
+    issues.push("实际毛重超过最大毛重");
+    return { gate: GATE.FAIL, issues };
+  }
+  const dens = parseFloat(p.relativeDensity);
+  const maxD = parseFloat(p.maxRelativeDensity);
+  if (!isNaN(dens) && !isNaN(maxD) && dens > maxD) {
+    issues.push("相对密度超过包装标记允许值");
+    return { gate: GATE.FAIL, issues };
+  }
+  if (!p.compatibilityStatus || p.compatibilityStatus.indexOf("未知") >= 0) {
+    issues.push("材料相容性未知，不得自动通过");
+    return { gate: GATE.EXPERT, issues };
+  }
+  if (!p.certificateCovers) {
+    issues.push("证书未覆盖当前用途/装量，不得自动通过");
+    return { gate: GATE.FAIL, issues };
+  }
+  if (!p.performanceCertificate) {
+    issues.push("缺少性能检验证书信息");
+    return { gate: GATE.INSUFFICIENT, issues };
+  }
+  return { gate: GATE.PASS, issues: ["包装基础校验通过（DEMO）"] };
+}
+
+function evaluateLabelGate() {
+  const required = buildLabelChecklist();
+  const missing = required.filter(i => !state.labels.checks[i.id]);
+  if (!state.labels.manualConfirmed) {
+    return { gate: GATE.CONDITIONAL, issues: ["标签样稿须人工确认颜色、尺寸、位置和耐久性"].concat(missing.map(m => "未勾选：" + m.text)) };
+  }
+  if (missing.length) {
+    return { gate: GATE.INSUFFICIENT, issues: missing.map(m => "未勾选：" + m.text) };
+  }
+  return { gate: GATE.PASS, issues: ["标记与标签检查清单已确认"] };
+}
+
+function buildLabelChecklist() {
+  const items = RULES.labelChecklistTemplates.common.map(x => ({ ...x }));
+  const c = state.classification;
+  const path = state.path.selected;
+  if (c.class) {
+    items.unshift({ id: "dg_label_primary", text: "危险货物主标签 Class " + c.class + " 已粘贴/确认（示意）" });
+  }
+  if (c.subsidiaryRisk) {
+    items.splice(1, 0, { id: "dg_label_sub", text: "副危险标签 Class " + c.subsidiaryRisk + " 已确认（示意）" });
+  }
+  if (c.marinePollutant === "是") {
+    items.push({ id: "mp", text: "海洋污染物标记已确认" });
+  }
+  if (path === "lq") {
+    items.push({ id: "lq_mark", text: "限量运输 LQ 标记已确认" });
+  }
+  if (path === "eq") {
+    items.push({ id: "eq_mark", text: "例外数量 EQ 标记已确认" });
+  }
+  return items;
+}
+
+function evaluateReportGate() {
+  const issues = [];
+  const stepGates = ["basic","docs","class","sp","path","pack","label"].map(k => state.gates[k] || GATE.NONE);
+  if (stepGates.includes(GATE.FAIL)) {
+    return { gate: GATE.FAIL, issues: ["存在步骤判定为不通过，不得最终放行"] };
+  }
+  if (stepGates.includes(GATE.EXPERT) && !state.approval.overrideApproved) {
+    return { gate: GATE.EXPERT, issues: ["存在需专家复核事项，尚未批准覆盖"] };
+  }
+  if (stepGates.includes(GATE.INSUFFICIENT)) {
+    return { gate: GATE.INSUFFICIENT, issues: ["存在资料不足步骤"] };
+  }
+  if (stepGates.includes(GATE.CONDITIONAL) || !state.approval.reviewer) {
+    if (!state.approval.reviewer) issues.push("未填写审核人");
+    if (stepGates.includes(GATE.CONDITIONAL)) issues.push("存在有条件通过项，完成待办前不得最终放行");
+    return { gate: GATE.CONDITIONAL, issues };
+  }
+  if (!state.approval.approver) {
+    return { gate: GATE.CONDITIONAL, issues: ["未填写批准人（条件通过）"] };
+  }
+  return { gate: GATE.PASS, issues: ["各强制步骤已通过，可内部放行（仍须正式申报审核）"] };
+}
+
+function evaluateAllGates() {
+  const map = {
+    basic: evaluateBasicGate,
+    docs: evaluateDocsGate,
+    class: evaluateClassGate,
+    sp: evaluateSpGate,
+    path: evaluatePathGate,
+    pack: evaluatePackGate,
+    label: evaluateLabelGate,
+    report: evaluateReportGate
+  };
+  state.openIssues = [];
+  Object.keys(map).forEach(k => {
+    // 跳过尚未开始的步骤：无 audit 时仅评估已访问逻辑——简化为始终可评估
+    const r = map[k]();
+    state.gates[k] = r.gate;
+    r.issues.forEach(i => state.openIssues.push({ step: k, gate: r.gate, text: i }));
+  });
+  // 汇总最终
+  state.approval.finalDecision = state.gates.report || GATE.INSUFFICIENT;
+  state.updatedAt = nowIso();
+  return state.gates;
+}
+
+function canEnterStep(stepId) {
+  if (stepId === "dashboard") return true;
+  if (!state.auditId && stepId !== "basic") return false;
+  const order = ["basic","docs","class","sp","path","pack","label","report"];
+  const idx = order.indexOf(stepId);
+  if (idx <= 0) return true;
+  // 阻断闸门：资料不足/不通过/专家未处理时，不允许越过该步进入更后步骤（有条件通过可继续）
+  for (let i = 0; i < idx; i++) {
+    const g = state.gates[order[i]];
+    if (g === GATE.FAIL || g === GATE.INSUFFICIENT) return false;
+    if (g === GATE.EXPERT && !state.approval.overrideApproved) return false;
+    if (!g || g === GATE.NONE) {
+      // 允许进入下一步进行填写，但前面步骤至少应尝试过——放宽：仅要求 basic 已有 auditId
+      if (order[i] === "basic" && !state.auditId) return false;
+    }
+  }
+  return true;
+}
+
+/* ==================== DGL / SP 载入 ==================== */
+function loadDglFromUn() {
+  const un = normalizeUn(state.classification.unNumber || state.docs.appraisalUn);
+  const rule = RULES.unRules[un];
+  if (!rule) {
+    state.classification.matched = false;
+    state.classification.dglSource = "";
+    return { ok: false, msg: "规则库无 UN" + un + "，不得自动生成分类结论。" };
+  }
+  state.classification.unNumber = rule.unNumber;
+  state.classification.properShippingName = rule.properShippingName;
+  state.classification.class = rule.class;
+  state.classification.subsidiaryRisk = rule.subsidiaryRisk || "";
+  state.classification.ems = rule.ems;
+  state.classification.matched = true;
+  state.classification.dglSource = rule.sourceReference + " [" + rule.status + "]";
+  if (!state.classification.packingGroup && rule.packingGroups.length === 1) {
+    state.classification.packingGroup = rule.packingGroups[0];
+  }
+  if (rule.marinePollutantDefault) state.classification.marinePollutant = "是";
+  state.packing.packingInstruction = rule.packingInstruction;
+  // 载入全部 SP（不允许匹配首条后停止）
+  const sps = [];
+  (rule.specialProvisions || []).forEach(code => {
+    const def = RULES.specialProvisions[code];
+    if (def) {
+      const existing = (state.sp.items || []).find(x => x.code === def.code);
+      sps.push({
+        code: def.code,
+        spKey: code,
+        confirmed: existing ? existing.confirmed : false,
+        note: existing ? existing.note : ""
+      });
+    }
+  });
+  // 演示：若产品类型为稀释剂，额外提示 SP198
+  if (state.basic.productType === "稀释剂" && !sps.find(s => s.spKey === "198")) {
+    sps.push({ code: "SP198", spKey: "198", confirmed: false, note: "" });
+  }
+  // 企业占位 SP944 始终作为附加检查提示（可选确认）
+  if (!sps.find(s => s.spKey === "944")) {
+    sps.push({ code: "SP944", spKey: "944", confirmed: false, note: "" });
+  }
+  state.sp.items = sps;
+  return { ok: true, msg: "已载入 DEMO DGL 及全部适用 SP（" + sps.map(s => s.code).join(", ") + "）" };
+}
+
+function applyPackageMaster(id) {
+  const pkg = RULES.packages.find(p => p.packageId === id);
+  if (!pkg) return;
+  state.packing.packageId = pkg.packageId;
+  state.packing.packageName = pkg.name;
+  state.packing.unPackageCode = pkg.unPackageCode;
+  state.packing.material = pkg.material;
+  state.packing.closure = pkg.closure;
+  state.packing.performanceRating = pkg.performanceRating;
+  state.packing.capacityL = String(pkg.capacityL);
+  state.packing.maxGrossKg = String(pkg.maxGrossKg);
+  state.packing.maxRelativeDensity = String(pkg.maxRelativeDensity);
+  state.packing.testPressureKPa = String(pkg.testPressureKPa);
+  state.packing.compatibilityStatus = pkg.compatibilityStatus;
+  state.packing.performanceCertificate = pkg.performanceCertificate;
+  state.packing.useAppraisalScope = pkg.useAppraisalScope;
+}
+
+/* ==================== UI 渲染 ==================== */
+function $(sel, root) { return (root || document).querySelector(sel); }
+function el(html) {
+  const t = document.createElement("template");
+  t.innerHTML = html.trim();
+  return t.content.firstChild;
+}
+
+function renderNav() {
+  const nav = $("#stepNav");
+  nav.innerHTML = "";
+  STEPS.forEach(s => {
+    const gate = s.id === "dashboard" ? GATE.NONE : (state.gates[s.id] || GATE.NONE);
+    const locked = !canEnterStep(s.id);
+    const btn = el(
+      `<button type="button" class="nav-item ${currentStep===s.id?"active":""} ${locked?"locked":""} ${gate!==GATE.NONE && gate!=="none"?"done":""}" data-step="${s.id}">
+        <span class="nav-num">${s.id==="dashboard"?"⌂":STEPS.indexOf(s)}</span>
+        <span class="nav-text"><div class="t">${s.short}</div><div class="s">${GATE_LABEL[gate] || ""}</div></span>
+        <span class="gate-dot ${gate}"></span>
+      </button>`
+    );
+    btn.addEventListener("click", () => {
+      if (locked && s.id !== currentStep) {
+        showToast("当前存在阻断项，请先完成前置步骤或补充资料。");
+        return;
+      }
+      goStep(s.id);
+    });
+    nav.appendChild(btn);
+  });
+  $("#sideRuleVer").textContent = RULES.meta.enterpriseRuleVersion;
+  $("#sideRegVer").textContent = RULES.meta.regulationVersion;
+}
+
+function updateChips() {
+  $("#chipAuditId").textContent = state.auditId || "未创建";
+  const g = state.approval.finalDecision || state.gates.report || "草稿";
+  $("#chipStatus").textContent = GATE_LABEL[g] || g;
+  const pathMap = { eq: "例外数量EQ", lq: "限量LQ", regular: "普通危险货物" };
+  $("#chipPath").textContent = pathMap[state.path.selected] || "未选择";
+}
+
+function statusBanner(gate, issues) {
+  const cls = {
+    pass: "status-pass",
+    conditional: "status-conditional",
+    fail: "status-fail",
+    insufficient: "status-insufficient",
+    expert: "status-expert"
+  }[gate] || "status-insufficient";
+  const list = (issues && issues.length)
+    ? "<ul style='margin:6px 0 0 18px;padding:0'>" + issues.map(i => "<li>" + esc(i) + "</li>").join("") + "</ul>"
+    : "";
+  return `<div class="status-banner ${cls}"><div class="code">${esc(GATE_LABEL[gate] || gate)}</div><div class="msg">${list || "—"}</div></div>`;
+}
+
+function esc(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function goStep(id) {
+  currentStep = id;
+  evaluateAllGates();
+  render();
+}
+
+function render() {
+  renderNav();
+  updateChips();
+  const root = $("#content");
+  const views = {
+    dashboard: renderDashboard,
+    basic: renderBasic,
+    docs: renderDocs,
+    class: renderClass,
+    sp: renderSp,
+    path: renderPath,
+    pack: renderPack,
+    label: renderLabel,
+    report: renderReport
+  };
+  root.innerHTML = "";
+  root.appendChild(views[currentStep]());
+  bindCommonActions();
+}
+
+function fieldHtml(opts) {
+  const { name, label, value, type, required, options, disabled, hint, full, placeholder } = opts;
+  const err = errors[name];
+  let control = "";
+  if (type === "select") {
+    control = `<select name="${name}" ${disabled?"disabled":""}>
+      <option value="">请选择</option>
+      ${(options||[]).map(o => {
+        const v = typeof o === "string" ? o : o.value;
+        const t = typeof o === "string" ? o : o.text;
+        return `<option value="${esc(v)}" ${String(value)===String(v)?"selected":""}>${esc(t)}</option>`;
+      }).join("")}
+    </select>`;
+  } else if (type === "textarea") {
+    control = `<textarea name="${name}" rows="3" ${disabled?"disabled":""} placeholder="${esc(placeholder||"")}">${esc(value||"")}</textarea>`;
+  } else {
+    control = `<input type="${type||"text"}" name="${name}" value="${esc(value||"")}" ${disabled?"disabled":""} placeholder="${esc(placeholder||"")}" />`;
+  }
+  return `<div class="field ${full?"full":""} ${err?"error":""}">
+    <label>${esc(label)}${required?"<span class='req'>*</span>":""}</label>
+    ${control}
+    ${hint?`<div class="hint">${esc(hint)}</div>`:""}
+    <div class="err">${esc(err||"")}</div>
+  </div>`;
+}
+
+function stepActions(prev, next, extraRight) {
+  return `<div class="actions no-print">
+    <div class="actions-left">
+      ${prev?`<button type="button" class="btn btn-secondary" data-go="${prev}">上一步</button>`:""}
+    </div>
+    <div class="actions-right">
+      <button type="button" class="btn btn-secondary" id="btnSaveStep">保存本步并校验</button>
+      ${extraRight||""}
+      ${next?`<button type="button" class="btn btn-primary" data-go="${next}" id="btnNext">下一步</button>`:""}
+    </div>
+  </div>`;
+}
+
+/* ---------- Dashboard ---------- */
+function renderDashboard() {
+  const counts = { draft: 0, pending: 0, done: 0 };
+  taskList.forEach(t => {
+    if (t.status === "已完成") counts.done++;
+    else if (t.status === "待补资料") counts.pending++;
+    else counts.draft++;
+  });
+  if (state.auditId) {
+    // 当前任务也计入
+  }
+  const wrap = el(`<div></div>`);
+  wrap.innerHTML = `
+    <div class="panel">
+      <h2>审核任务首页</h2>
+      <p class="lead">创建内部预审任务，按固定闸门顺序完成包装与运输标签审核。当前规则状态：<span class="tag tag-demo">${esc(RULES.meta.status)}</span></p>
+      <div class="alert alert-warn">${esc(RULES.meta.disclaimer)}</div>
+      <div class="cards">
+        <div class="stat-card"><div class="n">${taskList.filter(t=>t.status!=="已完成").length}</div><div class="l">进行中 / 待审核</div></div>
+        <div class="stat-card"><div class="n">${taskList.filter(t=>t.status==="待补资料").length}</div><div class="l">待补资料</div></div>
+        <div class="stat-card"><div class="n">${taskList.filter(t=>t.status==="已完成").length}</div><div class="l">已完成</div></div>
+        <div class="stat-card"><div class="n" style="font-size:16px;padding-top:8px">${esc(RULES.meta.regulationVersion)}</div><div class="l">IMDG 演示法规版本</div></div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        <button type="button" class="btn btn-primary" id="btnNewTask">＋ 新建审核任务</button>
+        <button type="button" class="btn btn-secondary" id="btnContinue" ${state.auditId?"":"disabled"}>继续当前任务</button>
+      </div>
+      <div class="grid" style="margin-bottom:12px">
+        ${fieldHtml({ name: "q_kw", label: "查询（编号/产品/物料号）", value: "", placeholder: "输入关键字后点查询" })}
+        ${fieldHtml({ name: "q_status", label: "状态", type: "select", options: ["全部","草稿","待补资料","已完成"], value: "全部" })}
+      </div>
+      <button type="button" class="btn btn-secondary" id="btnSearch">查询</button>
+      <div class="table-wrap" id="taskTableWrap"></div>
+    </div>`;
+  setTimeout(() => {
+    const newBtn = $("#btnNewTask");
+    const contBtn = $("#btnContinue");
+    const searchBtn = $("#btnSearch");
+    if (newBtn) newBtn.onclick = () => newTask();
+    if (contBtn) contBtn.onclick = () => { if (state.auditId) goStep("basic"); };
+    if (searchBtn) searchBtn.onclick = () => drawTaskTable();
+    drawTaskTable();
+  }, 0);
+  // 注意：innerHTML 前导空白会使 firstChild 变成文本节点，必须用 firstElementChild
+  return wrap.firstElementChild || wrap;
+}
+
+function drawTaskTable() {
+  const kw = (($("input[name=q_kw]") || {}).value || "").trim().toLowerCase();
+  const st = (($("select[name=q_status]") || {}).value) || "全部";
+  let rows = taskList.slice();
+  if (state.auditId && !taskList.find(t => t.auditId === state.auditId)) {
+    rows.unshift(snapshotTaskMeta(state));
+  }
+  rows = rows.filter(t => {
+    if (st !== "全部" && t.status !== st) return false;
+    if (!kw) return true;
+    return (t.auditId + t.productName + t.materialNo).toLowerCase().indexOf(kw) >= 0;
+  });
+  const wrap = $("#taskTableWrap");
+  if (!wrap) return;
+  if (!rows.length) {
+    wrap.innerHTML = `<div class="empty">暂无任务。请新建审核任务，或导入审核 JSON。</div>`;
+    return;
+  }
+  wrap.innerHTML = `<table class="data"><thead><tr>
+    <th>审核编号</th><th>产品</th><th>物料号</th><th>目的港</th><th>出运日期</th><th>状态</th><th>操作</th>
+  </tr></thead><tbody>
+  ${rows.map(t => `<tr>
+    <td class="mono">${esc(t.auditId)}</td>
+    <td>${esc(t.productName)}</td>
+    <td>${esc(t.materialNo)}</td>
+    <td>${esc(t.destinationPort)}</td>
+    <td>${esc(t.etd)}</td>
+    <td>${esc(t.status)}</td>
+    <td><span class="clickable" data-open="${esc(t.auditId)}">打开</span></td>
+  </tr>`).join("")}
+  </tbody></table>`;
+  wrap.querySelectorAll("[data-open]").forEach(a => {
+    a.onclick = () => openTask(a.getAttribute("data-open"));
+  });
+}
+
+function snapshotTaskMeta(s) {
+  const g = s.approval.finalDecision || s.gates.report;
+  let status = "草稿";
+  if (g === GATE.PASS || g === GATE.CONDITIONAL) status = "已完成";
+  if (g === GATE.INSUFFICIENT) status = "待补资料";
+  if (g === GATE.FAIL || g === GATE.EXPERT) status = "待补资料";
+  return {
+    auditId: s.auditId,
+    productName: s.basic.productName,
+    materialNo: s.basic.materialNo,
+    destinationPort: s.basic.destinationPort,
+    etd: s.basic.etd,
+    status,
+    data: null
+  };
+}
+
+function newTask() {
+  syncCurrentToList();
+  state = createEmptyState();
+  state.auditId = genAuditId();
+  state.createdAt = nowIso();
+  state.updatedAt = state.createdAt;
+  state.ruleVersionLocked = RULES.meta.enterpriseRuleVersion;
+  state.regulationVersionLocked = RULES.meta.regulationVersion;
+  errors = {};
+  goStep("basic");
+}
+
+function openTask(auditId) {
+  if (state.auditId === auditId) { goStep("basic"); return; }
+  const t = taskList.find(x => x.auditId === auditId);
+  if (t && t.data) {
+    syncCurrentToList();
+    state = t.data;
+    goStep("basic");
+  } else if (state.auditId === auditId) {
+    goStep("basic");
+  } else {
+    showToast("该任务仅有摘要。请通过「导入审核JSON」恢复完整数据。");
+  }
+}
+
+function syncCurrentToList() {
+  if (!state.auditId) return;
+  const meta = snapshotTaskMeta(state);
+  meta.data = JSON.parse(JSON.stringify(state));
+  const idx = taskList.findIndex(t => t.auditId === state.auditId);
+  if (idx >= 0) taskList[idx] = meta;
+  else taskList.unshift(meta);
+}
+
+/* ---------- Step 1 ---------- */
+function renderBasic() {
+  const b = state.basic;
+  const g = evaluateBasicGate();
+  const panel = el(`<div class="panel"></div>`);
+  panel.innerHTML = `
+    <h2>步骤1：基本信息</h2>
+    <p class="lead">创建任务并锁定计划出运日期、运输方式与规则版本。</p>
+    ${statusBanner(g.gate, g.issues)}
+    <div class="grid">
+      ${fieldHtml({ name: "auditId", label: "审核编号", value: state.auditId, disabled: true, hint: "自动生成且唯一" })}
+      ${fieldHtml({ name: "applicant", label: "申请人", value: state.applicant, required: true })}
+      ${fieldHtml({ name: "department", label: "部门", value: state.department })}
+      ${fieldHtml({ name: "orderNo", label: "订单号", value: state.orderNo })}
+      ${fieldHtml({ name: "productName", label: "产品名称", value: b.productName, required: true })}
+      ${fieldHtml({ name: "materialNo", label: "内部物料号", value: b.materialNo, required: true })}
+      ${fieldHtml({ name: "productType", label: "产品类型", value: b.productType, type: "select", options: RULES.productTypes, required: true })}
+      ${fieldHtml({ name: "formulaVersion", label: "配方版本", value: b.formulaVersion })}
+      ${fieldHtml({ name: "factory", label: "生产工厂", value: b.factory })}
+      ${fieldHtml({ name: "destinationCountry", label: "出口国家/地区", value: b.destinationCountry, required: true })}
+      ${fieldHtml({ name: "destinationPort", label: "目的港", value: b.destinationPort, required: true })}
+      ${fieldHtml({ name: "etd", label: "预计出运日期", value: b.etd, type: "date", required: true })}
+      ${fieldHtml({ name: "transportMode", label: "运输方式", value: "海运", disabled: true, hint: "V1 固定为海运" })}
+      ${fieldHtml({ name: "ruleVer", label: "锁定企业规则版本", value: state.ruleVersionLocked, disabled: true })}
+      ${fieldHtml({ name: "regVer", label: "锁定法规版本", value: state.regulationVersionLocked, disabled: true })}
+    </div>
+    ${stepActions("dashboard", "docs")}`;
+  return panel;
+}
+
+/* ---------- Step 2 ---------- */
+function renderDocs() {
+  const d = state.docs;
+  // 首次进入时用步骤1品名预填空白的 SDS/鉴定书名称，避免无谓阻断
+  if (!d.sdsProductName && state.basic.productName) d.sdsProductName = state.basic.productName;
+  if (!d.appraisalProductName && state.basic.productName) d.appraisalProductName = state.basic.productName;
+  const g = evaluateDocsGate();
+  const panel = el(`<div class="panel"></div>`);
+  const checks = RULES.documentTypes.map(doc => `
+    <label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <input type="checkbox" name="file_${doc.id}" ${d.files[doc.id]?"checked":""} />
+      <span>${esc(doc.name)}</span>
+    </label>`).join("");
+  const nameHint = namesCorrespond(d.sdsProductName || state.basic.productName, state.basic.productName)
+    && namesCorrespond(d.appraisalProductName || state.basic.productName, state.basic.productName);
+  panel.innerHTML = `
+    <h2>步骤2：SDS 与鉴定资料</h2>
+    <p class="lead">登记资料完整性、有效期与关键字段一致性。离线版以勾选登记代替实际上传。</p>
+    ${statusBanner(g.gate, g.issues)}
+    <div class="alert alert-info">一致性规则：DOC-001 UN不一致→专家复核；DOC-002 过期→阻断；DOC-003 名称无法对应→资料不足（允许「油漆/涂料」前缀、空格与符号差异）；DOC-004 配方变更→条件通过；DOC-005 仅客户标签→禁止自动判定。</div>
+    <div class="alert ${nameHint ? "alert-ok" : "alert-warn"}">
+      步骤1 基本信息产品名称：<strong>${esc(state.basic.productName || "（未填写）")}</strong>
+      ${nameHint ? "（与本页名称可对应）" : "（与本页 SDS/鉴定书名称未能对应，这是无法点「下一步」的常见原因）"}
+    </div>
+    <h3 style="font-size:14px;margin:0 0 10px;color:var(--steel)">资料登记</h3>
+    <div style="margin-bottom:16px">${checks}</div>
+    <div class="grid">
+      ${fieldHtml({ name: "sdsUn", label: "SDS第14部分 UN号", value: d.sdsUn, required: true, placeholder: "如 1263" })}
+      ${fieldHtml({ name: "appraisalUn", label: "鉴定书 UN号", value: d.appraisalUn, required: true, placeholder: "如 1263" })}
+      ${fieldHtml({ name: "flashPoint", label: "闪点", value: d.flashPoint, placeholder: "如 28°C" })}
+      ${fieldHtml({ name: "manufacturer", label: "生产单位", value: d.manufacturer })}
+      ${fieldHtml({ name: "sdsProductName", label: "SDS产品名称", value: d.sdsProductName, hint: "可与步骤1相差「油漆/涂料」等前缀" })}
+      ${fieldHtml({ name: "appraisalProductName", label: "鉴定书产品名称", value: d.appraisalProductName, hint: "须能对应步骤1及 SDS 产品名称" })}
+      ${fieldHtml({ name: "reportIssueDate", label: "报告签发日期", value: d.reportIssueDate, type: "date" })}
+      ${fieldHtml({ name: "reportExpiryDate", label: "报告到期日期", value: d.reportExpiryDate, type: "date", required: true })}
+      ${fieldHtml({ name: "docsNotes", label: "备注", value: d.notes, type: "textarea", full: true })}
+    </div>
+    <div class="no-print" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">
+      <button type="button" class="btn btn-secondary" id="btnSyncFromBasic">用步骤1名称填入 SDS/鉴定书</button>
+      <button type="button" class="btn btn-secondary" id="btnSyncToBasic">以 SDS 名称为准写回步骤1</button>
+    </div>
+    <div style="margin-top:12px">
+      <label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input type="checkbox" name="formulaChanged" ${d.formulaChanged?"checked":""} />
+        <span>配方或关键原料已发生变化（DOC-004）</span>
+      </label>
+      <label style="display:flex;gap:8px;align-items:center">
+        <input type="checkbox" name="unFromCustomerLabelOnly" ${d.unFromCustomerLabelOnly?"checked":""} />
+        <span>UN号仅来自客户标签，无鉴定/SDS支撑（DOC-005）</span>
+      </label>
+    </div>
+    ${stepActions("basic", "class")}`;
+  setTimeout(() => {
+    const fromBasic = $("#btnSyncFromBasic");
+    const toBasic = $("#btnSyncToBasic");
+    if (fromBasic) fromBasic.onclick = () => {
+      collectForm();
+      if (!state.basic.productName) { showToast("步骤1尚未填写产品名称"); return; }
+      state.docs.sdsProductName = state.basic.productName;
+      state.docs.appraisalProductName = state.basic.productName;
+      evaluateAllGates();
+      render();
+    };
+    if (toBasic) toBasic.onclick = () => {
+      collectForm();
+      const name = state.docs.sdsProductName || state.docs.appraisalProductName;
+      if (!name) { showToast("请先填写 SDS 或鉴定书产品名称"); return; }
+      state.basic.productName = name;
+      if (state.docs.appraisalProductName && !state.docs.sdsProductName) {
+        state.docs.sdsProductName = name;
+      }
+      evaluateAllGates();
+      render();
+    };
+  }, 0);
+  return panel;
+}
+
+/* ---------- Step 3 ---------- */
+function renderClass() {
+  const c = state.classification;
+  const g = evaluateClassGate();
+  const un = normalizeUn(c.unNumber);
+  const rule = RULES.unRules[un];
+  const pgOpts = rule ? rule.packingGroups : ["I","II","III"];
+  const panel = el(`<div class="panel"></div>`);
+  panel.innerHTML = `
+    <h2>步骤3：运输分类</h2>
+    <p class="lead">从受控 DGL（演示）匹配 UN 条目。无匹配时不得自动生成结论。</p>
+    ${statusBanner(g.gate, g.issues)}
+    <div class="alert alert-warn">当前匹配数据标记为 <span class="tag tag-demo">DEMO</span>，非正式法规结论。</div>
+    <div class="grid">
+      ${fieldHtml({ name: "unNumber", label: "UN Number", value: c.unNumber, required: true, placeholder: "1263 / 3066 / 3469 / 3470", hint: "重点演示：UN1263、3066、3469、3470" })}
+      ${fieldHtml({ name: "packingGroup", label: "Packing Group", value: c.packingGroup, type: "select", options: pgOpts, required: true })}
+      ${fieldHtml({ name: "properShippingName", label: "Proper Shipping Name", value: c.properShippingName, disabled: true })}
+      ${fieldHtml({ name: "technicalName", label: "Technical Name", value: c.technicalName, hint: "SP163/SP274 可能要求" })}
+      ${fieldHtml({ name: "class", label: "Class", value: c.class, disabled: true })}
+      ${fieldHtml({ name: "subsidiaryRisk", label: "Subsidiary Risk", value: c.subsidiaryRisk, disabled: true })}
+      ${fieldHtml({ name: "marinePollutant", label: "Marine Pollutant", value: c.marinePollutant, type: "select", options: ["否","是"] })}
+      ${fieldHtml({ name: "ems", label: "EmS", value: c.ems, disabled: true })}
+      ${fieldHtml({ name: "evidence", label: "分类证据", value: c.evidence, type: "select", options: ["鉴定报告","专家批准记录"], required: true })}
+      ${fieldHtml({ name: "dglSource", label: "DGL来源", value: c.dglSource, disabled: true, full: true })}
+    </div>
+    <div style="margin-top:12px" class="no-print">
+      <button type="button" class="btn btn-primary" id="btnLoadDgl">从鉴定UN / 输入UN 载入 DGL 与全部 SP</button>
+    </div>
+    ${stepActions("docs", "sp")}`;
+  setTimeout(() => {
+    const btn = $("#btnLoadDgl");
+    if (btn) btn.onclick = () => {
+      collectForm();
+      if (!state.classification.unNumber && state.docs.appraisalUn) {
+        state.classification.unNumber = state.docs.appraisalUn;
+      }
+      const r = loadDglFromUn();
+      evaluateAllGates();
+      showToast(r.msg);
+      render();
+    };
+  }, 0);
+  return panel;
+}
+
+/* ---------- Step 4 ---------- */
+function renderSp() {
+  const g = evaluateSpGate();
+  const panel = el(`<div class="panel"></div>`);
+  const items = state.sp.items || [];
+  let body = "";
+  if (!items.length) {
+    body = `<div class="alert alert-gray">尚未载入 SP。请先在步骤3载入 DGL。</div>`;
+  } else {
+    body = items.map((it, idx) => {
+      const def = RULES.specialProvisions[it.spKey] || {};
+      return `<div class="sp-card">
+        <h4>${esc(it.code)} · ${esc(def.title || "")}</h4>
+        <div class="sp-meta">
+          <span class="tag tag-demo">DEMO</span>
+          <span class="tag tag-muted">${esc(def.citation || "")}</span>
+        </div>
+        <p style="font-size:13px;margin:0 0 6px"><strong>适用条件：</strong>${esc(def.applicability || "")}</p>
+        <p style="font-size:13px;margin:0 0 6px"><strong>所需输入：</strong>${esc((def.requiredInputs||[]).join("、"))}</p>
+        <p style="font-size:13px;margin:0 0 6px"><strong>处理要求：</strong>${esc(def.handling || "")}</p>
+        <p style="font-size:13px;margin:0 0 10px"><strong>企业解释：</strong>${esc(def.enterpriseNote || "")}</p>
+        <label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+          <input type="checkbox" name="sp_confirmed_${idx}" ${it.confirmed?"checked":""} />
+          <span>已分别确认本条 SP</span>
+        </label>
+        <div class="field">
+          <label>确认说明 / 证据</label>
+          <input type="text" name="sp_note_${idx}" value="${esc(it.note||"")}" placeholder="填写确认依据" />
+        </div>
+      </div>`;
+    }).join("");
+  }
+  panel.innerHTML = `
+    <h2>步骤4：特殊规定 SP</h2>
+    <p class="lead">根据 UN 条目取得<strong>全部</strong>适用 SP，逐条确认（不允许匹配首条后停止）。预留 SP163 / 198 / 232 / 274 / 944。</p>
+    ${statusBanner(g.gate, g.issues)}
+    ${body}
+    <div class="no-print" style="margin:8px 0 0">
+      <button type="button" class="btn btn-secondary" id="btnConfirmAllSp">全部标记为已确认</button>
+    </div>
+    ${stepActions("class", "path")}`;
+  setTimeout(() => {
+    const btn = $("#btnConfirmAllSp");
+    if (btn) btn.onclick = () => {
+      collectForm();
+      (state.sp.items || []).forEach(it => {
+        it.confirmed = true;
+        if (!it.note) it.note = "已确认";
+      });
+      evaluateAllGates();
+      render();
+    };
+  }, 0);
+  return panel;
+}
+
+/* ---------- Step 5 ---------- */
+function renderPath() {
+  collectPathPreview();
+  const feas = computePathFeasibility();
+  const g = evaluatePathGate();
+  const p = state.path;
+  const panel = el(`<div class="panel"></div>`);
+  panel.innerHTML = `
+    <h2>步骤5：运输路径</h2>
+    <p class="lead">独立评估 EQ、LQ 与普通危险货物路径，由业务选择实际路径并记录未选原因。</p>
+    ${statusBanner(g.gate, g.issues)}
+    <div class="path-grid">
+      <div class="path-card ${p.selected==="eq"?"selected":""} ${feas.eq.ok?"":"disabled"}" data-path="eq">
+        <h4>例外数量 EQ</h4>
+        <p>${feas.eq.ok ? "初步可行" : "不可行 / 信息不足"}</p>
+        <p style="margin-top:6px">${esc((feas.eq.issues.concat(feas.eq.notes)).slice(0,2).join("；") || "—")}</p>
+      </div>
+      <div class="path-card ${p.selected==="lq"?"selected":""} ${feas.lq.ok || p.selected==="lq"?"":""}" data-path="lq">
+        <h4>限量运输 LQ</h4>
+        <p>7a 限值：${esc(p.lq.limit || "—")}</p>
+        <p style="margin-top:6px">${esc((feas.lq.issues.slice(0,2).join("；")) || (feas.lq.ok?"初步可行":"请完善 LQ 输入"))}</p>
+      </div>
+      <div class="path-card ${p.selected==="regular"?"selected":""}" data-path="regular">
+        <h4>普通危险货物</h4>
+        <p>按完整危包与标签要求运输</p>
+      </div>
+    </div>
+    <h3 style="font-size:14px;margin:18px 0 10px;color:var(--steel)">LQ 输入</h3>
+    <div class="grid">
+      ${fieldHtml({ name: "lq_limit", label: "7a 限值（自动）", value: p.lq.limit, disabled: true })}
+      ${fieldHtml({ name: "lq_innerQty", label: "内包装数量", value: p.lq.innerQty, placeholder: "如 1 L" })}
+      ${fieldHtml({ name: "lq_grossKg", label: "每件毛重 kg", value: p.lq.grossKg, type: "number" })}
+    </div>
+    <label style="display:flex;gap:8px;align-items:center;margin:8px 0">
+      <input type="checkbox" name="lq_combinationOk" ${p.lq.combinationOk?"checked":""} /> 组合包装符合要求
+    </label>
+    <label style="display:flex;gap:8px;align-items:center;margin:8px 0 16px">
+      <input type="checkbox" name="lq_markOk" ${p.lq.markOk?"checked":""} /> LQ 标记 / 单证要求已核对
+    </label>
+    <h3 style="font-size:14px;margin:0 0 10px;color:var(--steel)">EQ 输入</h3>
+    <div class="grid">
+      ${fieldHtml({ name: "eq_code", label: "7b 代码（自动）", value: p.eq.code, disabled: true })}
+      ${fieldHtml({ name: "eq_innerLimit", label: "内包装限值", value: p.eq.innerLimit, disabled: true })}
+      ${fieldHtml({ name: "eq_outerLimit", label: "外包装限值", value: p.eq.outerLimit, disabled: true })}
+      ${fieldHtml({ name: "eq_innerActual", label: "实际内包装数量", value: p.eq.innerActual })}
+      ${fieldHtml({ name: "eq_outerActual", label: "实际外包装数量", value: p.eq.outerActual })}
+    </div>
+    <div class="grid" style="margin-top:12px">
+      ${fieldHtml({ name: "reasonNotOthers", label: "未选择其他路径的原因", value: p.reasonNotOthers, type: "textarea", full: true, required: true })}
+    </div>
+    ${stepActions("sp", "pack")}`;
+  setTimeout(() => {
+    panel.querySelectorAll(".path-card").forEach(card => {
+      card.addEventListener("click", () => {
+        collectForm();
+        state.path.selected = card.getAttribute("data-path");
+        render();
+      });
+    });
+  }, 0);
+  return panel;
+}
+
+function collectPathPreview() {
+  // no-op placeholder for future live preview
+}
+
+/* ---------- Step 6 ---------- */
+function renderPack() {
+  const p = state.packing;
+  const g = evaluatePackGate();
+  const c = state.classification;
+  const rule = RULES.unRules[normalizeUn(c.unNumber)];
+  const pi = (rule && rule.packingInstruction) || p.packingInstruction || "P001";
+  const piNote = RULES.packingInstructionNotes[pi];
+  const panel = el(`<div class="panel"></div>`);
+  const pkgOpts = RULES.packages.map(x => ({ value: x.packageId, text: x.packageId + " · " + x.name }));
+  // 推荐/禁止
+  let tips = "";
+  if (piNote) {
+    const allowed = RULES.packages.filter(pk => piNote.allowedCodes.indexOf(pk.unPackageCode) >= 0);
+    const banned = RULES.packages.filter(pk => piNote.allowedCodes.indexOf(pk.unPackageCode) < 0);
+    tips = `<div class="alert alert-info"><strong>包装导则 ${esc(pi)}</strong>（DEMO）：${esc(piNote.note)}<br/>
+      推荐/可接受：${allowed.map(a=>esc(a.unPackageCode+" "+a.name)).join("；") || "—"}<br/>
+      ${banned.length ? "主数据中不在导则列表：" + banned.map(a=>esc(a.unPackageCode)).join(", ") : ""}</div>`;
+  }
+  panel.innerHTML = `
+    <h2>步骤6：包装审核</h2>
+    <p class="lead">依据包装导则与包装主数据校验实际运输包装。证书未覆盖、相容性未知或导则未确认不得自动通过。</p>
+    ${statusBanner(g.gate, g.issues)}
+    ${tips}
+    <div class="grid">
+      ${fieldHtml({ name: "packageId", label: "包装主数据", value: p.packageId, type: "select", options: pkgOpts })}
+      ${fieldHtml({ name: "packageName", label: "包装名称", value: p.packageName })}
+      ${fieldHtml({ name: "unPackageCode", label: "包装代码", value: p.unPackageCode, placeholder: "1A1 / 1H1 / 4G" })}
+      ${fieldHtml({ name: "material", label: "材质", value: p.material })}
+      ${fieldHtml({ name: "closure", label: "开口形式", value: p.closure })}
+      ${fieldHtml({ name: "performanceRating", label: "X/Y/Z 等级", value: p.performanceRating, type: "select", options: ["X","Y","Z"] })}
+      ${fieldHtml({ name: "capacityL", label: "标称容量 L", value: p.capacityL, type: "number" })}
+      ${fieldHtml({ name: "fillL", label: "实际装量 L", value: p.fillL, type: "number", required: true })}
+      ${fieldHtml({ name: "maxGrossKg", label: "最大毛重 kg", value: p.maxGrossKg, type: "number" })}
+      ${fieldHtml({ name: "actualGrossKg", label: "实际毛重 kg", value: p.actualGrossKg, type: "number", required: true })}
+      ${fieldHtml({ name: "relativeDensity", label: "相对密度", value: p.relativeDensity, type: "number", required: true })}
+      ${fieldHtml({ name: "maxRelativeDensity", label: "允许最大相对密度", value: p.maxRelativeDensity, type: "number" })}
+      ${fieldHtml({ name: "testPressureKPa", label: "试验压力 kPa", value: p.testPressureKPa, type: "number" })}
+      ${fieldHtml({ name: "compatibilityStatus", label: "相容性", value: p.compatibilityStatus })}
+      ${fieldHtml({ name: "performanceCertificate", label: "性能证书编号", value: p.performanceCertificate })}
+      ${fieldHtml({ name: "useAppraisalScope", label: "使用鉴定覆盖范围", value: p.useAppraisalScope, full: true })}
+      ${fieldHtml({ name: "packingInstruction", label: "包装导则", value: pi, disabled: true })}
+    </div>
+    <label style="display:flex;gap:8px;align-items:center;margin-top:12px">
+      <input type="checkbox" name="certificateCovers" ${p.certificateCovers?"checked":""} />
+      <span>性能检验 / 使用鉴定证书已覆盖当前产品、包装与装量</span>
+    </label>
+    ${stepActions("path", "label")}`;
+  setTimeout(() => {
+    const sel = panel.querySelector("select[name=packageId]");
+    if (sel) sel.addEventListener("change", () => {
+      applyPackageMaster(sel.value);
+      render();
+    });
+  }, 0);
+  return panel;
+}
+
+/* ---------- Step 7 ---------- */
+function renderLabel() {
+  const g = evaluateLabelGate();
+  const items = buildLabelChecklist();
+  const c = state.classification;
+  const panel = el(`<div class="panel"></div>`);
+  const previews = [];
+  if (c.class === "3" || c.subsidiaryRisk === "3") previews.push(`<div class="lbl class3"><strong>CLASS 3</strong>易燃液体<br/>示意</div>`);
+  if (c.class === "8" || c.subsidiaryRisk === "8") previews.push(`<div class="lbl class8"><strong>CLASS 8</strong>腐蚀性<br/>示意</div>`);
+  if (c.marinePollutant === "是") previews.push(`<div class="lbl mp"><strong>海洋污染物</strong>示意</div>`);
+  if (state.path.selected === "lq") previews.push(`<div class="lbl lq"><strong>LQ</strong>限量标记示意</div>`);
+  if (state.path.selected === "eq") previews.push(`<div class="lbl"><strong>EQ</strong>例外数量标记示意</div>`);
+  previews.push(`<div class="lbl"><strong>UN ${esc(c.unNumber||"????")}</strong>${esc(c.properShippingName||"")}</div>`);
+
+  panel.innerHTML = `
+    <h2>步骤7：标记与标签</h2>
+    <p class="lead">区分 GHS 产品标签、危险货物包件标签、UN/运输名称、海洋污染物、LQ/EQ、方向箭头与运输组件标牌。图片仅示意。</p>
+    ${statusBanner(g.gate, g.issues)}
+    <div class="alert alert-warn">标签图片仅作示意，正式样稿须人工确认颜色、尺寸、位置和耐久性。</div>
+    <div class="label-preview">${previews.join("")}</div>
+    <ul class="check-list">
+      ${items.map(it => `<li>
+        <input type="checkbox" name="lbl_${it.id}" ${state.labels.checks[it.id]?"checked":""} />
+        <span>${esc(it.text)}</span>
+      </li>`).join("")}
+    </ul>
+    <label style="display:flex;gap:8px;align-items:center;margin:14px 0">
+      <input type="checkbox" name="manualConfirmed" ${state.labels.manualConfirmed?"checked":""} />
+      <span><strong>人工确认</strong>：已核对正式样稿的颜色、尺寸、位置与耐久性</span>
+    </label>
+    <div class="grid">
+      ${fieldHtml({ name: "labelNotes", label: "标签备注", value: state.labels.notes, type: "textarea", full: true })}
+    </div>
+    ${stepActions("pack", "report")}`;
+  return panel;
+}
+
+/* ---------- Step 8 ---------- */
+function renderReport() {
+  evaluateAllGates();
+  const g = state.gates.report;
+  const finalGate = g;
+  const stampCls = {
+    pass: "stamp-pass",
+    conditional: "stamp-conditional",
+    fail: "stamp-fail",
+    insufficient: "stamp-insufficient",
+    expert: "stamp-expert"
+  }[finalGate] || "stamp-insufficient";
+  const pathMap = { eq: "例外数量 EQ", lq: "限量运输 LQ", regular: "普通危险货物" };
+  const stepRows = ["basic","docs","class","sp","path","pack","label"].map(k => {
+    const label = STEPS.find(s => s.id === k).short;
+    return `<tr><td>${esc(label)}</td><td>${esc(GATE_LABEL[state.gates[k]]||"—")}</td>
+      <td>${esc(state.openIssues.filter(i=>i.step===k).map(i=>i.text).join("；") || "—")}</td></tr>`;
+  }).join("");
+
+  const panel = el(`<div class="panel"></div>`);
+  panel.innerHTML = `
+    <h2>步骤8：报告与审批</h2>
+    <p class="lead">汇总证据、异常、人工覆盖与审批状态，生成结论报告。可打印或另存为 PDF。</p>
+    ${statusBanner(finalGate, state.openIssues.filter(i=>i.step==="report").map(i=>i.text))}
+    <div class="no-print grid" style="margin-bottom:16px">
+      ${fieldHtml({ name: "reviewer", label: "审核人", value: state.approval.reviewer, required: true })}
+      ${fieldHtml({ name: "approver", label: "批准人", value: state.approval.approver })}
+      ${fieldHtml({ name: "overrideReason", label: "人工覆盖原因", value: state.approval.overrideReason, type: "textarea", full: true, hint: "修改自动结果时必须填写原因、证据和适用范围" })}
+      ${fieldHtml({ name: "comments", label: "审批意见", value: state.approval.comments, type: "textarea", full: true })}
+    </div>
+    <label class="no-print" style="display:flex;gap:8px;align-items:center;margin-bottom:16px">
+      <input type="checkbox" name="overrideApproved" ${state.approval.overrideApproved?"checked":""} />
+      <span>专家/第二人已批准高风险覆盖（不改变原始自动判断记录）</span>
+    </label>
+    <div class="actions no-print" style="margin-top:0">
+      <div class="actions-left">
+        <button type="button" class="btn btn-secondary" data-go="label">上一步</button>
+      </div>
+      <div class="actions-right">
+        <button type="button" class="btn btn-secondary" id="btnSaveStep">保存并重新汇总</button>
+        <button type="button" class="btn btn-primary" id="btnPrint">打印 / 另存PDF</button>
+      </div>
+    </div>
+
+    <div class="report-box" id="reportPrintArea">
+      <div class="final-stamp ${stampCls}">${esc(GATE_LABEL[finalGate] || finalGate)}</div>
+      <div class="disclaimer">${esc(RULES.meta.disclaimer)} 规则状态：${esc(RULES.meta.status)}。法规版本：${esc(state.regulationVersionLocked)}；企业规则：${esc(state.ruleVersionLocked)}。</div>
+
+      <h3>1. 审核概况</h3>
+      <div class="report-kv">
+        <div class="k">审核编号</div><div>${esc(state.auditId)}</div>
+        <div class="k">产品 / 物料号</div><div>${esc(state.basic.productName)} / ${esc(state.basic.materialNo)}</div>
+        <div class="k">产品类型</div><div>${esc(state.basic.productType)}</div>
+        <div class="k">订单号</div><div>${esc(state.orderNo || "—")}</div>
+        <div class="k">目的地</div><div>${esc(state.basic.destinationCountry)} · ${esc(state.basic.destinationPort)}</div>
+        <div class="k">运输方式 / ETD</div><div>${esc(state.basic.transportMode)} / ${esc(state.basic.etd)}</div>
+        <div class="k">申请人 / 部门</div><div>${esc(state.applicant)} / ${esc(state.department)}</div>
+        <div class="k">创建 / 更新时间</div><div>${esc(state.createdAt)} / ${esc(state.updatedAt)}</div>
+      </div>
+
+      <h3>2. 运输分类</h3>
+      <div class="report-kv">
+        <div class="k">UN / PSN</div><div>UN${esc(state.classification.unNumber)} · ${esc(state.classification.properShippingName)}</div>
+        <div class="k">技术名称</div><div>${esc(state.classification.technicalName || "—")}</div>
+        <div class="k">类别 / 副危险 / PG</div><div>${esc(state.classification.class)} / ${esc(state.classification.subsidiaryRisk||"—")} / ${esc(state.classification.packingGroup)}</div>
+        <div class="k">海洋污染物 / EmS</div><div>${esc(state.classification.marinePollutant)} / ${esc(state.classification.ems)}</div>
+        <div class="k">证据 / DGL</div><div>${esc(state.classification.evidence)} · ${esc(state.classification.dglSource)}</div>
+      </div>
+
+      <h3>3. 特殊规定 SP</h3>
+      <div>${(state.sp.items||[]).map(i => esc(i.code) + (i.confirmed?" ✓":" ✗") + (i.note?"（"+esc(i.note)+"）":"")).join("；") || "无"}</div>
+
+      <h3>4. 运输路径</h3>
+      <div class="report-kv">
+        <div class="k">选择路径</div><div>${esc(pathMap[state.path.selected] || "未选择")}</div>
+        <div class="k">LQ 7a / 内包装 / 毛重</div><div>${esc(state.path.lq.limit)} / ${esc(state.path.lq.innerQty)} / ${esc(state.path.lq.grossKg)} kg</div>
+        <div class="k">EQ 代码</div><div>${esc(state.path.eq.code)} · 内 ${esc(state.path.eq.innerActual)} / 外 ${esc(state.path.eq.outerActual)}</div>
+        <div class="k">未选其他路径原因</div><div>${esc(state.path.reasonNotOthers || "—")}</div>
+      </div>
+
+      <h3>5. 最终包装</h3>
+      <div class="report-kv">
+        <div class="k">包装</div><div>${esc(state.packing.packageName)}（${esc(state.packing.packageId)}）</div>
+        <div class="k">UN代码 / 等级</div><div>${esc(state.packing.unPackageCode)} / ${esc(state.packing.performanceRating)}</div>
+        <div class="k">容量 / 装量 / 毛重</div><div>${esc(state.packing.capacityL)} L / ${esc(state.packing.fillL)} L / ${esc(state.packing.actualGrossKg)} kg</div>
+        <div class="k">密度 / 相容性</div><div>${esc(state.packing.relativeDensity)} / ${esc(state.packing.compatibilityStatus)}</div>
+        <div class="k">证书</div><div>${esc(state.packing.performanceCertificate)} · 覆盖：${state.packing.certificateCovers?"是":"否"}</div>
+        <div class="k">使用鉴定范围</div><div>${esc(state.packing.useAppraisalScope || "—")}</div>
+      </div>
+
+      <h3>6. 标记与标签</h3>
+      <div>${buildLabelChecklist().map(i => (state.labels.checks[i.id]?"✓":"○") + " " + esc(i.text)).join("<br/>")}</div>
+      <div style="margin-top:8px">人工确认样稿：${state.labels.manualConfirmed?"是":"否"}；备注：${esc(state.labels.notes||"—")}</div>
+
+      <h3>7. 各步判定</h3>
+      <div class="table-wrap"><table class="data"><thead><tr><th>步骤</th><th>状态</th><th>说明</th></tr></thead><tbody>${stepRows}</tbody></table></div>
+
+      <h3>8. 异常与人工覆盖</h3>
+      <div>未决事项：${state.openIssues.filter(i => i.gate !== GATE.PASS).map(i => esc("["+GATE_LABEL[i.gate]+"] "+i.text)).join("；") || "无"}</div>
+      <div style="margin-top:6px">覆盖原因：${esc(state.approval.overrideReason || "—")}；第二人批准：${state.approval.overrideApproved?"是":"否"}</div>
+
+      <h3>9. 审批</h3>
+      <div class="report-kv">
+        <div class="k">审核人</div><div>${esc(state.approval.reviewer || "—")}</div>
+        <div class="k">批准人</div><div>${esc(state.approval.approver || "—")}</div>
+        <div class="k">意见</div><div>${esc(state.approval.comments || "—")}</div>
+        <div class="k">最终状态</div><div><strong>${esc(GATE_LABEL[finalGate])}</strong></div>
+        <div class="k">报告生成时间</div><div>${esc(nowIso())}</div>
+      </div>
+    </div>`;
+  setTimeout(() => {
+    const bp = $("#btnPrint");
+    if (bp) bp.onclick = () => { collectForm(); evaluateAllGates(); window.print(); };
+  }, 0);
+  return panel;
+}
+
+/* ==================== 表单采集与校验 ==================== */
+function collectForm() {
+  const root = $("#content");
+  if (!root) return;
+  const val = (name) => {
+    const n = root.querySelector(`[name="${name}"]`);
+    if (!n) return undefined;
+    if (n.type === "checkbox") return n.checked;
+    return n.value;
+  };
+  if (currentStep === "basic") {
+    state.applicant = val("applicant") ?? state.applicant;
+    state.department = val("department") ?? state.department;
+    state.orderNo = val("orderNo") ?? state.orderNo;
+    state.basic.productName = val("productName") ?? "";
+    state.basic.materialNo = val("materialNo") ?? "";
+    state.basic.productType = val("productType") ?? "";
+    state.basic.formulaVersion = val("formulaVersion") ?? "";
+    state.basic.factory = val("factory") ?? "";
+    state.basic.destinationCountry = val("destinationCountry") ?? "";
+    state.basic.destinationPort = val("destinationPort") ?? "";
+    state.basic.etd = val("etd") ?? "";
+    if (!state.ruleVersionLocked) {
+      state.ruleVersionLocked = RULES.meta.enterpriseRuleVersion;
+      state.regulationVersionLocked = RULES.meta.regulationVersion;
+    }
+  }
+  if (currentStep === "docs") {
+    RULES.documentTypes.forEach(d => {
+      const v = val("file_" + d.id);
+      if (v !== undefined) state.docs.files[d.id] = v;
+    });
+    state.docs.sdsUn = val("sdsUn") ?? "";
+    state.docs.appraisalUn = val("appraisalUn") ?? "";
+    state.docs.flashPoint = val("flashPoint") ?? "";
+    state.docs.manufacturer = val("manufacturer") ?? "";
+    state.docs.sdsProductName = val("sdsProductName") ?? "";
+    state.docs.appraisalProductName = val("appraisalProductName") ?? "";
+    state.docs.reportIssueDate = val("reportIssueDate") ?? "";
+    state.docs.reportExpiryDate = val("reportExpiryDate") ?? "";
+    state.docs.notes = val("docsNotes") ?? "";
+    state.docs.formulaChanged = !!val("formulaChanged");
+    state.docs.unFromCustomerLabelOnly = !!val("unFromCustomerLabelOnly");
+  }
+  if (currentStep === "class") {
+    state.classification.unNumber = val("unNumber") ?? state.classification.unNumber;
+    state.classification.packingGroup = val("packingGroup") ?? "";
+    state.classification.technicalName = val("technicalName") ?? "";
+    state.classification.marinePollutant = val("marinePollutant") ?? "否";
+    state.classification.evidence = val("evidence") ?? "";
+  }
+  if (currentStep === "sp") {
+    (state.sp.items || []).forEach((it, idx) => {
+      it.confirmed = !!val("sp_confirmed_" + idx);
+      it.note = val("sp_note_" + idx) ?? "";
+    });
+    state.sp.allConfirmed = (state.sp.items || []).every(i => i.confirmed);
+  }
+  if (currentStep === "path") {
+    state.path.lq.innerQty = val("lq_innerQty") ?? "";
+    state.path.lq.grossKg = val("lq_grossKg") ?? "";
+    state.path.lq.combinationOk = !!val("lq_combinationOk");
+    state.path.lq.markOk = !!val("lq_markOk");
+    state.path.eq.innerActual = val("eq_innerActual") ?? "";
+    state.path.eq.outerActual = val("eq_outerActual") ?? "";
+    state.path.reasonNotOthers = val("reasonNotOthers") ?? "";
+  }
+  if (currentStep === "pack") {
+    const pid = val("packageId");
+    if (pid && pid !== state.packing.packageId) applyPackageMaster(pid);
+    state.packing.packageName = val("packageName") ?? state.packing.packageName;
+    state.packing.unPackageCode = val("unPackageCode") ?? state.packing.unPackageCode;
+    state.packing.material = val("material") ?? state.packing.material;
+    state.packing.closure = val("closure") ?? state.packing.closure;
+    state.packing.performanceRating = val("performanceRating") ?? state.packing.performanceRating;
+    state.packing.capacityL = val("capacityL") ?? state.packing.capacityL;
+    state.packing.fillL = val("fillL") ?? "";
+    state.packing.maxGrossKg = val("maxGrossKg") ?? state.packing.maxGrossKg;
+    state.packing.actualGrossKg = val("actualGrossKg") ?? "";
+    state.packing.relativeDensity = val("relativeDensity") ?? "";
+    state.packing.maxRelativeDensity = val("maxRelativeDensity") ?? state.packing.maxRelativeDensity;
+    state.packing.testPressureKPa = val("testPressureKPa") ?? state.packing.testPressureKPa;
+    state.packing.compatibilityStatus = val("compatibilityStatus") ?? state.packing.compatibilityStatus;
+    state.packing.performanceCertificate = val("performanceCertificate") ?? state.packing.performanceCertificate;
+    state.packing.useAppraisalScope = val("useAppraisalScope") ?? state.packing.useAppraisalScope;
+    state.packing.certificateCovers = !!val("certificateCovers");
+  }
+  if (currentStep === "label") {
+    buildLabelChecklist().forEach(it => {
+      const v = val("lbl_" + it.id);
+      if (v !== undefined) state.labels.checks[it.id] = v;
+    });
+    state.labels.manualConfirmed = !!val("manualConfirmed");
+    state.labels.notes = val("labelNotes") ?? "";
+  }
+  if (currentStep === "report") {
+    state.approval.reviewer = val("reviewer") ?? "";
+    state.approval.approver = val("approver") ?? "";
+    state.approval.overrideReason = val("overrideReason") ?? "";
+    state.approval.comments = val("comments") ?? "";
+    state.approval.overrideApproved = !!val("overrideApproved");
+  }
+  state.updatedAt = nowIso();
+}
+
+function validateBeforeNext() {
+  errors = {};
+  collectForm();
+  evaluateAllGates();
+  if (currentStep === "basic") {
+    ["productName","materialNo","productType","destinationCountry","destinationPort","etd"].forEach(k => {
+      if (!state.basic[k]) errors[k] = "必填";
+    });
+    if (!state.applicant) errors.applicant = "必填";
+  }
+  const gate = state.gates[currentStep];
+  // 有条件通过允许继续；资料不足/不通过阻断；专家复核需覆盖批准（报告页除外，便于填写批准）
+  if (Object.keys(errors).length) return false;
+  if (gate === GATE.FAIL || gate === GATE.INSUFFICIENT) return false;
+  if (gate === GATE.EXPERT && !state.approval.overrideApproved && currentStep !== "report") return false;
+  return true;
+}
+
+function bindCommonActions() {
+  document.querySelectorAll("[data-go]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const target = btn.getAttribute("data-go");
+      collectForm();
+      evaluateAllGates();
+      syncCurrentToList();
+      if (btn.id === "btnNext" || (STEPS.findIndex(s=>s.id===target) > STEPS.findIndex(s=>s.id===currentStep))) {
+        if (!validateBeforeNext() && target !== "dashboard" && STEPS.findIndex(s=>s.id===target) > STEPS.findIndex(s=>s.id===currentStep)) {
+          const firstIssue = (state.openIssues || []).find(i => i.step === currentStep && i.gate !== GATE.PASS);
+          showToast(firstIssue ? ("无法进入下一步：" + firstIssue.text) : "存在必填缺失或阻断项，请根据页面状态提示处理后再继续。");
+          render();
+          return;
+        }
+        if (!canEnterStep(target)) {
+          showToast("前置步骤未通过，无法进入。");
+          render();
+          return;
+        }
+      }
+      goStep(target);
+    });
+  });
+  const saveBtn = $("#btnSaveStep");
+  if (saveBtn) {
+    saveBtn.onclick = () => {
+      collectForm();
+      evaluateAllGates();
+      syncCurrentToList();
+      showToast("已保存本步并完成校验（内存会话）。建议导出 JSON 以防关闭浏览器丢失。");
+      render();
+    };
+  }
+}
+
+/* ==================== JSON 导入导出 / 清空 ==================== */
+function downloadJson(obj, filename) {
+  const blob = new Blob([JSON.stringify(obj, null, 2)], { type: "application/json;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+function exportAudit() {
+  collectForm();
+  evaluateAllGates();
+  syncCurrentToList();
+  const payload = {
+    exportType: "audit",
+    exportedAt: nowIso(),
+    toolVersion: "1.0.0",
+    ruleMeta: RULES.meta,
+    audit: state
+  };
+  downloadJson(payload, (state.auditId || "audit") + ".json");
+}
+
+function exportRules() {
+  downloadJson(RULES, "dg-rules-" + RULES.meta.ruleVersion + ".json");
+}
+
+function importAuditFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      const audit = data.audit || data;
+      if (!audit.basic || !audit.auditId) throw new Error("JSON 缺少 auditId/basic");
+      syncCurrentToList();
+      state = Object.assign(createEmptyState(), audit);
+      // 深度合并关键嵌套
+      state.basic = Object.assign(createEmptyState().basic, audit.basic || {});
+      state.docs = Object.assign(createEmptyState().docs, audit.docs || {});
+      state.docs.files = Object.assign(createEmptyState().docs.files, (audit.docs && audit.docs.files) || {});
+      state.classification = Object.assign(createEmptyState().classification, audit.classification || {});
+      state.sp = Object.assign(createEmptyState().sp, audit.sp || {});
+      state.path = Object.assign(createEmptyState().path, audit.path || {});
+      state.path.lq = Object.assign(createEmptyState().path.lq, (audit.path && audit.path.lq) || {});
+      state.path.eq = Object.assign(createEmptyState().path.eq, (audit.path && audit.path.eq) || {});
+      state.packing = Object.assign(createEmptyState().packing, audit.packing || {});
+      state.labels = Object.assign(createEmptyState().labels, audit.labels || {});
+      state.labels.checks = Object.assign({}, (audit.labels && audit.labels.checks) || {});
+      state.approval = Object.assign(createEmptyState().approval, audit.approval || {});
+      evaluateAllGates();
+      syncCurrentToList();
+      showToast("已导入审核数据：" + state.auditId);
+      goStep("basic");
+    } catch (e) {
+      showToast("导入失败：" + e.message);
+    }
+  };
+  reader.readAsText(file, "utf-8");
+}
+
+function clearTask() {
+  showModal({
+    title: "清空当前任务",
+    body: "清空前请先导出审核 JSON，否则内存中的数据将丢失且无法恢复。是否已导出并确认清空？",
+    confirmText: "已导出，确认清空",
+    onConfirm: () => {
+      state = createEmptyState();
+      errors = {};
+      currentStep = "dashboard";
+      showToast("已清空当前任务");
+      render();
+    }
+  });
+}
+
+function showModal({ title, body, confirmText, onConfirm }) {
+  const root = $("#modalRoot");
+  root.innerHTML = `<div class="modal-mask"><div class="modal">
+    <h3>${esc(title)}</h3>
+    <p>${esc(body)}</p>
+    <div class="row">
+      <button type="button" class="btn btn-secondary" id="modalCancel">取消</button>
+      <button type="button" class="btn btn-danger" id="modalOk">${esc(confirmText||"确认")}</button>
+    </div>
+  </div></div>`;
+  $("#modalCancel").onclick = () => { root.innerHTML = ""; };
+  $("#modalOk").onclick = () => { root.innerHTML = ""; onConfirm && onConfirm(); };
+}
+
+function showToast(msg) {
+  let t = document.getElementById("toast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "toast";
+    t.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e334d;color:#fff;padding:10px 16px;border-radius:6px;z-index:200;max-width:520px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.remove("hidden");
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.add("hidden"), 3200);
+}
+
+/* ==================== 顶栏绑定 ==================== */
+function bindChrome() {
+  const exportBtn = $("#btnExportJson");
+  const rulesBtn = $("#btnExportRules");
+  const importBtn = $("#btnImportJson");
+  const fileInput = $("#fileImport");
+  const clearBtn = $("#btnClear");
+  if (exportBtn) exportBtn.onclick = exportAudit;
+  if (rulesBtn) rulesBtn.onclick = exportRules;
+  if (importBtn) importBtn.onclick = () => fileInput && fileInput.click();
+  if (fileInput) fileInput.onchange = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (f) importAuditFile(f);
+    e.target.value = "";
+  };
+  if (clearBtn) clearBtn.onclick = clearTask;
+}
+
+/* ==================== 启动 ==================== */
+bindChrome();
+render();
+</script>
+</body>
+</html>
