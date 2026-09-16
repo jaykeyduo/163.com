@@ -954,6 +954,44 @@ function recordJudgment(ruleId, input, result, detail) {
   });
 }
 
+/** 全角转半角，便于品名比对 */
+function toHalfWidth(s) {
+  return String(s || "").replace(/[\uFF01-\uFF5E]/g, ch =>
+    String.fromCharCode(ch.charCodeAt(0) - 0xFEE0)
+  ).replace(/\u3000/g, " ");
+}
+
+/**
+ * 产品名称对应检查（DOC-003）
+ * 允许空格、连字符、大小写、「油漆/涂料」等类别前缀差异；
+ * 禁止仅凭完全字面相等判定。
+ */
+function normalizeProductName(s) {
+  let t = toHalfWidth(s).trim().toUpperCase();
+  t = t.replace(/[\s\-_/\\.,，。·•:：()（）\[\]【】"'“”]/g, "");
+  const prefixes = ["油漆", "涂料", "漆", "产品", "货品", "商品", "PAINT", "COATING", "PRIMER", "LACQUER", "VARNISH"];
+  let prev;
+  do {
+    prev = t;
+    prefixes.forEach(p => {
+      const u = p.toUpperCase();
+      if (t.startsWith(u) && t.length - u.length >= 4) t = t.slice(u.length);
+      if (t.endsWith(u) && t.length - u.length >= 4) t = t.slice(0, -u.length);
+    });
+  } while (t !== prev);
+  return t;
+}
+
+function namesCorrespond(a, b) {
+  const na = normalizeProductName(a);
+  const nb = normalizeProductName(b);
+  if (!na || !nb) return true;
+  if (na === nb) return true;
+  const shorter = na.length <= nb.length ? na : nb;
+  const longer = na.length > nb.length ? na : nb;
+  return shorter.length >= 4 && longer.indexOf(shorter) >= 0;
+}
+
 /* ==================== 闸门评估 ==================== */
 function evaluateDocsGate() {
   const d = state.docs;
@@ -990,15 +1028,18 @@ function evaluateDocsGate() {
     issues.push("已勾选鉴定类文件但未填写到期日期");
     gate = GATE.INSUFFICIENT;
   }
-  // DOC-003
-  if (d.sdsProductName && state.basic.productName &&
-      d.sdsProductName.trim() !== state.basic.productName.trim()) {
-    issues.push("DOC-003：SDS产品名称与基本信息产品名称无法对应");
+  // DOC-003：产品名称无法对应（允许类别前缀/空格/符号差异）
+  const basicName = state.basic.productName || "";
+  if (d.sdsProductName && basicName && !namesCorrespond(d.sdsProductName, basicName)) {
+    issues.push("DOC-003：SDS产品名称「" + d.sdsProductName + "」与基本信息「" + basicName + "」无法对应。请改成可识别的同一产品，或使用下方同步按钮。");
     gate = worse(gate, GATE.INSUFFICIENT);
   }
-  if (d.appraisalProductName && state.basic.productName &&
-      d.appraisalProductName.trim() !== state.basic.productName.trim()) {
-    issues.push("DOC-003：鉴定书产品名称与基本信息无法对应");
+  if (d.appraisalProductName && basicName && !namesCorrespond(d.appraisalProductName, basicName)) {
+    issues.push("DOC-003：鉴定书产品名称「" + d.appraisalProductName + "」与基本信息「" + basicName + "」无法对应。请改成可识别的同一产品，或使用下方同步按钮。");
+    gate = worse(gate, GATE.INSUFFICIENT);
+  }
+  if (d.sdsProductName && d.appraisalProductName && !namesCorrespond(d.sdsProductName, d.appraisalProductName)) {
+    issues.push("DOC-003：SDS产品名称与鉴定书产品名称无法对应（「" + d.sdsProductName + "」vs「" + d.appraisalProductName + "」）");
     gate = worse(gate, GATE.INSUFFICIENT);
   }
   // DOC-004
@@ -1690,6 +1731,9 @@ function renderBasic() {
 /* ---------- Step 2 ---------- */
 function renderDocs() {
   const d = state.docs;
+  // 首次进入时用步骤1品名预填空白的 SDS/鉴定书名称，避免无谓阻断
+  if (!d.sdsProductName && state.basic.productName) d.sdsProductName = state.basic.productName;
+  if (!d.appraisalProductName && state.basic.productName) d.appraisalProductName = state.basic.productName;
   const g = evaluateDocsGate();
   const panel = el(`<div class="panel"></div>`);
   const checks = RULES.documentTypes.map(doc => `
@@ -1697,11 +1741,17 @@ function renderDocs() {
       <input type="checkbox" name="file_${doc.id}" ${d.files[doc.id]?"checked":""} />
       <span>${esc(doc.name)}</span>
     </label>`).join("");
+  const nameHint = namesCorrespond(d.sdsProductName || state.basic.productName, state.basic.productName)
+    && namesCorrespond(d.appraisalProductName || state.basic.productName, state.basic.productName);
   panel.innerHTML = `
     <h2>步骤2：SDS 与鉴定资料</h2>
     <p class="lead">登记资料完整性、有效期与关键字段一致性。离线版以勾选登记代替实际上传。</p>
     ${statusBanner(g.gate, g.issues)}
-    <div class="alert alert-info">一致性规则：DOC-001 UN不一致→专家复核；DOC-002 过期→阻断；DOC-003 名称无法对应→资料不足；DOC-004 配方变更→条件通过；DOC-005 仅客户标签→禁止自动判定。</div>
+    <div class="alert alert-info">一致性规则：DOC-001 UN不一致→专家复核；DOC-002 过期→阻断；DOC-003 名称无法对应→资料不足（允许「油漆/涂料」前缀、空格与符号差异）；DOC-004 配方变更→条件通过；DOC-005 仅客户标签→禁止自动判定。</div>
+    <div class="alert ${nameHint ? "alert-ok" : "alert-warn"}">
+      步骤1 基本信息产品名称：<strong>${esc(state.basic.productName || "（未填写）")}</strong>
+      ${nameHint ? "（与本页名称可对应）" : "（与本页 SDS/鉴定书名称未能对应，这是无法点「下一步」的常见原因）"}
+    </div>
     <h3 style="font-size:14px;margin:0 0 10px;color:var(--steel)">资料登记</h3>
     <div style="margin-bottom:16px">${checks}</div>
     <div class="grid">
@@ -1709,11 +1759,15 @@ function renderDocs() {
       ${fieldHtml({ name: "appraisalUn", label: "鉴定书 UN号", value: d.appraisalUn, required: true, placeholder: "如 1263" })}
       ${fieldHtml({ name: "flashPoint", label: "闪点", value: d.flashPoint, placeholder: "如 28°C" })}
       ${fieldHtml({ name: "manufacturer", label: "生产单位", value: d.manufacturer })}
-      ${fieldHtml({ name: "sdsProductName", label: "SDS产品名称", value: d.sdsProductName })}
-      ${fieldHtml({ name: "appraisalProductName", label: "鉴定书产品名称", value: d.appraisalProductName })}
+      ${fieldHtml({ name: "sdsProductName", label: "SDS产品名称", value: d.sdsProductName, hint: "可与步骤1相差「油漆/涂料」等前缀" })}
+      ${fieldHtml({ name: "appraisalProductName", label: "鉴定书产品名称", value: d.appraisalProductName, hint: "须能对应步骤1及 SDS 产品名称" })}
       ${fieldHtml({ name: "reportIssueDate", label: "报告签发日期", value: d.reportIssueDate, type: "date" })}
       ${fieldHtml({ name: "reportExpiryDate", label: "报告到期日期", value: d.reportExpiryDate, type: "date", required: true })}
       ${fieldHtml({ name: "docsNotes", label: "备注", value: d.notes, type: "textarea", full: true })}
+    </div>
+    <div class="no-print" style="display:flex;flex-wrap:wrap;gap:8px;margin:12px 0">
+      <button type="button" class="btn btn-secondary" id="btnSyncFromBasic">用步骤1名称填入 SDS/鉴定书</button>
+      <button type="button" class="btn btn-secondary" id="btnSyncToBasic">以 SDS 名称为准写回步骤1</button>
     </div>
     <div style="margin-top:12px">
       <label style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
@@ -1726,6 +1780,29 @@ function renderDocs() {
       </label>
     </div>
     ${stepActions("basic", "class")}`;
+  setTimeout(() => {
+    const fromBasic = $("#btnSyncFromBasic");
+    const toBasic = $("#btnSyncToBasic");
+    if (fromBasic) fromBasic.onclick = () => {
+      collectForm();
+      if (!state.basic.productName) { showToast("步骤1尚未填写产品名称"); return; }
+      state.docs.sdsProductName = state.basic.productName;
+      state.docs.appraisalProductName = state.basic.productName;
+      evaluateAllGates();
+      render();
+    };
+    if (toBasic) toBasic.onclick = () => {
+      collectForm();
+      const name = state.docs.sdsProductName || state.docs.appraisalProductName;
+      if (!name) { showToast("请先填写 SDS 或鉴定书产品名称"); return; }
+      state.basic.productName = name;
+      if (state.docs.appraisalProductName && !state.docs.sdsProductName) {
+        state.docs.sdsProductName = name;
+      }
+      evaluateAllGates();
+      render();
+    };
+  }, 0);
   return panel;
 }
 
@@ -2241,7 +2318,8 @@ function bindCommonActions() {
       syncCurrentToList();
       if (btn.id === "btnNext" || (STEPS.findIndex(s=>s.id===target) > STEPS.findIndex(s=>s.id===currentStep))) {
         if (!validateBeforeNext() && target !== "dashboard" && STEPS.findIndex(s=>s.id===target) > STEPS.findIndex(s=>s.id===currentStep)) {
-          showToast("存在必填缺失或阻断项，请根据状态提示处理后再继续。");
+          const firstIssue = (state.openIssues || []).find(i => i.step === currentStep && i.gate !== GATE.PASS);
+          showToast(firstIssue ? ("无法进入下一步：" + firstIssue.text) : "存在必填缺失或阻断项，请根据页面状态提示处理后再继续。");
           render();
           return;
         }
@@ -2362,7 +2440,7 @@ function showToast(msg) {
   if (!t) {
     t = document.createElement("div");
     t.id = "toast";
-    t.style.cssText = "position:fixed;top:72px;left:50%;transform:translateX(-50%);background:#1e334d;color:#fff;padding:10px 16px;border-radius:6px;z-index:200;max-width:420px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none";
+    t.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e334d;color:#fff;padding:10px 16px;border-radius:6px;z-index:200;max-width:520px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.2);pointer-events:none";
     document.body.appendChild(t);
   }
   t.textContent = msg;
