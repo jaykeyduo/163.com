@@ -96,7 +96,7 @@ h1 {
 .name-row {
   display: flex;
   gap: 8px;
-  max-width: 320px;
+  max-width: 280px;
   margin: 0 auto 18px;
 }
 

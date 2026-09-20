@@ -595,7 +595,7 @@
       action: action,
       lines: lines.join("\n"),
       changes: allChanges,
-      ended: state.week > WEEKS_TOTAL || state.flags.quit
+      ended: state.week > WEEKS_TOTAL || !!state.flags.quit
     };
   }
 
@@ -729,8 +729,9 @@
 
   function renderResult() {
     var r = ui.result;
-    var changeHtml = r.changes.length
-      ? '<p class="changes">' + r.changes.map(function (c) {
+    var shown = mergeChanges(r.changes);
+    var changeHtml = shown.length
+      ? '<p class="changes">' + shown.map(function (c) {
           var cls = c.diff < 0 ? "neg" : "";
           var sign = c.diff > 0 ? "+" : "";
           return '<span class="' + cls + '">' + labelFor(c.key) + " " + sign + c.diff + "</span>";
@@ -778,6 +779,23 @@
       '<button class="btn primary" data-act="restart">再来一局</button>' +
       '<button class="btn" data-act="title">回标题</button>' +
       "</div></section>";
+  }
+
+  function mergeChanges(changes) {
+    var map = {};
+    var order = [];
+    (changes || []).forEach(function (c) {
+      if (!Object.prototype.hasOwnProperty.call(map, c.key)) {
+        map[c.key] = 0;
+        order.push(c.key);
+      }
+      map[c.key] += c.diff;
+    });
+    return order.map(function (key) {
+      return { key: key, diff: map[key] };
+    }).filter(function (c) {
+      return c.diff !== 0;
+    });
   }
 
   function render() {
@@ -843,7 +861,7 @@
       var chg = applyDeltas(ui.state, picked.deltas);
       if (picked.flag) ui.state.flags[picked.flag] = true;
       ui.state.flags["choice:" + ui.choice.id] = true;
-      ui.result = { ok: true, lines: picked.log, changes: chg, ended: ui.state.week > WEEKS_TOTAL || ui.state.flags.quit };
+      ui.result = { ok: true, lines: picked.log, changes: chg, ended: ui.state.week > WEEKS_TOTAL || !!ui.state.flags.quit };
       ui.pendingChoice = null;
       ui.screen = "result";
     } else if (act === "ending") {
