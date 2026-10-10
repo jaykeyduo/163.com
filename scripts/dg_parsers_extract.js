@@ -44,6 +44,10 @@
 
   function detectDocType(text) {
     var t = text || '';
+    // Delivery Order（美凯威奇英文运单）优先：避免与中文证单混淆
+    if (/\bDelivery\s+\d{6,}\b/.test(t) && /Batch no\.:/i.test(t) && /Product no\./i.test(t)) {
+      return '运单DO';
+    }
     if (/出境危险货物运输包装使用鉴定结果单/.test(t) || /使用鉴定结果单/.test(t)) {
       return '危包证';
     }
@@ -63,6 +67,9 @@
     // 危包证特有「本结果单有效期」
     if (/本结果单有效期/.test(t) && (/危险货物名称/.test(t) || /使用人/.test(t))) {
       return '危包证';
+    }
+    if (/\bDelivery\s+\d{6,}\b/.test(t) && /manufactured:/i.test(t)) {
+      return '运单DO';
     }
     return 'unknown';
   }
@@ -624,10 +631,158 @@
       p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
   }
 
+  /** 运单 DO：Header(Delivery) + Item(Product/Batch) 扁平行字段 */
+  var DO_FIELDS = [
+    'Delivery号码', 'Delivery日期', '订单号', '客户号', '客户名称',
+    'Pos', 'Product no.', '产品描述', '产品额外描述',
+    '包装数量', '单件数量', '合计数量',
+    'Batch no.', 'manufactured', 'Use by end of', 'Country of origin',
+    '源文件名', '导入时间'
+  ];
+
+  function stripDoNoise(text) {
+    return String(text || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/^---\s*PAGE\s+\d+\s*---\s*$/gmi, '')
+      .replace(/^Delivery\s+\d+\s+Page:\s*\d+\s+of\s+\d+\s*$/gmi, '')
+      .replace(/^Page:\s*\d+\s+of\s+\d+\s*$/gmi, '')
+      .replace(/^from\s+\d{2}\.\d{2}\.\d{4}\s*$/gmi, '')
+      .replace(/Product name\s*_+/gi, '')
+      .replace(/^_{8,}.*$/gm, '')
+      .replace(/^Pos\.\s+Product no\..*$/gmi, '')
+      .replace(/^Product name\s*$/gmi, '')
+      .replace(/\n{3,}/g, '\n\n');
+  }
+
+  function isDoNoiseLine(line) {
+    return !line
+      || /^_{5,}/.test(line)
+      || /^Product name/i.test(line)
+      || /^(Customer:|Delivery condition:|Any deliveries|所有来自|Shanghai Mankiewicz|Our |Techn\.|Order processing|Date:|Your PO:|Page:|total:)/i.test(line)
+      || /^Artron\b/i.test(line)
+      || /^\d{1,5}\s+Punn\b/i.test(line)
+      || /^(KLONG TOEI|Thailand|THAILAND)\b/i.test(line);
+  }
+
+  /**
+   * 解析美凯威奇 Delivery Order PDF 文本。
+   * 返回 { header, items }；items 为扁平行（Header 字段重复在每行）。
+   */
+  function parseDelivery(text, meta) {
+    meta = meta || {};
+    var raw = String(text || '').replace(/\r\n/g, '\n');
+    var header = {
+      'Delivery号码': '',
+      'Delivery日期': '',
+      '订单号': '',
+      '客户号': '',
+      '客户名称': ''
+    };
+
+    // Header 先从原文取，避免 strip 掉「Delivery\nfrom dd.mm.yyyy」
+    var dm = raw.match(/\bDelivery\s+(\d{6,})\b/i);
+    if (dm) header['Delivery号码'] = dm[1];
+    var dateM = raw.match(/\bDelivery\s+\d{6,}\b[ \t]*\n[ \t]*from\s+(\d{2}\.\d{2}\.\d{4})/i);
+    if (!dateM) dateM = raw.match(/\bDelivery\s+\d{6,}\b[\s\S]{0,40}?from\s+(\d{2}\.\d{2}\.\d{4})/i);
+    if (dateM) header['Delivery日期'] = dateM[1];
+
+    var om = raw.match(/Our order no\.:\s*(\d+)/i);
+    if (om) header['订单号'] = om[1];
+    var cm = raw.match(/Customer no\.:\s*(\d+)/i);
+    if (cm) header['客户号'] = cm[1];
+    var custM = raw.match(/Customer:\s*(?:Customer:\s*)?\n\s*([^\n]+)/i);
+    if (custM) {
+      var cname = cleanBlank(custM[1]);
+      // 页脚双栏重复：Artron ... Co Ltd Artron ... Co Ltd
+      var half = Math.floor(cname.length / 2);
+      if (half > 8 && cname.slice(0, half).trim() === cname.slice(half).trim()) {
+        cname = cname.slice(0, half).trim();
+      }
+      header['客户名称'] = cname;
+    } else {
+      var cust2 = raw.match(/\b([A-Z][A-Za-z0-9 &().,\/-]{2,}(?:Co(?:\s*Ltd)?\.?|Ltd\.?|GmbH|Inc\.?))\b/);
+      if (cust2) header['客户名称'] = cleanBlank(cust2[1]);
+    }
+
+    var flat = stripDoNoise(raw);
+
+    var itemStartRe = /^(\d{1,3})\s+([A-Z0-9][A-Z0-9._-]{4,})\s+(\d{1,3}(?:[.,]\d{2})?\s+[A-Za-z]+)\s+x\s+(\d{1,3}(?:[.,]\d{3})?\s*KG)\s+(\d{1,3}(?:[.,]\d{3})?\s*KG)\s*$/gmi;
+    var starts = [];
+    var sm;
+    while ((sm = itemStartRe.exec(flat))) {
+      starts.push({
+        index: sm.index,
+        end: sm.index + sm[0].length,
+        pos: sm[1],
+        productNo: sm[2],
+        qtyPack: sm[3],
+        qtyUnit: sm[4],
+        qtyTotal: sm[5]
+      });
+    }
+
+    var totalIdx = flat.search(/\ntotal:\s*/i);
+    var items = [];
+    for (var i = 0; i < starts.length; i++) {
+      var s = starts[i];
+      var next = i + 1 < starts.length ? starts[i + 1].index : (totalIdx > s.end ? totalIdx : flat.length);
+      var body = flat.slice(s.end, next);
+      var lines = body.split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+      var productName = '';
+      var extras = [];
+      var batch = '', manufactured = '', useBy = '', origin = '';
+      for (var li = 0; li < lines.length; li++) {
+        var line = lines[li];
+        if (/^Batch no\.:/i.test(line)) {
+          var bm = line.match(/Batch no\.:\s*([^\s/]+)\s*\/\s*manufactured:\s*([0-9.]+)\s*\/\s*Use by end of:\s*([0-9.]+)/i);
+          if (bm) {
+            batch = bm[1];
+            manufactured = bm[2];
+            useBy = bm[3];
+          }
+          continue;
+        }
+        if (/^Country of origin\s+/i.test(line)) {
+          origin = cleanBlank(line.replace(/^Country of origin\s+/i, ''));
+          continue;
+        }
+        if (isDoNoiseLine(line)) continue;
+        if (!productName) productName = line;
+        else extras.push(line);
+      }
+      var row = emptyRow(DO_FIELDS);
+      row['Delivery号码'] = header['Delivery号码'];
+      row['Delivery日期'] = header['Delivery日期'];
+      row['订单号'] = header['订单号'];
+      row['客户号'] = header['客户号'];
+      row['客户名称'] = header['客户名称'];
+      row['Pos'] = s.pos;
+      row['Product no.'] = s.productNo;
+      row['产品描述'] = productName;
+      row['产品额外描述'] = extras.join('\n');
+      row['包装数量'] = cleanBlank(s.qtyPack);
+      row['单件数量'] = cleanBlank(s.qtyUnit);
+      row['合计数量'] = cleanBlank(s.qtyTotal);
+      row['Batch no.'] = batch;
+      row['manufactured'] = manufactured;
+      row['Use by end of'] = useBy;
+      row['Country of origin'] = origin;
+      row['源文件名'] = meta.sourceName || '';
+      row['导入时间'] = meta.importedAt || nowStr();
+      items.push(row);
+    }
+
+    return { header: header, items: items };
+  }
+
   function parseAuto(text, meta) {
     var type = detectDocType(text);
     if (type === '危包证') return { type: type, row: parseCertificate(text, meta) };
     if (type === '包装性能单') return { type: type, row: parsePerformance(text, meta) };
+    if (type === '运单DO') {
+      var parsed = parseDelivery(text, meta);
+      return { type: type, row: null, rows: parsed.items, header: parsed.header };
+    }
     return { type: 'unknown', row: null };
   }
 
@@ -635,9 +790,11 @@
     detectDocType: detectDocType,
     parsePerformance: parsePerformance,
     parseCertificate: parseCertificate,
+    parseDelivery: parseDelivery,
     parseAuto: parseAuto,
     PERF_FIELDS: PERF_FIELDS,
     CERT_FIELDS: CERT_FIELDS,
+    DO_FIELDS: DO_FIELDS,
     cleanBlank: cleanBlank,
     normalizeDate: normalizeDate,
     stripStarsQty: stripStarsQty
