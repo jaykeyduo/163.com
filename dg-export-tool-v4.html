@@ -332,6 +332,14 @@ textarea.paste{width:100%;min-height:160px;border:1px solid #cdd5e0;border-radiu
     if (/拟装货物名称/.test(t) && /包装容器数量/.test(t)) {
       return '包装性能单';
     }
+    // 粘贴/抽字不全时：性能单特有「本单有效期」+ 使用人/数量
+    if (/本单有效期/.test(t) && (/包装使用人/.test(t) || /包装容器数量/.test(t))) {
+      return '包装性能单';
+    }
+    // 危包证特有「本结果单有效期」
+    if (/本结果单有效期/.test(t) && (/危险货物名称/.test(t) || /使用人/.test(t))) {
+      return '危包证';
+    }
     return 'unknown';
   }
 

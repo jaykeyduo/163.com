@@ -11,6 +11,10 @@ const carton = `编号 310N2026AAAAA04
 包装使用人 美凯威奇(浙江)新材料科技有限公司
 本单有效期 截止于 2026年10月31日
 `;
+if (P.detectDocType(carton) !== '包装性能单') {
+  console.error('detect failed', P.detectDocType(carton));
+  process.exit(1);
+}
 const row = P.parsePerformance(carton, { sourceName: 't' });
 const mark = row['包装容器标记及批号'] || '';
 if (!/4G\/Y20\/S\/26/.test(mark) || !/CN\/C260101_PI:021/.test(mark)) {
