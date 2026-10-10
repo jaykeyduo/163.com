@@ -693,11 +693,9 @@
     var custM = raw.match(/Customer:\s*(?:Customer:\s*)?\n\s*([^\n]+)/i);
     if (custM) {
       var cname = cleanBlank(custM[1]);
-      // 页脚双栏重复：Artron ... Co Ltd Artron ... Co Ltd
-      var half = Math.floor(cname.length / 2);
-      if (half > 8 && cname.slice(0, half).trim() === cname.slice(half).trim()) {
-        cname = cname.slice(0, half).trim();
-      }
+      // 页脚双栏重复：Name Name
+      var dup = cname.match(/^(.+?)\s+\1$/);
+      if (dup) cname = dup[1];
       header['客户名称'] = cname;
     } else {
       var cust2 = raw.match(/\b([A-Z][A-Za-z0-9 &().,\/-]{2,}(?:Co(?:\s*Ltd)?\.?|Ltd\.?|GmbH|Inc\.?))\b/);
