@@ -1,0 +1,1687 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>出口危险品管理工具</title>
+<style>
+:root{--pri:#1f4e8c;--pri2:#2d6cc0;--bg:#f3f5f9;--card:#fff;--line:#dde3ec;--txt:#1f2733;--mut:#6b7686;--red:#d64545;--org:#e8871e;--yel:#d9b100;--grn:#2e9d5b;--gry:#9aa4b2;}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Microsoft YaHei","微软雅黑","PingFang SC","Hiragino Sans GB","Noto Sans CJK SC","Source Han Sans SC",Arial,sans-serif;font-size:14px;color:var(--txt);background:var(--bg);line-height:1.5}
+button,input,select,textarea{font-family:inherit;font-size:14px}
+header.top{background:linear-gradient(90deg,#173c6d,#1f4e8c 60%,#2a63ab);color:#fff;padding:10px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:0;z-index:50;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+header.top h1{font-size:18px;margin:0;font-weight:600;letter-spacing:.5px}
+header.top .sub{font-size:12px;opacity:.8}
+header.top .spacer{flex:1}
+header.top .today{font-size:12px;background:rgba(255,255,255,.12);padding:3px 8px;border-radius:10px}
+.hbtn{background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.3);padding:6px 12px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.hbtn:hover{background:rgba(255,255,255,.25)}
+nav.tabs{display:flex;gap:4px;padding:0 20px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:52px;z-index:40;overflow-x:auto}
+nav.tabs button{border:0;background:none;padding:12px 18px;cursor:pointer;color:var(--mut);font-size:15px;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs button.active{color:var(--pri);border-bottom-color:var(--pri);font-weight:600}
+nav.tabs button:hover{color:var(--pri)}
+main{padding:18px 20px 60px;max-width:1600px;margin:0 auto}
+section.tab{display:none}
+section.tab.active{display:block}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+.card h2{font-size:16px;margin:0 0 12px;color:#183a66;display:flex;align-items:center;gap:8px}
+.muted{color:var(--mut)}
+.small{font-size:12px}
+.btn{border:1px solid var(--line);background:#fff;color:var(--txt);padding:6px 12px;border-radius:6px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--pri2);color:var(--pri2)}
+.btn.pri{background:var(--pri);color:#fff;border-color:var(--pri)}
+.btn.pri:hover{background:var(--pri2);color:#fff}
+.btn.danger{color:var(--red);border-color:#f0c4c4}
+.btn.danger:hover{background:var(--red);color:#fff}
+.btn.sm{padding:3px 8px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.drop{border:2px dashed #b9c6d8;border-radius:10px;padding:22px;text-align:center;background:#f8fafc;color:var(--mut);cursor:pointer;transition:.15s}
+.drop:hover,.drop.drag{border-color:var(--pri2);background:#eef5ff;color:var(--pri)}
+.drop input{display:none}
+.drop.disabled{opacity:.55;cursor:not-allowed;background:#f3f4f6}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:62vh}
+table.data{border-collapse:collapse;width:100%;font-size:12px;background:#fff}
+table.data th{position:sticky;top:0;background:#eef2f8;color:#2a3b52;text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1}
+table.data td{padding:4px 6px;border-bottom:1px solid #edf0f5;vertical-align:top}
+table.data tr:hover td{background:#f6f9fe}
+table.data input.cell{border:1px solid transparent;background:transparent;padding:3px 4px;width:100%;min-width:72px;border-radius:4px}
+table.data input.cell:focus{border-color:var(--pri2);background:#fff;box-shadow:0 0 0 2px rgba(45,108,192,.12);outline:none}
+.statbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px 14px;min-width:100px}
+.stat .n{font-size:20px;font-weight:700;color:var(--pri)}
+.stat .l{font-size:12px;color:var(--mut)}
+.warnbox{background:#fff8e6;border:1px solid #f1d58a;color:#7a5a00;border-radius:6px;padding:8px 12px;margin-bottom:12px}
+.okbox{background:#effaf3;border:1px solid #bfe6cd;color:#1f6d3f;border-radius:6px;padding:8px 12px;margin-bottom:12px}
+.infoBox{background:#eef5ff;border:1px solid #c5d8f5;color:#1f4e8c;border-radius:6px;padding:10px 12px;margin-bottom:12px}
+.toasts{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:8px;z-index:200;max-width:440px}
+.toast{padding:10px 14px;border-radius:8px;color:#fff;box-shadow:0 4px 14px rgba(0,0,0,.2);font-size:13px;white-space:pre-wrap;animation:tin .2s}
+.toast.ok{background:#2e9d5b}.toast.err{background:#c93b3b}.toast.info{background:#2f5f9e}.toast.warn{background:#c98612}
+@keyframes tin{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.mask{position:fixed;inset:0;background:rgba(15,25,40,.45);display:none;align-items:center;justify-content:center;z-index:100;padding:20px}
+.mask.show{display:flex}
+.modal{background:#fff;border-radius:12px;max-width:640px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.modal .mh{padding:14px 18px;border-bottom:1px solid var(--line);font-weight:600;font-size:16px;color:#183a66}
+.modal .mb{padding:16px 18px}
+.modal .mf{padding:12px 18px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+textarea.paste{width:100%;min-height:160px;border:1px solid #cdd5e0;border-radius:6px;padding:8px;font-family:Consolas,"Microsoft YaHei",monospace;font-size:12px}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;background:#eef1f6;color:#44546a}
+.tag.stub{background:#fff0d6;color:#9a5b00}
+.clip{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 12px;padding:12px;background:#f7f9fc;border:1px solid var(--line);border-radius:8px;margin-bottom:12px}
+.filters .fg{display:flex;flex-direction:column;gap:4px;min-width:0}
+.filters label{font-size:12px;color:var(--mut)}
+.filters input,.filters select{border:1px solid #cdd5e0;border-radius:6px;padding:6px 8px;background:#fff;width:100%}
+.filters .fg-actions{justify-content:flex-end}
+.filters .fg-actions .row{margin-top:auto}
+.filters .hint{font-size:12px;color:var(--mut);margin-top:2px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div>
+    <h1>出口危险品管理工具</h1>
+    <div class="sub">美凯威奇 · 包装性能单 / 危包证 / 运单 / 结合</div>
+  </div>
+  <div class="spacer"></div>
+  <span class="today" id="todayLabel"></span>
+  <button class="hbtn" type="button" onclick="exportAllJson()">导出全部 JSON</button>
+  <button class="hbtn" type="button" onclick="clearStorageConfirm()">清空本地缓存</button>
+</header>
+<nav class="tabs">
+  <button type="button" class="active" data-tab="perf" onclick="showTab('perf')">1. 包装性能单</button>
+  <button type="button" data-tab="cert" onclick="showTab('cert')">2. 危包证</button>
+  <button type="button" data-tab="do" onclick="showTab('do')">3. 运单 DO</button>
+  <button type="button" data-tab="join" onclick="showTab('join')">4. 数据结合 <span class="tag stub">待开发</span></button>
+</nav>
+<main>
+  <!-- Module 1 -->
+  <section class="tab active" id="tab-perf">
+    <div class="card">
+      <h2>包装性能单 · 出入境货物包装性能检验结果单</h2>
+      <div class="statbar">
+        <div class="stat"><div class="n" id="perfCount">0</div><div class="l">清单条数</div></div>
+      </div>
+      <div class="drop" id="perfDrop" onclick="document.getElementById('perfFile').click()">
+        <input type="file" id="perfFile" accept="application/pdf,.pdf" multiple>
+        <div><b>点击或拖入多个 PDF</b></div>
+        <div class="small muted">自动识别并解析包装性能单；若误传危包证会提示切换</div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn pri" type="button" onclick="document.getElementById('perfFile').click()">选择 PDF</button>
+        <button class="btn" type="button" onclick="openPasteModal('perf')">粘贴文本导入</button>
+        <button class="btn" type="button" onclick="addBlankRow('perf')">新增空白行</button>
+        <button class="btn" type="button" onclick="exportCsv('perf')">导出 CSV</button>
+        <button class="btn" type="button" onclick="exportJson('perf')">导出 JSON</button>
+        <button class="btn danger" type="button" onclick="clearModule('perf')">清空本模块</button>
+        <span class="muted small" id="perfStatus"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>数据清单</h2>
+      <div class="filters" id="perfFilters">
+        <div class="fg">
+          <label for="perfFilterUser">包装使用人</label>
+          <input id="perfFilterUser" type="text" list="perfUserList" placeholder="包含关键字，可多条件同时筛" autocomplete="off">
+          <datalist id="perfUserList"></datalist>
+        </div>
+        <div class="fg">
+          <label>本单有效期截止</label>
+          <div class="row">
+            <input id="perfFilterValidFrom" type="date" title="起始（含）" style="flex:1;min-width:0">
+            <span class="muted small">至</span>
+            <input id="perfFilterValidTo" type="date" title="截止（含）" style="flex:1;min-width:0">
+          </div>
+          <div class="hint">可只填一端；与其它条件同时生效</div>
+        </div>
+        <div class="fg">
+          <label for="perfFilterMode">运输方式</label>
+          <select id="perfFilterMode">
+            <option value="">全部</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label for="perfFilterMark">包装容器标记及批号</label>
+          <input id="perfFilterMark" type="text" placeholder="如 4G/Y25 或 CN/…PI" autocomplete="off">
+        </div>
+        <div class="fg fg-actions">
+          <label>&nbsp;</label>
+          <div class="row">
+            <button class="btn" type="button" onclick="resetPerfFilters()">重置筛选</button>
+            <span class="muted small" id="perfFilterStat"></span>
+          </div>
+        </div>
+      </div>
+      <div class="tablewrap">
+        <table class="data" id="perfTable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 2 -->
+  <section class="tab" id="tab-cert">
+    <div class="card">
+      <h2>危包证 · 出境危险货物运输包装使用鉴定结果单</h2>
+      <div class="statbar">
+        <div class="stat"><div class="n" id="certCount">0</div><div class="l">清单条数</div></div>
+      </div>
+      <div class="drop" id="certDrop" onclick="document.getElementById('certFile').click()">
+        <input type="file" id="certFile" accept="application/pdf,.pdf" multiple>
+        <div><b>点击或拖入多个 PDF</b></div>
+        <div class="small muted">自动识别并解析危包证；若误传性能单会提示切换</div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn pri" type="button" onclick="document.getElementById('certFile').click()">选择 PDF</button>
+        <button class="btn" type="button" onclick="openPasteModal('cert')">粘贴文本导入</button>
+        <button class="btn" type="button" onclick="addBlankRow('cert')">新增空白行</button>
+        <button class="btn" type="button" onclick="exportCsv('cert')">导出 CSV</button>
+        <button class="btn" type="button" onclick="exportJson('cert')">导出 JSON</button>
+        <button class="btn danger" type="button" onclick="clearModule('cert')">清空本模块</button>
+        <span class="muted small" id="certStatus"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>数据清单</h2>
+      <div class="tablewrap">
+        <table class="data" id="certTable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 3: Delivery Order -->
+  <section class="tab" id="tab-do">
+    <div class="card">
+      <h2>运单 DO · Delivery Order（Header + Item）</h2>
+      <div class="statbar">
+        <div class="stat"><div class="n" id="doCount">0</div><div class="l">行项目条数</div></div>
+        <div class="stat"><div class="n" id="doHeaderCount">0</div><div class="l">Delivery 份数</div></div>
+      </div>
+      <div class="infoBox">
+        Header：Delivery 号码 / 日期；Item：每个 Product no. + Batch no. 一行。
+        读取产品描述、可选额外描述、manufactured、Use by end of、Country of origin。
+      </div>
+      <div class="drop" id="doDrop" onclick="document.getElementById('doFile').click()">
+        <input type="file" id="doFile" accept="application/pdf,.pdf" multiple>
+        <div><b>点击或拖入多个 Delivery PDF</b></div>
+        <div class="small muted">自动识别 Delivery 单据；跨页行项目会自动拼接</div>
+      </div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn pri" type="button" onclick="document.getElementById('doFile').click()">选择 PDF</button>
+        <button class="btn" type="button" onclick="openPasteModal('do')">粘贴文本导入</button>
+        <button class="btn" type="button" onclick="addBlankRow('do')">新增空白行</button>
+        <button class="btn" type="button" onclick="exportCsv('do')">导出 CSV</button>
+        <button class="btn" type="button" onclick="exportJson('do')">导出 JSON</button>
+        <button class="btn danger" type="button" onclick="clearModule('do')">清空本模块</button>
+        <span class="muted small" id="doStatus"></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>运单行项目清单</h2>
+      <div class="filters" id="doFilters">
+        <div class="fg">
+          <label for="doFilterDelivery">Delivery号码</label>
+          <input id="doFilterDelivery" type="text" list="doDeliveryList" placeholder="包含关键字" autocomplete="off">
+          <datalist id="doDeliveryList"></datalist>
+        </div>
+        <div class="fg">
+          <label for="doFilterProduct">Product no. / 产品描述</label>
+          <input id="doFilterProduct" type="text" placeholder="如 463VG 或 Primer" autocomplete="off">
+        </div>
+        <div class="fg">
+          <label for="doFilterBatch">Batch no.</label>
+          <input id="doFilterBatch" type="text" placeholder="批号" autocomplete="off">
+        </div>
+        <div class="fg">
+          <label for="doFilterOrigin">Country of origin</label>
+          <select id="doFilterOrigin"><option value="">全部</option></select>
+        </div>
+        <div class="fg fg-actions">
+          <label>&nbsp;</label>
+          <div class="row">
+            <button class="btn" type="button" onclick="resetDoFilters()">重置筛选</button>
+            <span class="muted small" id="doFilterStat"></span>
+          </div>
+        </div>
+      </div>
+      <div class="tablewrap">
+        <table class="data" id="doTable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Module 4 stub -->
+  <section class="tab" id="tab-join">
+    <div class="card">
+      <h2>数据结合 <span class="tag stub">模块框架 · 待开发</span></h2>
+      <div class="infoBox">
+        将包装性能单、危包证、运单三类清单按业务规则关联（结合逻辑后续梳理）。
+        常见关联键预览：危包证「包装容器性能检验结果单号」↔ 包装性能单「编号」；也可按 UN 编号 / 标记批号辅助匹配。
+      </div>
+      <div class="row">
+        <button class="btn pri" type="button" disabled title="待开发">按 性能单号 / UN / 标记批号 关联</button>
+        <button class="btn" type="button" onclick="previewJoinMock()">预览已有数据的简单关联（只读）</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>结合结果预览</h2>
+      <div id="joinPreview" class="muted">尚未执行结合。模块 4 正式逻辑待定；可先点上方按钮查看危包证→性能单号的只读匹配情况。</div>
+      <div class="tablewrap" style="margin-top:12px;display:none" id="joinWrap">
+        <table class="data" id="joinTable"><thead></thead><tbody></tbody></table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toasts" id="toasts"></div>
+
+<div class="mask" id="pasteMask">
+  <div class="modal">
+    <div class="mh">粘贴 PDF 文本导入</div>
+    <div class="mb">
+      <p class="muted small">当浏览器 PDF 解析失败时，可用 pdftotext / 复制文本粘贴到下方。</p>
+      <textarea class="paste" id="pasteText" placeholder="粘贴整份结果单文本…"></textarea>
+      <input type="hidden" id="pasteTarget">
+    </div>
+    <div class="mf">
+      <button class="btn" type="button" onclick="closePasteModal()">取消</button>
+      <button class="btn pri" type="button" onclick="submitPaste()">解析导入</button>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="routeMask">
+  <div class="modal">
+    <div class="mh">单据类型不匹配</div>
+    <div class="mb" id="routeMsg"></div>
+    <div class="mf">
+      <button class="btn" type="button" onclick="closeRouteModal(false)">取消</button>
+      <button class="btn pri" type="button" onclick="closeRouteModal(true)">转到正确模块并导入</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== Embedded parsers (same as parsers.js) ===== */
+/**
+ * 出口危险品管理工具 — PDF 文本解析器（浏览器 / Node 共用）
+ * 解析「出入境货物包装性能检验结果单」与「出境危险货物运输包装使用鉴定结果单」
+ */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) {
+    module.exports = factory();
+  } else {
+    root.DgParsers = factory();
+  }
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  function cleanBlank(v) {
+    if (v == null) return '';
+    var s = String(v).replace(/\u00a0/g, ' ').trim();
+    s = s.replace(/^[\*_]+$/, '');
+    if (/^\*{1,}$/.test(s) || s === '***' || s === '********') return '';
+    s = s.replace(/^\*{1,2}/, '').replace(/\*{1,2}$/, '').trim();
+    s = s.replace(/_+/g, ' ');
+    s = s.replace(/\s+/g, ' ').trim();
+    s = s.replace(/[\u200b\u200c\u200d\ufeff]/g, '');
+    return s;
+  }
+
+  function normalizeDate(raw) {
+    if (!raw) return '';
+    var s = String(raw).replace(/[\u200b\u200c\u200d\ufeff]/g, '').replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+    var m = s.match(/(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日?/);
+    if (m) {
+      return m[1] + '-' + pad2(m[2]) + '-' + pad2(m[3]);
+    }
+    m = s.match(/(\d{4})[-\/\.](\d{1,2})[-\/\.](\d{1,2})/);
+    if (m) return m[1] + '-' + pad2(m[2]) + '-' + pad2(m[3]);
+    return cleanBlank(s);
+  }
+
+  function pad2(n) {
+    n = String(parseInt(n, 10));
+    return n.length < 2 ? '0' + n : n;
+  }
+
+  function stripStarsQty(v) {
+    var s = cleanBlank(v);
+    s = s.replace(/^\*+/, '').trim();
+    return s;
+  }
+
+  function detectDocType(text) {
+    var t = text || '';
+    // Delivery Order（美凯威奇英文运单）优先：避免与中文证单混淆
+    if (/\bDelivery\s+\d{6,}\b/.test(t) && /Batch no\.:/i.test(t) && /Product no\./i.test(t)) {
+      return '运单DO';
+    }
+    if (/出境危险货物运输包装使用鉴定结果单/.test(t) || /使用鉴定结果单/.test(t)) {
+      return '危包证';
+    }
+    if (/出入境货物包装性能检验结果单/.test(t) || /包装性能检验结果单/.test(t)) {
+      return '包装性能单';
+    }
+    if (/包装容器性能检验结果单号/.test(t) && /危险货物名称/.test(t)) {
+      return '危包证';
+    }
+    if (/拟装货物名称/.test(t) && /包装容器数量/.test(t)) {
+      return '包装性能单';
+    }
+    // 粘贴/抽字不全时：性能单特有「本单有效期」+ 使用人/数量
+    if (/本单有效期/.test(t) && (/包装使用人/.test(t) || /包装容器数量/.test(t))) {
+      return '包装性能单';
+    }
+    // 危包证特有「本结果单有效期」
+    if (/本结果单有效期/.test(t) && (/危险货物名称/.test(t) || /使用人/.test(t))) {
+      return '危包证';
+    }
+    if (/\bDelivery\s+\d{6,}\b/.test(t) && /manufactured:/i.test(t)) {
+      return '运单DO';
+    }
+    return 'unknown';
+  }
+
+  function extractCertNo(text) {
+    // pdftotext: 「编号326N…」；PDF.js 排版常把号放在标签前一行：「326N… 编号」
+    var patterns = [
+      /编号\s*[:：]?\s*([0-9A-Za-z]{10,})/,
+      /([0-9A-Za-z]{10,})\s*编号/,
+      /(?:结果单|检验结果单)?\s*编号\s*[:：]?\s*([0-9A-Za-z]{10,})/,
+      /\b(\d{3}[A-Za-z]\d{6,}[A-Za-z0-9]*)\b/
+    ];
+    for (var i = 0; i < patterns.length; i++) {
+      var m = text.match(patterns[i]);
+      if (m) {
+        var v = cleanBlank(m[1]);
+        // 排除联合国编号等短数字；CIQ 单号通常 >= 15
+        if (v && v.length >= 12 && !/^1263$/.test(v)) return v;
+      }
+    }
+    return '';
+  }
+
+  function afterLabel(text, label, untilRe) {
+    var idx = text.indexOf(label);
+    if (idx < 0) return '';
+    var rest = text.slice(idx + label.length);
+    if (untilRe) {
+      var m = rest.match(untilRe);
+      if (m) rest = rest.slice(0, m.index);
+    }
+    return rest;
+  }
+
+  function firstLineValue(chunk) {
+    var lines = String(chunk).split(/\r?\n/).map(function (l) {
+      return l.trim();
+    }).filter(Boolean);
+    if (!lines.length) return '';
+    return cleanBlank(lines[0].replace(/^[:：\s]+/, ''));
+  }
+
+  function matchField(text, patterns) {
+    for (var i = 0; i < patterns.length; i++) {
+      var m = text.match(patterns[i]);
+      if (m && m[1] != null) {
+        var v = cleanBlank(m[1]);
+        if (v) return v;
+      }
+    }
+    return '';
+  }
+
+  /** 包装性能单字段 schema */
+  var PERF_FIELDS = [
+    '编号', '申请人', '包装容器名称及规格', '包装容器标记及批号', '包装容器数量',
+    '生产日期起', '生产日期止', '拟装货物名称', '状态', '比重', '检验依据',
+    '拟装货物类别', '联合国编号', '运输方式', '检验结果摘要', '包装使用人',
+    '签发日期', '本单有效期截止', '源文件名', '导入时间'
+  ];
+
+  /** 危包证字段 schema */
+  var CERT_FIELDS = [
+    '编号', '申请人', '使用人', '包装容器名称及规格', '包装容器标记及批号',
+    '货物包装类别', '包装容器性能检验结果单号', '运输方式',
+    '危险货物名称中文', '危险货物名称英文', '危险货物类别', '联合国编号',
+    '危险货物状态', '危险货物密度', '报检包件数量', '单件容积', '单件毛重',
+    '单件净重', '危险货物灌装日期', '检验依据', '鉴定结果摘要',
+    '签发日期', '本结果单有效期截止', '源文件名', '导入时间'
+  ];
+
+  function parsePerformance(text, meta) {
+    meta = meta || {};
+    var t = text || '';
+    var flat = t.replace(/\r\n/g, '\n');
+    var row = emptyRow(PERF_FIELDS);
+
+    row['编号'] = extractCertNo(flat);
+
+    row['申请人'] = matchField(flat, [
+      /申请人\s+([^\n]+?)(?:\n|$)/,
+      /申请人\s*[:：]?\s*([^\n]+)/
+    ]);
+
+    // 名称及规格 + 标记及批号 常并排两列
+    var nameMark = parsePerfNameAndMark(flat);
+    row['包装容器名称及规格'] = nameMark.name;
+    row['包装容器标记及批号'] = nameMark.mark;
+
+    row['包装容器数量'] = stripStarsQty(matchField(flat, [
+      /包装容器数量\s+\*{0,2}\s*([^\n生产]+?)(?=\s{2,}生产日期|\s*生产日期|$)/,
+      /包装容器数量\s*[:：]?\s*\*{0,2}\s*([^\n]+)/
+    ]));
+
+    var dateRange = flat.match(/生产日期\s*自\s*([\d\s_\u200b年日月]+?)\s*至\s*([\d\s_\u200b年日月]+)/);
+    if (dateRange) {
+      row['生产日期起'] = normalizeDate(dateRange[1]);
+      row['生产日期止'] = normalizeDate(dateRange[2]);
+    }
+
+    // 拟装货物名称可能跨行（黏度说明）
+    row['拟装货物名称'] = parseCargoName(flat);
+    row['状态'] = matchField(flat, [
+      /状态\s+([^\s\n比重]+)/,
+      /状态\s*[:：]?\s*([液固态气粉]+)/
+    ]);
+    // 比重多为 *** 空白；只接受数字（含小数），避免吃到右侧「检验依据/拟装货物类别」
+    (function () {
+      var m = flat.match(/比重\s*[:：]?\s*((?:\*{1,3})|(?:\d+(?:\.\d+)?))?/);
+      var v = m && m[1] ? String(m[1]).trim() : '';
+      if (!v || /^\*+$/.test(v)) row['比重'] = '';
+      else if (/^\d+(?:\.\d+)?$/.test(v)) row['比重'] = v;
+      else row['比重'] = '';
+    })();
+
+    row['检验依据'] = parseInspectBasis(flat);
+    row['拟装货物类别'] = /[×xX]\s*危险货物/.test(flat) || /拟装货物类别[\s\S]{0,40}危险货物/.test(flat)
+      ? (/[×xX]\s*一般货物/.test(flat) && !/[×xX]\s*危险货物/.test(flat) ? '一般货物' : '危险货物')
+      : (/[×xX]\s*一般货物/.test(flat) ? '一般货物' : '');
+
+    row['联合国编号'] = cleanBlank(matchField(flat, [
+      /联合国编号\s+\*{0,3}\s*([A-Za-z0-9]*)/,
+      /联合国编号\s*[:：]?\s*([^\n运输]+)/
+    ]));
+    if (/^\*+$/.test(row['联合国编号'])) row['联合国编号'] = '';
+
+    row['运输方式'] = matchField(flat, [
+      /运输方式\s+([^\n检]+?)(?=\n|$)/,
+      /运输方式\s*[:：]?\s*([^\n]+)/
+    ]);
+
+    row['检验结果摘要'] = matchField(flat, [
+      /符合\s*([IiⅠⅡⅢIV一二三四\d]+)\s*类\s*包装\s*要求/,
+      /(该包装容器符合[^\n。]+)/,
+      /性能测试结果表明[，,]\s*([^\n。]+)/
+    ]);
+    if (row['检验结果摘要'] && !/^符合/.test(row['检验结果摘要']) && /符合/.test(row['检验结果摘要'])) {
+      // keep as is
+    } else if (/符合\s*[IiⅠⅡⅢIV一二三四\d]+\s*类/.test(flat)) {
+      var rm = flat.match(/符合\s*([IiⅠⅡⅢIV一二三四\d]+)\s*类\s*包装\s*要求/);
+      if (rm) row['检验结果摘要'] = '符合' + rm[1] + '类包装要求';
+    }
+
+    row['包装使用人'] = matchField(flat, [
+      /包装使用人\s+([^\n本]+?)(?=\n|本单有效期|$)/,
+      /包装使用人\s*[:：]?\s*([^\n]+)/
+    ]);
+
+    // 签发日期：签字附近的日期（非有效期）
+    var issueM = flat.match(/签字[：:][\s\S]{0,80}?日期[：:]\s*([\d\s年日月]+)/);
+    if (issueM) row['签发日期'] = normalizeDate(issueM[1]);
+    else {
+      var allDates = flat.match(/日期[：:]\s*([\d\s年日月]+)/g);
+      // fallback: first 日期 after 签字 block
+      var dm = flat.match(/日期[：:]\s*(\d{4}\s*年\s*\d{1,2}\s*月\s*\d{1,2}\s*日)/);
+      if (dm) row['签发日期'] = normalizeDate(dm[1]);
+    }
+
+    var validM = flat.match(/本单有效期\s*截止于\s*([\d\s年日月]+)/);
+    if (validM) row['本单有效期截止'] = normalizeDate(validM[1]);
+
+    row['源文件名'] = meta.sourceName || '';
+    row['导入时间'] = meta.importedAt || nowStr();
+    return row;
+  }
+
+  /** UN 包装标记：钢桶 1A2/Y1.6/100/26、纸箱 4G/Y25/S/25 等（第 3 段可为 S 或数字；兼容尾部 _） */
+  function extractUnPackMarks(text) {
+    var marks = [];
+    // 不用尾部 \b：PDF 常把标记写成 4G/Y20/S/26_ / 1A2/Y1.6/100/26_，_ 会破坏词边界
+    var re = /(?:^|[^A-Z0-9\/])(\d[A-Z0-9]{0,3}\/[XYZN][A-Z0-9.]*\/[A-Z0-9.]+\/\d+)_?(?=[^A-Z0-9\/]|$)/gi;
+    var m;
+    while ((m = re.exec(text || ''))) {
+      var code = String(m[1]).toUpperCase().replace(/_+$/, '');
+      if (marks.indexOf(code) < 0) marks.push(code);
+    }
+    return marks;
+  }
+
+  /** CN/批号 + PI：兼容 PDF 抽字空格，如 CN/ C241205 __ PI:008 → CN/C241205_PI:008 */
+  function extractCnPiMarks(text) {
+    var marks = [];
+    var t = String(text || '');
+    var reSpaced = /\bCN\s*\/\s*([A-Za-z0-9]+)\s*_+\s*PI\s*[:：]?\s*(\d+)\b/gi;
+    var m;
+    while ((m = reSpaced.exec(t))) {
+      var code = 'CN/' + m[1] + '_PI:' + m[2];
+      if (marks.indexOf(code) < 0) marks.push(code);
+    }
+    if (!marks.length) {
+      var reTight = /\bCN\s*\/\s*([A-Za-z0-9]+)(?:\s*_+\s*|\s+)PI\s*[:：]?\s*(\d+)\b/gi;
+      while ((m = reTight.exec(t))) {
+        code = 'CN/' + m[1] + '_PI:' + m[2];
+        if (marks.indexOf(code) < 0) marks.push(code);
+      }
+    }
+    if (!marks.length) {
+      var reLoose = /\bCN\s*\/\s*([A-Za-z0-9]+)\b/gi;
+      while ((m = reLoose.exec(t))) {
+        code = 'CN/' + m[1];
+        if (marks.indexOf(code) < 0) marks.push(code);
+      }
+    }
+    return marks;
+  }
+
+  function formatPackMarks(unMarks, cnMarks) {
+    return unMarks.concat(cnMarks).filter(Boolean).join(' / ');
+  }
+
+  function stripPackMarksFromText(s) {
+    s = String(s || '');
+    s = s.replace(/\d[A-Z0-9]{0,3}\/[XYZN][A-Z0-9.]*\/[A-Z0-9.]+\/\d+_?/gi, ' ');
+    s = s.replace(/\bCN\s*\/\s*[A-Za-z0-9]+\s*_+\s*PI\s*[:：]?\s*\d+\b/gi, ' ');
+    s = s.replace(/\bCN\s*\/\s*[A-Za-z0-9]+(?:\s*_+\s*|\s+)PI\s*[:：]?\s*\d+\b/gi, ' ');
+    s = s.replace(/\bCN\s*\/\s*[A-Za-z0-9]+\b/gi, ' ');
+    return cleanBlank(s);
+  }
+
+  function parsePerfNameAndMark(flat) {
+    var name = '';
+    var mark = '';
+    // Pattern: 包装容器 ... 包装容器  then 名称及规格 / 标记及批号
+    // 钢桶：1A2/Y1.6/100/26 + CN/...PI
+    // 纸箱：4G/Y25/S/25 + CN/...PI（第 3 段常为 S，旧正则只认数字会漏读）
+    var scope = flat;
+    var block = flat.match(/包装容器\s+([\s\S]*?)包装容器数量/);
+    if (block) scope = block[0];
+
+    var unMarks = extractUnPackMarks(scope);
+    if (!unMarks.length) unMarks = extractUnPackMarks(flat);
+    var cnMarks = extractCnPiMarks(scope);
+    if (!cnMarks.length) cnMarks = extractCnPiMarks(flat);
+    mark = formatPackMarks(unMarks, cnMarks);
+
+    if (block) {
+      var lines = block[1].split(/\n/).map(function (l) { return l.replace(/\s+$/, ''); });
+      var leftParts = [];
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        if (/名称及规格|标记及批号|包装容器\s*$/.test(line) && !/\S{4,}/.test(line.replace(/包装容器|名称及规格|标记及批号/g, ''))) {
+          continue;
+        }
+        // 右栏 UN / CN 标记（兼容单空格：…包装容器 4G/Y25/S/25）
+        var unMark = line.match(/(?:\s{2,}|\s)(\d[A-Z0-9]{0,3}\/[XYZN][A-Z0-9.]*\/[A-Z0-9.]+\/\d+)\s*_?\s*$/i);
+        var cnMark = line.match(/(?:\s{2,}|\s)(CN\s*\/\s*[A-Za-z0-9]+(?:\s*_+\s*PI\s*[:：]?\s*\d+)?)\s*$/i);
+        if (unMark || cnMark) {
+          var m = unMark || cnMark;
+          var left = line.slice(0, m.index).replace(/包装容器|名称及规格|标记及批号/g, '').trim();
+          left = stripPackMarksFromText(left);
+          if (left) leftParts.push(left);
+        } else {
+          var cleaned = line.replace(/包装容器|名称及规格|标记及批号/g, '').trim();
+          cleaned = stripPackMarksFromText(cleaned);
+          if (!cleaned) continue;
+          var parts = cleaned.split(/\s{3,}/).map(cleanBlank).filter(Boolean);
+          if (parts.length >= 2) {
+            leftParts.push(parts[0]);
+            // 右栏残留文本若不是标记则并入名称备注
+            var rightRest = stripPackMarksFromText(parts.slice(1).join(' '));
+            if (rightRest && !/^[0-9A-Z]{1,3}\//i.test(rightRest) && !/^CN\//i.test(rightRest)) {
+              leftParts.push(rightRest);
+            }
+          } else if (parts.length === 1) {
+            if (!/^[0-9A-Z]{1,3}\//i.test(parts[0]) && !/^CN\//i.test(parts[0])) {
+              leftParts.push(parts[0]);
+            }
+          }
+        }
+      }
+      name = leftParts.join(' ').replace(/^\*+/, '').trim();
+    }
+
+    if (!name) {
+      name = matchField(flat, [
+        /名称及规格\s+([^\n包装]+)/
+      ]);
+      name = stripPackMarksFromText(name);
+    } else {
+      name = stripPackMarksFromText(name);
+    }
+
+    // 名称仍空时：从块内抓纸箱/钢桶描述行
+    if (!name && block) {
+      var nmGuess = block[1].match(/((?:双瓦楞|三瓦楞|钢制|铁桶|塑料|纤维板)[^\n]{0,120})/);
+      if (nmGuess) name = stripPackMarksFromText(nmGuess[1]);
+    }
+
+    return { name: cleanBlank(name), mark: mark };
+  }
+
+  function parseCargoName(flat) {
+    // Normal: 拟装货物名称  xxx  状态
+    var m = flat.match(/拟装货物名称\s+([^\n]*?)\s+状态\s+/);
+    if (m && cleanBlank(m[1])) {
+      var raw = cleanBlank(m[1]);
+      // continuation line with closing paren (viscosity note)
+      var cont = flat.match(/拟装货物名称[\s\S]{0,80}?状态[^\n]*\n\s*([^\n]*[）)])/);
+      if (cont) raw = cleanBlank(raw + cont[1]);
+      return raw;
+    }
+    // Awkward layout: cargo text appears on line ABOVE the label
+    var awkward = flat.match(/\n\s*([^\n]{2,40})\n\s*拟装货物名称\s+状态\s+/);
+    if (awkward) {
+      var name = cleanBlank(awkward[1]);
+      var cont2 = flat.match(/拟装货物名称[\s\S]{0,100}?\n\s*([^\n]*[）)])/);
+      if (cont2) name = cleanBlank(name + cont2[1]);
+      return name;
+    }
+    return matchField(flat, [/拟装货物名称\s+([^\n状态]+)/]);
+  }
+
+  function parseInspectBasis(flat) {
+    // Between 检验依据 area and 拟装货物类别 / 检验结果
+    var m = flat.match(/(《[^》]+》[^\n]*|SN\/T[^\n]+)/);
+    // Prefer the block near 检/验/依/据
+    var basisBlock = flat.match(/包装容器数量[\s\S]*?检\s*\n?\s*验[\s\S]*?依[\s\S]*?据([\s\S]*?)检验结果|按上述/);
+    var candidates = [];
+    var re = /(《[^》]+》(?:及[^。\n]+)?|SN\/T[_\s]?[0-9.]+-?[0-9]*《[^》]+》|SN\/T[_\s]?[0-9.]+-?[0-9]*[^\n]*)/g;
+    var mm;
+    while ((mm = re.exec(flat)) && candidates.length < 5) {
+      var c = cleanBlank(mm[1]);
+      if (c && c.length > 4 && !/使用鉴定/.test(c) || /性能|规程|规则/.test(c)) {
+        candidates.push(c);
+      }
+    }
+    // For performance docs, take first substantial basis before 检验结果
+    var beforeResult = flat.split(/检\s*\n\s*验\s*\n\s*结\s*\n\s*果|按上述检验依据/)[0] || flat;
+    candidates = [];
+    re.lastIndex = 0;
+    while ((mm = re.exec(beforeResult))) {
+      var c2 = cleanBlank(mm[1]);
+      if (c2.length > 6) candidates.push(c2);
+    }
+    if (candidates.length) {
+      var seen = {};
+      var out = [];
+      candidates.forEach(function (c) {
+        c = c.replace(/\s*拟装货物类别[\s\S]*$/, '').replace(/\s*[×xX]\s*危险货物.*$/, '').trim();
+        if (c && !seen[c]) { seen[c] = 1; out.push(c); }
+      });
+      return out[0] || '';
+    }
+    return '';
+  }
+
+  function parseCertificate(text, meta) {
+    meta = meta || {};
+    var flat = (text || '').replace(/\r\n/g, '\n');
+    var row = emptyRow(CERT_FIELDS);
+
+    row['编号'] = extractCertNo(flat);
+
+    row['申请人'] = matchField(flat, [
+      /申请人\s+([^\n]+)/
+    ]);
+    row['使用人'] = matchField(flat, [
+      /使用人\s+([^\n]+)/
+    ]);
+
+    var nm = parseCertNameAndMark(flat);
+    row['包装容器名称及规格'] = nm.name;
+    row['包装容器标记及批号'] = nm.mark;
+
+    row['货物包装类别'] = matchField(flat, [
+      /货物包装类别\s+([IiⅠⅡⅢIV一二三四\d]+)\s*类/,
+      /货物包装类别\s+([^\n包装1]+)/
+    ]);
+    if (row['货物包装类别'] && !/类$/.test(row['货物包装类别'])) {
+      row['货物包装类别'] = row['货物包装类别'] + '类';
+    }
+    // Normalize
+    var catM = flat.match(/货物包装类别\s*([IiⅠⅡⅢIV一二三四\d]+)\s*类/);
+    if (catM) row['货物包装类别'] = catM[1] + '类';
+
+    row['包装容器性能检验结果单号'] = matchField(flat, [
+      /包装容器性能\s*\n?\s*检验结果单号\s*([0-9A-Za-z]+)/,
+      /检验结果单号\s*([0-9A-Za-z]{10,})/,
+      /包装容器性能[\s\S]{0,40}?([0-9]{3}[A-Za-z][0-9A-Za-z]{10,})/
+    ]);
+    // Layout often has number between 性能 and 检验结果单号
+    if (!row['包装容器性能检验结果单号']) {
+      var pm = flat.match(/包装容器性能\s*\n\s*([0-9A-Za-z]{10,})\s*\n\s*检验结果单号/);
+      if (pm) row['包装容器性能检验结果单号'] = cleanBlank(pm[1]);
+      else {
+        pm = flat.match(/货物包装类别[\s\S]{0,120}?([0-9]{3}N[0-9A-Za-z]+Z[0-9]{2})/);
+        if (pm && pm[1] !== row['编号']) row['包装容器性能检验结果单号'] = pm[1];
+      }
+    }
+
+    row['运输方式'] = matchField(flat, [
+      /运输方式\s+([^\n]+)/
+    ]);
+
+    var names = parseDangerNames(flat);
+    row['危险货物名称中文'] = names.zh;
+    row['危险货物名称英文'] = names.en;
+
+    // 类别只取 IMDG 类号（如 3 / 8 / 3.1），不要吞进品名后缀 402、405-4P
+    row['危险货物类别'] = matchField(flat, [
+      /危险货物类别\s*([0-9]{1,2}(?:\.[0-9])?)/
+    ]);
+    row['联合国编号'] = matchField(flat, [
+      /联合国编号\s+([0-9A-Za-z]+)/
+    ]);
+
+    row['危险货物状态'] = matchField(flat, [
+      /危险货物状态\s+([^\s\n危险]+)/
+    ]);
+    row['危险货物密度'] = matchField(flat, [
+      /危险货物密度\s+([0-9.]+)/
+    ]);
+
+    row['报检包件数量'] = stripStarsQty(matchField(flat, [
+      /报检包件数量\s+\*{0,2}\s*([^\s\n单]+)/
+    ]));
+    row['单件容积'] = stripStarsQty(matchField(flat, [
+      /单件容积\s+\*{0,3}\s*([^\s\n单]+)/
+    ]));
+    row['单件毛重'] = stripStarsQty(matchField(flat, [
+      /单件毛重\s+\*{0,2}\s*([^\n]+)/
+    ]));
+    row['单件净重'] = stripStarsQty(matchField(flat, [
+      /单件净重\s+\*{0,2}\s*([^\n]+)/
+    ]));
+
+    var fillM = flat.match(/危险货物灌装日期\s+([\d\s年日月]+)/);
+    if (fillM) row['危险货物灌装日期'] = normalizeDate(fillM[1]);
+
+    row['检验依据'] = matchField(flat, [
+      /检验依据\s+(《[^》]+》及[^\n]+)/,
+      /检验依据\s+([^\n]+)/
+    ]);
+
+    row['鉴定结果摘要'] = '';
+    if (/符合《国际海运危险货物规则》/.test(flat) || /适用性及使用方法符合/.test(flat)) {
+      var am = flat.match(/符合(《[^》]+》[^\n]*|SN\/T[^\n]+要求)/);
+      row['鉴定结果摘要'] = '适用性及使用方法符合《国际海运危险货物规则》及 SN/T0370.3 使用鉴定要求';
+      var sn = flat.match(/SN\/T\s*0370\.3-?\d*/);
+      if (sn) row['鉴定结果摘要'] = '符合《国际海运危险货物规则》、' + sn[0] + ' 使用鉴定要求';
+    }
+
+    var issueM = flat.match(/日期[：:]\s*([\d\s年日月]+)/);
+    // Prefer the one near 签字
+    var issue2 = flat.match(/签字[：:][\s\S]{0,100}?日期[：:]\s*([\d\s年日月]+)/);
+    if (issue2) row['签发日期'] = normalizeDate(issue2[1]);
+    else if (issueM) row['签发日期'] = normalizeDate(issueM[1]);
+
+    var validM = flat.match(/本结果单有效期\s*截止于\s*([\d\s年日月]+)/);
+    if (validM) row['本结果单有效期截止'] = normalizeDate(validM[1]);
+
+    row['源文件名'] = meta.sourceName || '';
+    row['导入时间'] = meta.importedAt || nowStr();
+    return row;
+  }
+
+  function parseCertNameAndMark(flat) {
+    var name = '';
+    var mark = '';
+
+    // 纸箱 / 钢桶两种版式：标题顺序可能对调；标记在「货物包装类别」同行或下一行
+    var block = flat.match(/包装容器(?:名称及规格|标记及批号)\s+包装容器(?:标记及批号|名称及规格)\s*\n([\s\S]*?)货物包装类别/);
+    if (block) {
+      var lines = block[1].split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+      var nameLines = [];
+      lines.forEach(function (line) {
+        if (isPackMarkLine(line)) return;
+        line = line.replace(/\s+\d[A-Z0-9]{1,3}\/[A-Z0-9.\/]+$/i, '').trim();
+        if (line) nameLines.push(line);
+      });
+      name = normalizePackName(nameLines.join(' '));
+    }
+
+    if (!name) {
+      var nm2 = flat.match(/((?:钢制|双瓦楞|铁桶|塑料)[\s\S]{0,140}?皮重\s*[:：]?\s*[0-9.]+kg(?:[\s\S]{0,40}?装货\s*物)?)/);
+      if (nm2) name = normalizePackName(nm2[1]);
+    }
+
+    if (name && name.length > 160) {
+      var cut = name.search(/货物包装类别|申请人|使用人|运输方式|危险货物|包装容器性能/);
+      if (cut > 8) name = name.slice(0, cut);
+      name = name.replace(/包装容器名称及规格|包装容器标记及批号/g, '').trim();
+    }
+
+    var marks = [];
+    // 1A1/Y1.6/100/26（1A1 三字符）与 4G/Y25/S/25
+    var umRe = /\b(\d[A-Z0-9]{1,3}\/[A-Z0-9.]+\/[A-Z0-9.]+\/\d+)\b/g;
+    var um;
+    while ((um = umRe.exec(flat))) {
+      if (marks.indexOf(um[1]) < 0) marks.push(um[1]);
+    }
+    var cm = flat.match(/\bCN\/\s*([A-Za-z0-9]+)\s*_+\s*PI\s*[:：]?\s*(\d+)/i);
+    if (cm) {
+      marks.push('CN/' + cm[1] + '_PI:' + cm[2]);
+    } else {
+      cm = flat.match(/\b(CN\/[A-Za-z0-9]+(?:_*PI[:：]?\d+)?)/i);
+      if (cm) marks.push(cm[1].replace(/__+/g, '_'));
+    }
+    mark = marks.join(' / ');
+    return { name: cleanBlank(name), mark: mark };
+  }
+
+  function normalizePackName(s) {
+    s = String(s || '');
+    s = s.replace(/_+/g, ' ');
+    s = s.replace(/装货\s*物/g, '装货物');
+    s = s.replace(/\s*:\s*/g, ':');
+    s = s.replace(/\s*,\s*/g, ', ');
+    s = s.replace(/\s+/g, ' ').trim();
+    s = s.replace(/Φ\s*/g, 'Φ');
+    s = s.replace(/(\d)\s*L\b/g, '$1L');
+    s = s.replace(/mm\s*,/g, 'mm,');
+    s = s.replace(/mm皮重/g, 'mm 皮重').replace(/kg内有/g, 'kg 内有');
+    return s;
+  }
+
+  function isPackMarkLine(line) {
+    return /^\d[A-Z0-9]{1,3}\/[A-Z0-9.\/]+$/i.test(line)
+      || /^CN\//i.test(line)
+      || /^CN\/\s*[A-Za-z0-9]+\s*_+\s*PI/i.test(line);
+  }
+
+  function parseDangerNames(flat) {
+    var zh = '';
+    var en = '';
+    var zhBlock = flat.match(/（中文）\s*([\s\S]*?)（英文）/);
+    if (zhBlock) {
+      zh = zhBlock[1]
+        .replace(/危险货物类别\s*[0-9]{1,2}(?:\.[0-9])?/g, ' ')
+        .replace(/危险货物名称/g, ' ')
+        .replace(/\n/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      zh = cleanBlank(zh);
+      // Join split " / Thinner_xxx" fragments
+      zh = zh.replace(/\s+\/\s+/g, ' / ').replace(/\s+/g, ' ').trim();
+    } else {
+      var zhM = flat.match(/（中文）\s*([^\n]+)/);
+      if (zhM) zh = cleanBlank(zhM[1].replace(/危险货物类别\s*\S+/g, ''));
+    }
+    var enM = flat.match(/（英文）\s*\*{0,3}\s*([^\n联合国]*)/);
+    if (enM) {
+      en = cleanBlank(enM[1]);
+      if (/^\*+$/.test(en) || !en) en = '';
+    }
+    return { zh: zh, en: en };
+  }
+
+  function emptyRow(fields) {
+    var o = {};
+    fields.forEach(function (f) { o[f] = ''; });
+    return o;
+  }
+
+  function nowStr() {
+    var d = new Date();
+    var p = function (n) { return n < 10 ? '0' + n : '' + n; };
+    return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' +
+      p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+  }
+
+  /** 运单 DO：Header(Delivery) + Item(Product/Batch) 扁平行字段 */
+  var DO_FIELDS = [
+    'Delivery号码', 'Delivery日期', '订单号', '客户号', '客户名称',
+    'Pos', 'Product no.', '产品描述', '产品额外描述',
+    '包装数量', '单件数量', '合计数量',
+    'Batch no.', 'manufactured', 'Use by end of', 'Country of origin',
+    '源文件名', '导入时间'
+  ];
+
+  function stripDoNoise(text) {
+    return String(text || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/^---\s*PAGE\s+\d+\s*---\s*$/gmi, '')
+      .replace(/^Delivery\s+\d+\s+Page:\s*\d+\s+of\s+\d+\s*$/gmi, '')
+      .replace(/^Page:\s*\d+\s+of\s+\d+\s*$/gmi, '')
+      .replace(/^from\s+\d{2}\.\d{2}\.\d{4}\s*$/gmi, '')
+      .replace(/Product name\s*_+/gi, '')
+      .replace(/^_{8,}.*$/gm, '')
+      .replace(/^Pos\.\s+Product no\..*$/gmi, '')
+      .replace(/^Product name\s*$/gmi, '')
+      .replace(/\n{3,}/g, '\n\n');
+  }
+
+  function isDoNoiseLine(line) {
+    return !line
+      || /^_{5,}/.test(line)
+      || /^Product name/i.test(line)
+      || /^(Customer:|Delivery condition:|Any deliveries|所有来自|Shanghai Mankiewicz|Our |Techn\.|Order processing|Date:|Your PO:|Page:|total:)/i.test(line)
+      || /^Artron\b/i.test(line)
+      || /^\d{1,5}\s+Punn\b/i.test(line)
+      || /^(KLONG TOEI|Thailand|THAILAND)\b/i.test(line);
+  }
+
+  /**
+   * 解析美凯威奇 Delivery Order PDF 文本。
+   * 返回 { header, items }；items 为扁平行（Header 字段重复在每行）。
+   */
+  function parseDelivery(text, meta) {
+    meta = meta || {};
+    var raw = String(text || '').replace(/\r\n/g, '\n');
+    var header = {
+      'Delivery号码': '',
+      'Delivery日期': '',
+      '订单号': '',
+      '客户号': '',
+      '客户名称': ''
+    };
+
+    // Header 先从原文取，避免 strip 掉「Delivery\nfrom dd.mm.yyyy」
+    var dm = raw.match(/\bDelivery\s+(\d{6,})\b/i);
+    if (dm) header['Delivery号码'] = dm[1];
+    var dateM = raw.match(/\bDelivery\s+\d{6,}\b[ \t]*\n[ \t]*from\s+(\d{2}\.\d{2}\.\d{4})/i);
+    if (!dateM) dateM = raw.match(/\bDelivery\s+\d{6,}\b[\s\S]{0,40}?from\s+(\d{2}\.\d{2}\.\d{4})/i);
+    if (dateM) header['Delivery日期'] = dateM[1];
+
+    var om = raw.match(/Our order no\.:\s*(\d+)/i);
+    if (om) header['订单号'] = om[1];
+    var cm = raw.match(/Customer no\.:\s*(\d+)/i);
+    if (cm) header['客户号'] = cm[1];
+    var custM = raw.match(/Customer:\s*(?:Customer:\s*)?\n\s*([^\n]+)/i);
+    if (custM) {
+      var cname = cleanBlank(custM[1]);
+      // 页脚双栏重复：Name Name
+      var dup = cname.match(/^(.+?)\s+\1$/);
+      if (dup) cname = dup[1];
+      header['客户名称'] = cname;
+    } else {
+      var cust2 = raw.match(/\b([A-Z][A-Za-z0-9 &().,\/-]{2,}(?:Co(?:\s*Ltd)?\.?|Ltd\.?|GmbH|Inc\.?))\b/);
+      if (cust2) header['客户名称'] = cleanBlank(cust2[1]);
+    }
+
+    var flat = stripDoNoise(raw);
+
+    var itemStartRe = /^(\d{1,3})\s+([A-Z0-9][A-Z0-9._-]{4,})\s+(\d{1,3}(?:[.,]\d{2})?\s+[A-Za-z]+)\s+x\s+(\d{1,3}(?:[.,]\d{3})?\s*KG)\s+(\d{1,3}(?:[.,]\d{3})?\s*KG)\s*$/gmi;
+    var starts = [];
+    var sm;
+    while ((sm = itemStartRe.exec(flat))) {
+      starts.push({
+        index: sm.index,
+        end: sm.index + sm[0].length,
+        pos: sm[1],
+        productNo: sm[2],
+        qtyPack: sm[3],
+        qtyUnit: sm[4],
+        qtyTotal: sm[5]
+      });
+    }
+
+    var totalIdx = flat.search(/\ntotal:\s*/i);
+    var items = [];
+    for (var i = 0; i < starts.length; i++) {
+      var s = starts[i];
+      var next = i + 1 < starts.length ? starts[i + 1].index : (totalIdx > s.end ? totalIdx : flat.length);
+      var body = flat.slice(s.end, next);
+      var lines = body.split(/\n/).map(function (l) { return l.trim(); }).filter(Boolean);
+      var productName = '';
+      var extras = [];
+      var batch = '', manufactured = '', useBy = '', origin = '';
+      for (var li = 0; li < lines.length; li++) {
+        var line = lines[li];
+        if (/^Batch no\.:/i.test(line)) {
+          var bm = line.match(/Batch no\.:\s*([^\s/]+)\s*\/\s*manufactured:\s*([0-9.]+)\s*\/\s*Use by end of:\s*([0-9.]+)/i);
+          if (bm) {
+            batch = bm[1];
+            manufactured = bm[2];
+            useBy = bm[3];
+          }
+          continue;
+        }
+        if (/^Country of origin\s+/i.test(line)) {
+          origin = cleanBlank(line.replace(/^Country of origin\s+/i, ''));
+          continue;
+        }
+        if (isDoNoiseLine(line)) continue;
+        if (!productName) productName = line;
+        else extras.push(line);
+      }
+      var row = emptyRow(DO_FIELDS);
+      row['Delivery号码'] = header['Delivery号码'];
+      row['Delivery日期'] = header['Delivery日期'];
+      row['订单号'] = header['订单号'];
+      row['客户号'] = header['客户号'];
+      row['客户名称'] = header['客户名称'];
+      row['Pos'] = s.pos;
+      row['Product no.'] = s.productNo;
+      row['产品描述'] = productName;
+      row['产品额外描述'] = extras.join('\n');
+      row['包装数量'] = cleanBlank(s.qtyPack);
+      row['单件数量'] = cleanBlank(s.qtyUnit);
+      row['合计数量'] = cleanBlank(s.qtyTotal);
+      row['Batch no.'] = batch;
+      row['manufactured'] = manufactured;
+      row['Use by end of'] = useBy;
+      row['Country of origin'] = origin;
+      row['源文件名'] = meta.sourceName || '';
+      row['导入时间'] = meta.importedAt || nowStr();
+      items.push(row);
+    }
+
+    return { header: header, items: items };
+  }
+
+  function parseAuto(text, meta) {
+    var type = detectDocType(text);
+    if (type === '危包证') return { type: type, row: parseCertificate(text, meta) };
+    if (type === '包装性能单') return { type: type, row: parsePerformance(text, meta) };
+    if (type === '运单DO') {
+      var parsed = parseDelivery(text, meta);
+      return { type: type, row: null, rows: parsed.items, header: parsed.header };
+    }
+    return { type: 'unknown', row: null };
+  }
+
+  return {
+    detectDocType: detectDocType,
+    parsePerformance: parsePerformance,
+    parseCertificate: parseCertificate,
+    parseDelivery: parseDelivery,
+    parseAuto: parseAuto,
+    PERF_FIELDS: PERF_FIELDS,
+    CERT_FIELDS: CERT_FIELDS,
+    DO_FIELDS: DO_FIELDS,
+    cleanBlank: cleanBlank,
+    normalizeDate: normalizeDate,
+    stripStarsQty: stripStarsQty
+  };
+});
+
+</script>
+<script type="module">
+const ENGINE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs';
+const WORKER_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+window.__pdfReady = (async function () {
+  try {
+    const pdfjs = await import(ENGINE_URL);
+    pdfjs.GlobalWorkerOptions.workerSrc = WORKER_URL;
+    window.__pdfjs = pdfjs;
+    window.extractPdfText = async function (file) {
+      const buf = await file.arrayBuffer();
+      const doc = await pdfjs.getDocument({ data: buf }).promise;
+      const parts = [];
+      for (let i = 1; i <= doc.numPages; i++) {
+        const page = await doc.getPage(i);
+        const tc = await page.getTextContent();
+        const items = tc.items.map(it => ({ str: it.str, x: it.transform[4], y: it.transform[5] }));
+        items.sort((a, b) => (b.y - a.y) || (a.x - b.x));
+        let line = '', lastY = null; const lines = [];
+        for (const it of items) {
+          if (lastY != null && Math.abs(lastY - it.y) > 6) { lines.push(line); line = ''; }
+          else if (line && it.str) line += ' ';
+          line += it.str; lastY = it.y;
+        }
+        if (line) lines.push(line);
+        let pageText = lines.join('\n');
+        pageText = pageText.replace(/([0-9A-Za-z]{12,})\s*\n\s*编号/g, '编号 $1');
+        pageText = pageText.replace(/([0-9A-Za-z]{12,})\s+编号/g, '编号 $1');
+        parts.push(pageText); parts.push('');
+      }
+      return parts.join('\n');
+    };
+    return true;
+  } catch (e) {
+    console.error(e);
+    window.__pdfLoadError = e && e.message ? e.message : String(e);
+    return false;
+  }
+})();
+</script>
+<script>
+const STORE_KEY = 'mkq-dg-export-v1';
+const P = window.DgParsers;
+const PERF_COLS = P.PERF_FIELDS.slice();
+const CERT_COLS = P.CERT_FIELDS.slice();
+const DO_COLS = P.DO_FIELDS.slice();
+const MOD_LABEL = { perf:'包装性能单', cert:'危包证', do:'运单DO' };
+
+let state = { perf: [], cert: [], do: [] };
+let routePending = null;
+const perfFilterIds = ['perfFilterUser','perfFilterValidFrom','perfFilterValidTo','perfFilterMode','perfFilterMark'];
+const doFilterIds = ['doFilterDelivery','doFilterProduct','doFilterBatch','doFilterOrigin'];
+
+function colsOf(mod){
+  if(mod==='perf') return PERF_COLS;
+  if(mod==='cert') return CERT_COLS;
+  return DO_COLS;
+}
+
+function uid(){ return 'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function todayStr(){
+  const d=new Date();
+  const p=n=>n<10?'0'+n:''+n;
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());
+}
+function nowStr(){ return P.normalizeDate ? (function(){
+  const d=new Date(); const p=n=>n<10?'0'+n:''+n;
+  return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());
+})() : todayStr(); }
+
+function toast(msg, type, ms){
+  const el=document.createElement('div');
+  el.className='toast '+(type||'info');
+  el.textContent=msg;
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(()=>el.remove(), ms||3200);
+}
+
+function loadState(){
+  try{
+    const raw=localStorage.getItem(STORE_KEY);
+    if(raw){
+      const o=JSON.parse(raw);
+      state.perf=Array.isArray(o.perf)?o.perf:[];
+      state.cert=Array.isArray(o.cert)?o.cert:[];
+      state.do=Array.isArray(o.do)?o.do:[];
+    }
+  }catch(e){ console.warn(e); }
+}
+function saveState(){
+  localStorage.setItem(STORE_KEY, JSON.stringify({
+    version:1, savedAt: nowStr(), perf: state.perf, cert: state.cert, do: state.do
+  }));
+}
+
+function showTab(name){
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.querySelectorAll('section.tab').forEach(s=>s.classList.toggle('active', s.id==='tab-'+name));
+}
+
+function emptyPerf(){ const r={_id:uid()}; PERF_COLS.forEach(c=>r[c]=''); r['导入时间']=nowStr(); return r; }
+function emptyCert(){ const r={_id:uid()}; CERT_COLS.forEach(c=>r[c]=''); r['导入时间']=nowStr(); return r; }
+function emptyDo(){ const r={_id:uid()}; DO_COLS.forEach(c=>r[c]=''); r['导入时间']=nowStr(); return r; }
+
+function getPerfFilterState(){
+  const user = (document.getElementById('perfFilterUser')?.value || '').trim().toLowerCase();
+  const validFrom = (document.getElementById('perfFilterValidFrom')?.value || '').trim();
+  const validTo = (document.getElementById('perfFilterValidTo')?.value || '').trim();
+  const mode = (document.getElementById('perfFilterMode')?.value || '').trim();
+  const mark = (document.getElementById('perfFilterMark')?.value || '').trim().toLowerCase();
+  return { user, validFrom, validTo, mode, mark };
+}
+
+function hasActivePerfFilters(){
+  const f = getPerfFilterState();
+  return !!(f.user || f.validFrom || f.validTo || f.mode || f.mark);
+}
+
+function rowMatchesPerfFilters(row, f){
+  if(f.user){
+    const v = String(row['包装使用人']||'').toLowerCase();
+    if(!v.includes(f.user)) return false;
+  }
+  if(f.mode){
+    const v = String(row['运输方式']||'').trim();
+    if(v !== f.mode) return false;
+  }
+  if(f.mark){
+    const v = String(row['包装容器标记及批号']||'').toLowerCase().replace(/\s+/g,'');
+    const q = f.mark.replace(/\s+/g,'');
+    if(!v.includes(q)) return false;
+  }
+  if(f.validFrom || f.validTo){
+    const d = String(row['本单有效期截止']||'').trim();
+    if(!d) return false;
+    if(f.validFrom && d < f.validFrom) return false;
+    if(f.validTo && d > f.validTo) return false;
+  }
+  return true;
+}
+
+function getPerfViewRows(){
+  const all = state.perf;
+  if(!hasActivePerfFilters()) return all.slice();
+  const f = getPerfFilterState();
+  return all.filter(r => rowMatchesPerfFilters(r, f));
+}
+
+function refreshPerfFilterOptions(){
+  const users = [...new Set(state.perf.map(r => String(r['包装使用人']||'').trim()).filter(Boolean))].sort();
+  const modes = [...new Set(state.perf.map(r => String(r['运输方式']||'').trim()).filter(Boolean))].sort();
+  const dl = document.getElementById('perfUserList');
+  if(dl) dl.innerHTML = users.map(u => '<option value="'+escAttr(u)+'"></option>').join('');
+  const sel = document.getElementById('perfFilterMode');
+  if(sel){
+    const cur = sel.value;
+    sel.innerHTML = '<option value="">全部</option>' + modes.map(m => '<option value="'+escAttr(m)+'">'+esc(m)+'</option>').join('');
+    if(modes.includes(cur) || cur==='') sel.value = cur;
+    else sel.value = '';
+  }
+}
+
+function updatePerfFilterStat(viewLen){
+  const el = document.getElementById('perfFilterStat');
+  if(!el) return;
+  const total = state.perf.length;
+  if(!hasActivePerfFilters()){
+    el.textContent = total ? ('共 '+total+' 条') : '';
+  } else {
+    el.textContent = '筛选显示 '+viewLen+' / '+total+' 条';
+  }
+}
+
+function resetPerfFilters(){
+  perfFilterIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  renderTable('perf');
+}
+
+function bindPerfFilters(){
+  perfFilterIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el || el.dataset.bound) return;
+    el.dataset.bound='1';
+    el.addEventListener('input', ()=>renderTable('perf'));
+    el.addEventListener('change', ()=>renderTable('perf'));
+  });
+}
+
+function getDoFilterState(){
+  return {
+    delivery: (document.getElementById('doFilterDelivery')?.value || '').trim().toLowerCase(),
+    product: (document.getElementById('doFilterProduct')?.value || '').trim().toLowerCase(),
+    batch: (document.getElementById('doFilterBatch')?.value || '').trim().toLowerCase(),
+    origin: (document.getElementById('doFilterOrigin')?.value || '').trim()
+  };
+}
+function hasActiveDoFilters(){
+  const f=getDoFilterState();
+  return !!(f.delivery || f.product || f.batch || f.origin);
+}
+function rowMatchesDoFilters(row, f){
+  if(f.delivery && !String(row['Delivery号码']||'').toLowerCase().includes(f.delivery)) return false;
+  if(f.batch && !String(row['Batch no.']||'').toLowerCase().includes(f.batch)) return false;
+  if(f.origin && String(row['Country of origin']||'').trim() !== f.origin) return false;
+  if(f.product){
+    const hay = (String(row['Product no.']||'')+' '+String(row['产品描述']||'')+' '+String(row['产品额外描述']||'')).toLowerCase();
+    if(!hay.includes(f.product)) return false;
+  }
+  return true;
+}
+function getDoViewRows(){
+  const all=state.do;
+  if(!hasActiveDoFilters()) return all.slice();
+  const f=getDoFilterState();
+  return all.filter(r=>rowMatchesDoFilters(r,f));
+}
+function refreshDoFilterOptions(){
+  const deliveries=[...new Set(state.do.map(r=>String(r['Delivery号码']||'').trim()).filter(Boolean))].sort();
+  const origins=[...new Set(state.do.map(r=>String(r['Country of origin']||'').trim()).filter(Boolean))].sort();
+  const dl=document.getElementById('doDeliveryList');
+  if(dl) dl.innerHTML=deliveries.map(d=>'<option value="'+escAttr(d)+'"></option>').join('');
+  const sel=document.getElementById('doFilterOrigin');
+  if(sel){
+    const cur=sel.value;
+    sel.innerHTML='<option value="">全部</option>'+origins.map(o=>'<option value="'+escAttr(o)+'">'+esc(o)+'</option>').join('');
+    sel.value = origins.includes(cur) || cur==='' ? cur : '';
+  }
+  const hc=document.getElementById('doHeaderCount');
+  if(hc) hc.textContent=String(deliveries.length);
+}
+function updateDoFilterStat(viewLen){
+  const el=document.getElementById('doFilterStat');
+  if(!el) return;
+  const total=state.do.length;
+  el.textContent = hasActiveDoFilters() ? ('筛选显示 '+viewLen+' / '+total+' 条') : (total?('共 '+total+' 条'):'');
+}
+function resetDoFilters(){
+  doFilterIds.forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  renderTable('do');
+}
+function bindDoFilters(){
+  doFilterIds.forEach(id=>{
+    const el=document.getElementById(id);
+    if(!el || el.dataset.bound) return;
+    el.dataset.bound='1';
+    el.addEventListener('input', ()=>renderTable('do'));
+    el.addEventListener('change', ()=>renderTable('do'));
+  });
+}
+
+function renderTable(mod){
+  const cols = colsOf(mod);
+  if(mod==='perf') refreshPerfFilterOptions();
+  if(mod==='do') refreshDoFilterOptions();
+  const rows = mod==='perf' ? getPerfViewRows() : (mod==='do' ? getDoViewRows() : state[mod]);
+  const table = document.getElementById(mod+'Table');
+  if(!table) return;
+  const thead = table.querySelector('thead');
+  const tbody = table.querySelector('tbody');
+  thead.innerHTML = '<tr><th class="nosort">操作</th>' + cols.map(c=>'<th>'+esc(c)+'</th>').join('') + '</tr>';
+  if(!state[mod].length){
+    tbody.innerHTML = '<tr><td colspan="'+(cols.length+1)+'" class="muted" style="text-align:center;padding:20px">暂无数据，请上传 PDF 或新增空白行</td></tr>';
+  } else if(!rows.length){
+    tbody.innerHTML = '<tr><td colspan="'+(cols.length+1)+'" class="muted" style="text-align:center;padding:20px">无匹配筛选结果，请调整条件或重置筛选</td></tr>';
+  } else {
+    tbody.innerHTML = rows.map((row) => {
+      return '<tr data-id="'+esc(row._id)+'">' +
+        '<td class="nowrap"><button class="btn sm danger" type="button" onclick="deleteRow(\''+mod+'\',\''+esc(row._id)+'\')">删除</button></td>' +
+        cols.map(c => '<td><input class="cell" data-mod="'+mod+'" data-id="'+esc(row._id)+'" data-field="'+esc(c)+'" value="'+escAttr(row[c]||'')+'" /></td>').join('') +
+        '</tr>';
+    }).join('');
+  }
+  const countEl=document.getElementById(mod+'Count');
+  if(countEl) countEl.textContent = String(state[mod].length);
+  if(mod==='perf') updatePerfFilterStat(rows.length);
+  if(mod==='do') updateDoFilterStat(rows.length);
+  tbody.querySelectorAll('input.cell').forEach(inp=>{
+    inp.addEventListener('change', onCellEdit);
+    inp.addEventListener('blur', onCellEdit);
+  });
+}
+
+function onCellEdit(e){
+  const inp=e.target;
+  const mod=inp.dataset.mod, id=inp.dataset.id, field=inp.dataset.field;
+  const row=state[mod].find(r=>r._id===id);
+  if(row){ row[field]=inp.value; saveState(); }
+}
+
+function deleteRow(mod, id){
+  state[mod]=state[mod].filter(r=>r._id!==id);
+  saveState(); renderTable(mod); toast('已删除一行','ok');
+}
+
+function addBlankRow(mod){
+  const row = mod==='perf' ? emptyPerf() : (mod==='cert' ? emptyCert() : emptyDo());
+  state[mod].push(row);
+  saveState(); renderTable(mod); toast('已新增空白行','ok');
+}
+
+function clearModule(mod){
+  if(!state[mod].length) return;
+  if(!confirm('确认清空本模块全部 '+state[mod].length+' 条记录？')) return;
+  state[mod]=[];
+  saveState(); renderTable(mod); toast('已清空','warn');
+}
+
+function clearStorageConfirm(){
+  if(!confirm('确认清空本地缓存中的全部模块数据？')) return;
+  state={perf:[],cert:[],do:[]};
+  saveState(); renderTable('perf'); renderTable('cert'); renderTable('do'); toast('本地缓存已清空','warn');
+}
+
+function upsertByNo(mod, row){
+  const no=row['编号'];
+  if(no){
+    const i=state[mod].findIndex(r=>r['编号']===no);
+    if(i>=0){
+      const keepId=state[mod][i]._id;
+      state[mod][i]=Object.assign({}, row, {_id:keepId});
+      return 'update';
+    }
+  }
+  row._id=uid();
+  state[mod].push(row);
+  return 'add';
+}
+
+/** DO 行去重键：Delivery + Pos + Product no. + Batch */
+function doRowKey(r){
+  return [r['Delivery号码'], r['Pos'], r['Product no.'], r['Batch no.']].map(x=>String(x||'').trim()).join('|');
+}
+function upsertDoRows(rows){
+  let added=0, updated=0;
+  rows.forEach(row=>{
+    const key=doRowKey(row);
+    const i=state.do.findIndex(r=>doRowKey(r)===key && key!=='|||');
+    if(i>=0 && key!=='|||'){
+      const keepId=state.do[i]._id;
+      state.do[i]=Object.assign({}, row, {_id:keepId});
+      updated++;
+    } else {
+      row._id=uid();
+      state.do.push(row);
+      added++;
+    }
+  });
+  return { added, updated };
+}
+
+async function handleFiles(mod, fileList){
+  const files=[...fileList].filter(f=>/\.pdf$/i.test(f.name)||f.type==='application/pdf');
+  if(!files.length){ toast('请选择 PDF 文件','warn'); return; }
+  const status=document.getElementById(mod+'Status');
+  status.textContent='正在解析 '+files.length+' 个文件…';
+  let ok=0, fail=0, routed=0;
+  for(const file of files){
+    try{
+      if(window.__pdfReady) await window.__pdfReady;
+      if(!window.extractPdfText){
+        const why = window.__pdfLoadError ? ('：'+window.__pdfLoadError) : '';
+        throw new Error('PDF.js 未能加载'+why+'。请确认能访问 cdnjs.cloudflare.com，或改用粘贴文本');
+      }
+      const text=await window.extractPdfText(file);
+      const result=await ingestText(mod, text, file.name);
+      if(result==='routed') routed++;
+      else if(result) ok++;
+      else fail++;
+    }catch(err){
+      console.error(err);
+      fail++;
+      toast(file.name+' 解析失败：'+(err.message||err)+'\n可改用「粘贴文本导入」','err',5000);
+    }
+  }
+  status.textContent='完成：成功 '+ok+(routed?'，已改模块 '+routed:'')+(fail?'，失败 '+fail:'');
+  renderTable('perf'); renderTable('cert'); renderTable('do');
+  saveState();
+  if(ok) toast('已导入 '+ok+' 份','ok');
+}
+
+function modOfType(type){
+  if(type==='包装性能单') return 'perf';
+  if(type==='危包证') return 'cert';
+  if(type==='运单DO') return 'do';
+  return null;
+}
+
+function commitParsed(detected, text, sourceName){
+  const meta={ sourceName: sourceName||'', importedAt: nowStr() };
+  if(detected==='运单DO'){
+    const parsed=P.parseDelivery(text, meta);
+    if(!parsed.items.length){
+      toast((sourceName||'')+' 未解析到行项目','warn');
+      return false;
+    }
+    const {added, updated}=upsertDoRows(parsed.items);
+    const no=parsed.header['Delivery号码']||sourceName||'DO';
+    toast(no+'：新增 '+added+' 行'+(updated?('，更新 '+updated+' 行'):''),'ok',4000);
+    return true;
+  }
+  const row = detected==='包装性能单' ? P.parsePerformance(text, meta) : P.parseCertificate(text, meta);
+  if(!row['编号']){ toast((sourceName||'')+' 未解析到编号','warn'); return false; }
+  const targetMod = modOfType(detected);
+  const act=upsertByNo(targetMod, row);
+  toast((sourceName||row['编号'])+' '+(act==='update'?'已更新（同编号去重）':'已新增'),'ok');
+  return true;
+}
+
+function ingestText(expectedMod, text, sourceName){
+  return new Promise((resolve)=>{
+    const detected=P.detectDocType(text);
+    const want = MOD_LABEL[expectedMod] || expectedMod;
+    if(detected==='unknown'){
+      toast((sourceName||'')+' 无法识别单据类型','err');
+      resolve(false); return;
+    }
+    if(detected!==want){
+      routePending={ expectedMod, detected, text, sourceName, resolve };
+      document.getElementById('routeMsg').innerHTML =
+        '<p>文件 <b>'+esc(sourceName||'')+'</b> 识别为 <b>'+esc(detected)+'</b>，当前标签是 <b>'+esc(want)+'</b>。</p>'+
+        '<p class="muted">是否切换到正确模块并导入？</p>';
+      document.getElementById('routeMask').classList.add('show');
+      return;
+    }
+    resolve(commitParsed(detected, text, sourceName));
+  });
+}
+
+function closeRouteModal(ok){
+  document.getElementById('routeMask').classList.remove('show');
+  const p=routePending; routePending=null;
+  if(!p) return;
+  if(!ok){ p.resolve('cancel'); return; }
+  const targetMod = modOfType(p.detected);
+  if(!targetMod){ p.resolve(false); return; }
+  showTab(targetMod);
+  const okImport=commitParsed(p.detected, p.text, p.sourceName);
+  saveState(); renderTable(targetMod);
+  if(okImport) toast('已导入到「'+p.detected+'」','ok');
+  p.resolve(okImport ? 'routed' : false);
+}
+
+function openPasteModal(mod){
+  document.getElementById('pasteTarget').value=mod;
+  document.getElementById('pasteText').value='';
+  document.getElementById('pasteMask').classList.add('show');
+}
+function closePasteModal(){ document.getElementById('pasteMask').classList.remove('show'); }
+async function submitPaste(){
+  const mod=document.getElementById('pasteTarget').value;
+  const text=document.getElementById('pasteText').value;
+  if(!text.trim()){ toast('请粘贴文本','warn'); return; }
+  closePasteModal();
+  await ingestText(mod, text, '粘贴文本');
+  renderTable('perf'); renderTable('cert'); renderTable('do'); saveState();
+}
+
+function exportCsv(mod){
+  const cols = colsOf(mod);
+  const rows = mod==='perf' ? getPerfViewRows() : (mod==='do' ? getDoViewRows() : state[mod]);
+  const lines=[cols.join(',')];
+  rows.forEach(r=>{
+    lines.push(cols.map(c=>csvEscape(r[c]||'')).join(','));
+  });
+  const filtered = (mod==='perf' && hasActivePerfFilters()) || (mod==='do' && hasActiveDoFilters());
+  downloadText(lines.join('\n'), (MOD_LABEL[mod]||mod)+'_'+todayStr()+'.csv', 'text/csv;charset=utf-8');
+  toast(filtered ? ('已导出筛选结果 CSV（'+rows.length+' 条）') : '已导出 CSV','ok');
+}
+function exportJson(mod){
+  const cols = colsOf(mod);
+  const src = mod==='perf' ? getPerfViewRows() : (mod==='do' ? getDoViewRows() : state[mod]);
+  const rows=src.map(r=>{ const o={}; cols.forEach(c=>o[c]=r[c]||''); return o; });
+  const filtered = (mod==='perf' && hasActivePerfFilters()) || (mod==='do' && hasActiveDoFilters());
+  downloadText(JSON.stringify(rows,null,2), (MOD_LABEL[mod]||mod)+'_'+todayStr()+'.json', 'application/json');
+  toast(filtered ? ('已导出筛选结果 JSON（'+rows.length+' 条）') : '已导出 JSON','ok');
+}
+function exportAllJson(){
+  const payload={
+    exportedAt: nowStr(),
+    包装性能单: state.perf.map(r=>{ const o={}; PERF_COLS.forEach(c=>o[c]=r[c]||''); return o; }),
+    危包证: state.cert.map(r=>{ const o={}; CERT_COLS.forEach(c=>o[c]=r[c]||''); return o; }),
+    运单DO: state.do.map(r=>{ const o={}; DO_COLS.forEach(c=>o[c]=r[c]||''); return o; })
+  };
+  downloadText(JSON.stringify(payload,null,2), '出口危险品数据_'+todayStr()+'.json', 'application/json');
+  toast('已导出全部 JSON','ok');
+}
+function csvEscape(v){
+  const s=String(v).replace(/"/g,'""');
+  return /[",\n\r]/.test(s)?'"'+s+'"':s;
+}
+function downloadText(text, name, mime){
+  const bom = mime.indexOf('csv')>=0 ? '\uFEFF' : '';
+  const blob=new Blob([bom+text],{type:mime});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=name;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+
+function previewJoinMock(){
+  const wrap=document.getElementById('joinWrap');
+  const box=document.getElementById('joinPreview');
+  const table=document.getElementById('joinTable');
+  if(!state.cert.length){
+    box.textContent='危包证清单为空，无法预览关联。请先在模块 2 导入数据。';
+    wrap.style.display='none';
+    return;
+  }
+  const perfMap={};
+  state.perf.forEach(p=>{ if(p['编号']) perfMap[p['编号']]=p; });
+  const cols=['危包证编号','危险货物名称中文','UN','性能单号','匹配状态','性能单-包装名称','性能单-有效期'];
+  table.querySelector('thead').innerHTML='<tr>'+cols.map(c=>'<th>'+esc(c)+'</th>').join('')+'</tr>';
+  table.querySelector('tbody').innerHTML = state.cert.map(c=>{
+    const link=c['包装容器性能检验结果单号']||'';
+    const hit=link && perfMap[link];
+    return '<tr>'+
+      '<td>'+esc(c['编号']||'')+'</td>'+
+      '<td>'+esc(c['危险货物名称中文']||'')+'</td>'+
+      '<td>'+esc(c['联合国编号']||'')+'</td>'+
+      '<td>'+esc(link)+'</td>'+
+      '<td>'+(hit?'<span style="color:#1f7a45">已匹配</span>':'<span style="color:#b42323">未找到性能单</span>')+'</td>'+
+      '<td>'+esc(hit?(hit['包装容器名称及规格']||''):'')+'</td>'+
+      '<td>'+esc(hit?(hit['本单有效期截止']||''):'')+'</td>'+
+      '</tr>';
+  }).join('');
+  wrap.style.display='block';
+  box.innerHTML='只读预览：按危包证「包装容器性能检验结果单号」= 包装性能单「编号」匹配（正式结合规则待模块 4 定义）。当前危包证 '+state.cert.length+' 条，性能单 '+state.perf.length+' 条。';
+}
+
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+function escAttr(s){ return esc(s).replace(/\n/g,'&#10;'); }
+
+function bindDrop(id, mod){
+  const el=document.getElementById(id);
+  const input=document.getElementById(mod+'File');
+  input.addEventListener('change', e=>{ handleFiles(mod, e.target.files); e.target.value=''; });
+  ['dragenter','dragover'].forEach(ev=>el.addEventListener(ev, e=>{ e.preventDefault(); el.classList.add('drag'); }));
+  ['dragleave','drop'].forEach(ev=>el.addEventListener(ev, e=>{ e.preventDefault(); el.classList.remove('drag'); }));
+  el.addEventListener('drop', e=>{
+    e.preventDefault();
+    if(e.dataTransfer.files && e.dataTransfer.files.length) handleFiles(mod, e.dataTransfer.files);
+  });
+}
+
+// boot
+document.getElementById('todayLabel').textContent='今天 '+todayStr();
+loadState();
+bindPerfFilters();
+bindDoFilters();
+renderTable('perf');
+renderTable('cert');
+renderTable('do');
+bindDrop('perfDrop','perf');
+bindDrop('certDrop','cert');
+bindDrop('doDrop','do');
+window.showTab=showTab;
+window.addBlankRow=addBlankRow;
+window.clearModule=clearModule;
+window.deleteRow=deleteRow;
+window.exportCsv=exportCsv;
+window.exportJson=exportJson;
+window.exportAllJson=exportAllJson;
+window.clearStorageConfirm=clearStorageConfirm;
+window.openPasteModal=openPasteModal;
+window.closePasteModal=closePasteModal;
+window.submitPaste=submitPaste;
+window.closeRouteModal=closeRouteModal;
+window.previewJoinMock=previewJoinMock;
+window.resetPerfFilters=resetPerfFilters;
+window.resetDoFilters=resetDoFilters;
+</script>
+</body>
+</html>
