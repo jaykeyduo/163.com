@@ -71,6 +71,13 @@
     if (/\bDelivery\s+\d{6,}\b/.test(t) && /manufactured:/i.test(t)) {
       return '运单DO';
     }
+    // 中文 SDS / 化学品安全技术说明书
+    if (/化学品安全技术说明书/.test(t) || /安全数据单/.test(t) || /GB\/T\s*16483/.test(t)) {
+      return 'SDS';
+    }
+    if (/产品代码/.test(t) && /14\.\s*运输信息/.test(t) && (/联合国运输名称/.test(t) || /不作为危险货物管理/.test(t))) {
+      return 'SDS';
+    }
     return 'unknown';
   }
 
@@ -773,6 +780,192 @@
     return { header: header, items: items };
   }
 
+
+  /** SDS（化学品安全技术说明书）— 办危包证相关字段 */
+  var SDS_FIELDS = [
+    '产品代码', '中文名称', '英文名称', '产品的商业名称',
+    '危险货物名称中文', '危险货物名称英文', '危险货物类别', '联合国编号',
+    '危险货物状态', '危险货物密度', '联合国运输名称', '包装类别',
+    '海洋污染物', 'EmS表号', '闪点', 'GHS危险性类别', '主要危险成分',
+    '运输非危标记', '源文件名', '导入时间'
+  ];
+
+  function flattenSds(text) {
+    return String(text || '').replace(/\r\n/g, '\n')
+      .replace(/---\s*PAGE\s+\d+\s*---/gi, '\n')
+      .replace(/页码\s+\d+\s*\/\s*\d+/g, '\n')
+      .replace(/[ \t\u00a0]+/g, ' ');
+  }
+
+  function sectionSlice(flat, startRe, endRe) {
+    var m = flat.match(startRe);
+    if (!m) return '';
+    var start = m.index;
+    var rest = flat.slice(start);
+    var em = rest.search(endRe);
+    return em > 0 ? rest.slice(0, em) : rest;
+  }
+
+  function normalizeUn(raw) {
+    if (!raw) return '';
+    var s = cleanBlank(raw);
+    if (/不适用|不作为危险货物/.test(s)) return '';
+    var m = s.match(/(?:UN\s*)?(\d{4})/i);
+    return m ? m[1] : '';
+  }
+
+  function normalizeDensity(raw) {
+    if (!raw || /无数据|不适用/.test(raw)) return '';
+    var m = String(raw).replace(/,/g, '.').match(/(\d+(?:\.\d+)?)\s*g\s*\/?\s*cm/i);
+    return m ? m[1] : '';
+  }
+
+  function normalizeFlash(raw) {
+    if (!raw) return '';
+    var s = cleanBlank(raw);
+    if (/不适用/.test(s)) return '不适用';
+    var m = s.match(/(-?\d+(?:\.\d+)?)\s*°?\s*C/i);
+    return m ? (m[1] + '°C') : s;
+  }
+
+  function parseSdsIngredients(sec3) {
+    if (/不含有害成分/.test(sec3)) return '';
+    var rows = [];
+    var lines = sec3.split(/\n/);
+    for (var i = 0; i < lines.length; i++) {
+      var line = cleanBlank(lines[i]);
+      if (!line || /化学品名称|组成信息|组分|还包含/.test(line)) continue;
+      var casM = line.match(/(\d{2,7}\s*-\s*\d{1,3}\s*-\s*\d{1,2}|未指定)/);
+      if (!casM) continue;
+      var cas = casM[1].replace(/\s+/g, '');
+      var name = cleanBlank(line.slice(0, casM.index));
+      var conc = cleanBlank(line.slice(casM.index + casM[0].length)).replace(/\s+/g, '');
+      if (name && name.length < 40) rows.push(name + '|' + (cas === '未指定' ? '未指定' : cas) + '|' + conc);
+      if (rows.length >= 8) break;
+    }
+    return rows.join('; ');
+  }
+
+  function parseSdsGhs(sec2) {
+    if (/非危险物质或混合物/.test(sec2)) return '非危险物质或混合物';
+    var parts = [];
+    var re = /:\s*([^:\n]{2,40}?)\s+类别\s+([0-9A-Za-z.]+)/g;
+    var m;
+    while ((m = re.exec(sec2)) && parts.length < 8) {
+      var name = cleanBlank(m[1]).replace(/\s+/g, '');
+      if (/特异性靶器官/.test(name)) name = '特异性靶器官毒性(一次接触)';
+      parts.push(name + ':' + m[2]);
+    }
+    return parts.join('; ');
+  }
+
+  function parseImdgBlock(sec14) {
+    var imdg = '';
+    var m = sec14.match(/海运\s*\(?\s*IMDG[\s\S]*?(?=国内法规|15\.\s*法规|按《\s*MARPOL|$)/i);
+    if (m) imdg = m[0];
+    else {
+      m = sec14.match(/ADR[\s\S]*?(?=空运|海运|国内法规|15\.\s|$)/i);
+      imdg = m ? m[0] : sec14;
+    }
+    return imdg;
+  }
+
+  /**
+   * 解析中文 SDS PDF 文本（办危包证相关字段）。
+   * 运输类别只取 Sec.14 IMDG（缺则 ADR），禁止误用 GHS「类别」。
+   */
+  function parseSds(text, meta) {
+    meta = meta || {};
+    var flat = flattenSds(text);
+    var row = emptyRow(SDS_FIELDS);
+    row['源文件名'] = meta.sourceName || '';
+    row['导入时间'] = meta.importedAt || nowStr();
+
+    var trade = flat.match(/产品的商业名称\s*:\s*([^\n修订]+)/);
+    if (trade) row['产品的商业名称'] = cleanBlank(trade[1]);
+    var code = flat.match(/产品代码\s+([A-Z0-9]{8,})/i) || flat.match(/质量号\s*:\s*([A-Z0-9]{8,})/i);
+    if (code) row['产品代码'] = code[1];
+
+    var zh = flat.match(/:\s*中文名称\s+([^\n]+)/) || flat.match(/中文名称\s*:\s*([^\n]+)/);
+    if (zh) row['中文名称'] = cleanBlank(zh[1]);
+    var en = flat.match(/:\s*([^\n]{3,80}?)\s+英文名称/) || flat.match(/英文名称\s*:\s*([^\n]+)/);
+    if (en) row['英文名称'] = cleanBlank(en[1]);
+
+    row['危险货物名称中文'] = row['中文名称'];
+    row['危险货物名称英文'] = row['英文名称'];
+
+    var sec2 = sectionSlice(flat, /2\.\s*危险性概述/, /\n\s*3\.\s*成分/);
+    var sec3 = sectionSlice(flat, /3\.\s*成分/, /\n\s*4\.\s*急救/);
+    var sec9 = sectionSlice(flat, /9\.\s*理化特性/, /\n\s*10\.\s*稳定性/);
+    var sec14 = sectionSlice(flat, /14\.\s*运输信息/, /\n\s*15\.\s*法规/);
+
+    var state = sec9.match(/外观与性状\s+([^\n(]+)/) || flat.match(/外观与性状\s+([^\n(]+)/);
+    if (state) row['危险货物状态'] = cleanBlank(state[1]);
+
+    var dens = sec9.match(/(?:^|\n):\s*密度\s+([^\n]+)/) || sec9.match(/\n密度\s+([^\n]+)/);
+    if (dens) row['危险货物密度'] = normalizeDensity(dens[1]);
+
+    var flash = sec9.match(/闪点\s+([^\n]+)/);
+    if (flash) row['闪点'] = normalizeFlash(flash[1]);
+
+    row['GHS危险性类别'] = parseSdsGhs(sec2);
+    row['主要危险成分'] = parseSdsIngredients(sec3);
+
+    var imdg = parseImdgBlock(sec14);
+    var unRaw = '';
+    var unM = imdg.match(/联合国编号\s+(UN\s*\d{4}|不适用)/i) || imdg.match(/联合国编号\s*:\s*(UN\s*\d{4}|不适用)/i);
+    if (!unM) unM = imdg.match(/联\s*合\s*国\s*编\s*号\s+(UN\s*\d{4}|不适用)/i);
+    if (!unM) unM = sec14.match(/海运[\s\S]{0,400}?联合国编号\s+(UN\s*\d{4}|不适用)/i);
+    if (unM) unRaw = unM[1];
+    row['联合国编号'] = normalizeUn(unRaw);
+
+    if (!row['联合国编号'] && (/不作为危险货物管理/.test(imdg) || /不作为危险货物管理/.test(sec14))) {
+      row['运输非危标记'] = '是';
+    } else {
+      row['运输非危标记'] = '';
+    }
+
+    var psn = imdg.match(/联合国运输名称\s+([A-Z][A-Z0-9 /,-]+)/i);
+    if (psn && !/不适用/.test(psn[1])) row['联合国运输名称'] = cleanBlank(psn[1]).replace(/\s+/g, ' ');
+
+    var cls = imdg.match(/(?:^|\n):\s*类别\s+(\d(?:\.\d)?|不适用)/) || imdg.match(/\n类别\s+(\d(?:\.\d)?|不适用)/);
+    if (!cls) cls = imdg.match(/类别\s+(\d(?:\.\d)?)\s*(?:\n|:|包装)/);
+    if (cls && !/不适用/.test(cls[1])) row['危险货物类别'] = cls[1];
+
+    var pg = imdg.match(/包装类别\s+(I{1,3}|不适用)/);
+    if (pg && !/不适用/.test(pg[1])) row['包装类别'] = pg[1];
+
+    var mar = imdg.match(/海洋污染物（是\s*\/\s*否）\s+(是|否)/);
+    if (mar) row['海洋污染物'] = mar[1];
+
+    var ems = imdg.match(/([FS]\s*-\s*[A-Z]\s*,\s*[FS]\s*-\s*[A-Z])\s*EmS\s*表号/i)
+      || imdg.match(/EmS\s*表号\s+([FS]\s*-\s*[A-Z]\s*,\s*[FS]\s*-\s*[A-Z]|不适用)/i);
+    if (ems && !/不适用/.test(ems[1])) row['EmS表号'] = ems[1].replace(/\s+/g, '').replace(/,/g, ', ');
+
+    if (row['联合国编号'] && !row['危险货物类别']) {
+      var adrCls = sec14.match(/类别\s+(3(?:\.\d)?)/);
+      if (adrCls) row['危险货物类别'] = adrCls[1];
+    }
+    if (row['联合国编号'] && !row['包装类别']) {
+      var adrPg = sec14.match(/包装类别\s+(I{1,3})/);
+      if (adrPg) row['包装类别'] = adrPg[1];
+    }
+    if (row['联合国编号'] && !row['联合国运输名称']) {
+      var adrPsn = sec14.match(/联合国运输名称\s+([A-Z][A-Z0-9 /,-]+)/);
+      if (adrPsn) row['联合国运输名称'] = cleanBlank(adrPsn[1]).replace(/\s+/g, ' ');
+    }
+    if (row['联合国编号'] && !row['EmS表号']) {
+      var ems2 = sec14.match(/([FS]\s*-\s*[A-Z]\s*,\s*[FS]\s*-\s*[A-Z])\s*EmS/i);
+      if (ems2) row['EmS表号'] = ems2[1].replace(/\s+/g, '').replace(/,/g, ', ');
+    }
+    if (row['联合国编号'] && !row['海洋污染物']) {
+      var mar2 = sec14.match(/海洋污染物（是\s*\/\s*否）\s+(是|否)/);
+      if (mar2) row['海洋污染物'] = mar2[1];
+    }
+
+    return row;
+  }
+
   function parseAuto(text, meta) {
     var type = detectDocType(text);
     if (type === '危包证') return { type: type, row: parseCertificate(text, meta) };
@@ -781,6 +974,7 @@
       var parsed = parseDelivery(text, meta);
       return { type: type, row: null, rows: parsed.items, header: parsed.header };
     }
+    if (type === 'SDS') return { type: type, row: parseSds(text, meta) };
     return { type: 'unknown', row: null };
   }
 
@@ -789,10 +983,12 @@
     parsePerformance: parsePerformance,
     parseCertificate: parseCertificate,
     parseDelivery: parseDelivery,
+    parseSds: parseSds,
     parseAuto: parseAuto,
     PERF_FIELDS: PERF_FIELDS,
     CERT_FIELDS: CERT_FIELDS,
     DO_FIELDS: DO_FIELDS,
+    SDS_FIELDS: SDS_FIELDS,
     cleanBlank: cleanBlank,
     normalizeDate: normalizeDate,
     stripStarsQty: stripStarsQty
