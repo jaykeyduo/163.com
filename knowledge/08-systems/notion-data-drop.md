@@ -1,11 +1,21 @@
 ---
 id: notion-data-drop
 owner: logistics
-last_updated: 2026-08-12
+last_updated: 2026-10-12
 status: active
 ---
 
 # Notion 业务数据直连（MK数据库）
+
+## 公司背景框架（非 CSV）
+
+| 项 | 值 |
+|---|---|
+| 页面 | **公司背景框架 · 物流顾问** |
+| URL | https://app.notion.com/p/3f76f5d12cd681698d32f9b372282284 |
+| 父库 | Notion「数据库」知识库 |
+| 用途 | 公司/部门业务描述，供后续项目页引用 |
+| 与 MK数据库 | **分开**：本页是框架文档；MK数据库只放 CSV Import |
 
 ## 主入口（固定）
 
