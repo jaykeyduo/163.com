@@ -1,11 +1,20 @@
 ---
 id: company-overview
 owner: logistics
-last_updated: 2026-09-03
+last_updated: 2026-10-12
 status: active
+notion_mirror: https://app.notion.com/p/3f76f5d12cd681698d32f9b372282284
 ---
 
 # 公司总览
+
+## Notion 镜像（项目互动）
+
+- 页面：**公司背景框架 · 物流顾问**
+- URL：https://app.notion.com/p/3f76f5d12cd681698d32f9b372282284
+- 位置：Notion「数据库」知识库（类型=指南）
+- 用途：后续项目文档引用本页，不复制改写。CSV 仍放 MK数据库。
+- 冲突时：**以本仓库 `knowledge/` 为准**，并回写 Notion 变更记录。
 
 ## 公司身份
 
